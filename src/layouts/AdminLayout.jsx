@@ -47,7 +47,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-mesh">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 bg-white/80 backdrop-blur-2xl border-r border-slate-200 shadow-glass-heavy hidden md:flex md:flex-col z-20 transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}>
+      <aside className={`fixed inset-y-0 left-0 bg-white/80 backdrop-blur-2xl border-r border-slate-200 shadow-glass-heavy hidden md:flex md:flex-col z-20 transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-20' : 'w-56'}`}>
         <div className={`h-16 flex items-center border-b border-slate-200 flex-shrink-0 ${isSidebarCollapsed ? 'justify-center' : 'px-6'}`}>
           <Leaf className={`w-6 h-6 text-emerald-600 ${isSidebarCollapsed ? '' : 'mr-2'}`} />
           {!isSidebarCollapsed && <span className="text-xl font-black text-slate-900 tracking-tight">PeanutIQ Admin</span>}
@@ -92,7 +92,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className={`flex flex-col min-h-screen transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'}`}>
+      <main className={`flex flex-col min-h-screen transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-56'}`}>
         {/* Header */}
         <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-10 shadow-sm transition-all duration-300">
           <div className="flex-1 flex items-center">

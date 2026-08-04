@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Search, BookOpen, ChevronRight, FileText, 
   Download, Sparkles, X, ArrowLeft, Loader2, Info, Pencil, Trash2
@@ -74,6 +74,13 @@ export default function KnowledgeBase() {
   const [isAiMode, setIsAiMode] = useState(false);
   const [aiState, setAiState] = useState('idle'); // idle, thinking, complete
   const [aiResponse, setAiResponse] = useState('');
+
+  // Scroll to top when an article is selected for reading or editing
+  useEffect(() => {
+    if (selectedArticle || editingArticleId) {
+      window.scrollTo(0, 0);
+    }
+  }, [selectedArticle, editingArticleId]);
 
   const filteredArticles = articles.filter(article => {
     const matchesCategory = activeCategory === 'All Articles' || article.category === activeCategory;
