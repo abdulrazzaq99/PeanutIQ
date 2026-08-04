@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Outfit', sans-serif;
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+  --shadow-glass-heavy: 0 16px 48px 0 rgba(0, 0, 0, 0.08);
+}
+
+@layer utilities {
+  .bg-mesh {
+    background-color: #f8fafc;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(158,100%,74%,0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(189,100%,56%,0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(163,100%,82%,0.18) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(158,100%,74%,0.12) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+  .glass-panel {
+    @apply bg-white border border-slate-200 shadow-sm;
+  }
+  .glass-card {
+    @apply bg-white border border-slate-200 shadow-sm;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-mesh text-slate-800 font-sans antialiased;
+  }
+
+  /* Remove WebKit autofill highlight color */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #111827 !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 1cm;
+  }
+  
+  html, body {
+    width: 100%;
+    height: auto !important;
+    background-color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Avoid page breaks inside the report cards */
+  .grid > div {
+    page-break-inside: avoid;
+  }
+  
+  /* Disable shadows in print to make it look like a document */
+  .shadow-sm {
+    box-shadow: none !important;
+  }
+}
