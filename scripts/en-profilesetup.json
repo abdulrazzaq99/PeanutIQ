@@ -1,0 +1,20 @@
+{
+  "auth": {
+    "profileSetup": {
+      "title": "Complete Your Profile",
+      "subtitle": "Almost there! Tell us a bit more about yourself.",
+      "fullName": "Full Name",
+      "namePlaceholder": "e.g. Ahmad Khan",
+      "role": "Role",
+      "roleFarmer": "Farmer",
+      "roleResearcher": "Researcher",
+      "roleAdmin": "Administrator",
+      "farmLocation": "Farm Location",
+      "locationPlaceholder": "e.g. Attock, Punjab",
+      "languagePreference": "Language Preference",
+      "langEnglish": "English",
+      "langUrdu": "Urdu",
+      "submitBtn": "Create Account"
+    }
+  }
+}

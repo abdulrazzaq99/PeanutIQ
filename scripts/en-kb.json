@@ -1,0 +1,84 @@
+{
+  "kb": {
+    "title": "Knowledge Base & Research",
+    "subtitle": "Institutional peanut cultivation guidelines and AI assistance",
+    "searchPlaceholder": "Search research papers and protocols...",
+    "searchAiPlaceholder": "Ask Agentic AI about peanut farming...",
+    "searchBtn": "Search",
+    "askAiBtn": "Ask AI",
+    "aiThinking": "Agentic AI is retrieving NARC/BARI research and reasoning...",
+    "aiRec": "Farmer-Friendly AI Recommendation",
+    "derivedInfo": "Derived from official institutional protocols.",
+    "categoriesTitle": "Categories",
+    "allArticles": "All Articles",
+    "noArticles": "No articles found",
+    "tryAdjusting": "Try adjusting your search or category filter.",
+    "editArticle": "Edit Article",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "back": "Back to Knowledge Base",
+    "editTitle": "Title",
+    "editCategory": "Category",
+    "editExcerpt": "Excerpt",
+    "editContent": "Content",
+    "categories": [
+      { "id": 1, "name": "Cultivation Practices", "count": 24 },
+      { "id": 2, "name": "Disease Management", "count": 18 },
+      { "id": 3, "name": "Seed Quality Standards", "count": 12 },
+      { "id": 4, "name": "Historical Records", "count": 8 },
+      { "id": 5, "name": "Disease Forecasting", "count": 5 }
+    ],
+    "articles": [
+      {
+        "id": 1,
+        "title": "NARC Recommended Groundnut Varieties for Pothwar",
+        "category": "Cultivation Practices",
+        "date": "Aug 1, 2026",
+        "author": "NARC Islamabad",
+        "excerpt": "Detailed guide on high-yielding peanut varieties suited for rainfed conditions of the Pothwar region including BARI-2016.",
+        "content": "The Pothwar region accounts for the majority of groundnut production in Pakistan. The National Agricultural Research Centre (NARC) highly recommends the BARI-2016 variety due to its high yield potential and resistance to drought conditions. Farmers are advised to maintain a seed rate of 25-30 kg per acre and ensure sowing between April and May. Proper land preparation, including deep ploughing and planking, is crucial for moisture conservation."
+      },
+      {
+        "id": 2,
+        "title": "Early Leaf Spot (Cercospora arachidicola) Management Protocol",
+        "category": "Disease Management",
+        "date": "Jul 28, 2026",
+        "author": "BARI Chakwal",
+        "excerpt": "Preventive measures and fungicidal recommendations for controlling Early Leaf Spot in peanut crops during monsoon season.",
+        "content": "Early Leaf Spot is a devastating fungal disease that thrives in high humidity (>80%) and temperatures between 25-30°C. Initial symptoms include brown circular spots surrounded by yellow halos on the upper leaf surface. Management protocols dictate prophylactic spraying of systemic fungicides such as Chlorothalonil (2ml/L) immediately upon symptom onset. Cultural practices like crop rotation and deep burying of crop residues significantly reduce primary inoculum."
+      },
+      {
+        "id": 3,
+        "title": "Seed Viability and Germination Testing Guidelines",
+        "category": "Seed Quality Standards",
+        "date": "Jun 15, 2026",
+        "author": "Agricultural Extension Dept",
+        "excerpt": "Standard procedures for testing peanut seed germination rates before sowing to ensure optimal plant density.",
+        "content": "To achieve optimal plant density (approx. 60,000 plants/acre), seed viability testing must be conducted 2 weeks prior to sowing. Select 100 random seeds from the batch. Soak them overnight and place them in moist paper towels at room temperature. A germination rate of >85% within 7 days is considered standard for certified seeds. Treat seeds with Imidacloprid and Thiram before planting to prevent soil-borne pests and seedling rot."
+      },
+      {
+        "id": 4,
+        "title": "Historical Outbreak Analysis: Pothwar Region 2022-2025",
+        "category": "Historical Records",
+        "date": "Jan 10, 2026",
+        "author": "Crop Reporting Service",
+        "excerpt": "A retrospective analysis of the severe Rosette Virus and Late Leaf Spot outbreaks and their economic impact.",
+        "content": "Between 2022 and 2025, the Pothwar region experienced unusually heavy late-monsoon showers, triggering widespread outbreaks of Late Leaf Spot and Groundnut Rosette Virus (GRV). GRV, transmitted by the aphid Aphis craccivora, caused up to 40% yield loss in late-sown fields. Data analysis reveals that fields planted early (mid-April) experienced significantly lower vector pressure, highlighting the importance of adjusting planting windows in response to changing climatic patterns."
+      },
+      {
+        "id": 5,
+        "title": "Predictive Modeling for Fungal Pathogen Spores",
+        "category": "Disease Forecasting",
+        "date": "May 05, 2026",
+        "author": "Agri-Tech AI Lab",
+        "excerpt": "Using micro-climate data to predict the dispersion of fungal spores for precision fungicide application.",
+        "content": "Our latest predictive models integrate real-time field telemetry (temperature, leaf wetness duration, and relative humidity) to forecast spore germination events. We found that 12 consecutive hours of leaf wetness combined with temperatures above 22°C triggers massive spore release. By applying protective fungicides exactly 48 hours prior to these predicted events, farmers can reduce chemical usage by 30% while maintaining complete crop protection."
+      }
+    ],
+    "aiResponses": {
+      "disease": "Based on BARI's Disease Management Protocol, Early Leaf Spot loves high humidity. You should spray a fungicide like Chlorothalonil (2ml per Litre of water) as soon as you see brown spots with yellow rings. Also, remember to clear out old plant debris from your field to stop the fungus from surviving the winter.",
+      "seed": "According to NARC and Extension guidelines, you should use the BARI-2016 variety. Use 25-30 kg of seeds per acre and sow between April and May. Before planting, test your seeds by sprouting 100 of them in wet paper towels—if 85 sprout, you're good to go! Don't forget to treat them with fungicide before putting them in the soil.",
+      "general": "I couldn't find specific institutional research for that exact query. However, generally, ensuring good drainage, timely weeding, and using certified NARC/BARI seed varieties will protect your yield. Try asking about 'leaf spot', 'seeds', or 'sowing times'."
+    }
+  }
+}

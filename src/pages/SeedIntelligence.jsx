@@ -5,17 +5,20 @@ import {
   XCircle, ChevronRight
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 // Mock Data
 const COLORS = ['#22c55e', '#eab308', '#f97316', '#64748b', '#ef4444'];
-const mockData = [
-  { name: 'Healthy', value: 75, color: '#22c55e' },
-  { name: 'Underdeveloped', value: 12, color: '#eab308' },
-  { name: 'Damaged', value: 8, color: '#f97316' },
-  { name: 'Diseased', value: 5, color: '#ef4444' }
-];
 
 export default function SeedIntelligence() {
+  const { t } = useTranslation();
+  const mockData = [
+    { name: t('seed.data.healthy'), value: 75, color: '#22c55e' },
+    { name: t('seed.data.underdeveloped'), value: 12, color: '#eab308' },
+    { name: t('seed.data.damaged'), value: 8, color: '#f97316' },
+    { name: t('seed.data.diseased'), value: 5, color: '#ef4444' }
+  ];
+
   const [status, setStatus] = useState('idle'); // idle, analyzing, complete
   const [image, setImage] = useState(null);
   const fileInputRef = useRef(null);
@@ -59,8 +62,8 @@ export default function SeedIntelligence() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Seed Intelligence</h1>
-          <p className="mt-1 text-sm text-gray-500">AI-powered seed batch analysis and quality grading.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('seed.title')}</h1>
+          <p className="mt-1 text-sm text-gray-500">{t('seed.subtitle')}</p>
         </div>
         {status === 'complete' && (
           <div className="mt-4 sm:mt-0 flex gap-3 print:hidden">
@@ -69,14 +72,14 @@ export default function SeedIntelligence() {
               className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center transition-colors"
             >
               <RefreshCcw className="w-4 h-4 mr-2" />
-              New Analysis
+              {t('seed.newAnalysis')}
             </button>
             <button 
               onClick={handleDownloadReport}
               className="px-4 py-2 bg-green-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-green-700 flex items-center transition-colors shadow-sm"
             >
               <Download className="w-4 h-4 mr-2" />
-              Download Report
+              {t('seed.downloadReport')}
             </button>
           </div>
         )}
@@ -100,13 +103,13 @@ export default function SeedIntelligence() {
           <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
             <Upload className="w-10 h-10 text-green-600" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Upload Seed Batch Image</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">{t('seed.uploadTitle')}</h3>
           <p className="text-gray-500 max-w-md mx-auto mb-6">
-            Drag and drop a clear image of your seed batch here, or click to browse. On mobile, you can use your camera directly.
+            {t('seed.uploadDesc')}
           </p>
           <button className="px-6 py-2.5 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors inline-flex items-center">
             <Camera className="w-5 h-5 mr-2" />
-            Capture / Select Image
+            {t('seed.captureBtn')}
           </button>
         </div>
       )}
@@ -120,18 +123,18 @@ export default function SeedIntelligence() {
               <Activity className="w-10 h-10 text-green-500 animate-pulse" />
             </div>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Analyzing Seeds...</h3>
-          <p className="text-gray-500">Our AI model is segmenting and evaluating each seed.</p>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">{t('seed.analyzing')}</h3>
+          <p className="text-gray-500">{t('seed.analyzingDesc')}</p>
           
           <div className="max-w-md mx-auto mt-8 space-y-3 text-left">
             <div className="flex items-center text-sm text-gray-600">
-              <CheckCircle className="w-4 h-4 text-green-500 mr-3" /> OpenCV Segmentation complete
+              <CheckCircle className="w-4 h-4 text-green-500 mr-3" /> {t('seed.step1')}
             </div>
             <div className="flex items-center text-sm text-gray-900 font-medium">
-              <RefreshCcw className="w-4 h-4 text-blue-500 mr-3 animate-spin" /> CNN Classification in progress...
+              <RefreshCcw className="w-4 h-4 text-blue-500 mr-3 animate-spin" /> {t('seed.step2')}
             </div>
             <div className="flex items-center text-sm text-gray-400">
-              <div className="w-4 h-4 rounded-full border-2 border-gray-200 mr-3"></div> Generating Health Score
+              <div className="w-4 h-4 rounded-full border-2 border-gray-200 mr-3"></div> {t('seed.step3')}
             </div>
           </div>
         </div>
@@ -145,24 +148,24 @@ export default function SeedIntelligence() {
               <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-4">
                 <span className="text-4xl font-black text-green-600">A</span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900">Overall Quality Grade</h3>
-              <p className="text-sm text-gray-500 mt-1">Excellent batch for planting.</p>
+              <h3 className="text-lg font-bold text-gray-900">{t('seed.overallGrade')}</h3>
+              <p className="text-sm text-gray-500 mt-1">{t('seed.overallDesc')}</p>
             </div>
             
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
               <div className="w-20 h-20 flex items-center justify-center mb-4">
                 <span className="text-5xl font-black text-gray-900">89<span className="text-2xl text-gray-400">%</span></span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900">Germination Potential</h3>
-              <p className="text-sm text-gray-500 mt-1">Estimated viability based on visual health.</p>
+              <h3 className="text-lg font-bold text-gray-900">{t('seed.germination')}</h3>
+              <p className="text-sm text-gray-500 mt-1">{t('seed.germinationDesc')}</p>
             </div>
 
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
               <div className="w-20 h-20 flex items-center justify-center mb-4">
                 <span className="text-5xl font-black text-gray-900">342</span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900">Total Seeds Analyzed</h3>
-              <p className="text-sm text-gray-500 mt-1">Successfully segmented from batch.</p>
+              <h3 className="text-lg font-bold text-gray-900">{t('seed.totalAnalyzed')}</h3>
+              <p className="text-sm text-gray-500 mt-1">{t('seed.totalDesc')}</p>
             </div>
           </div>
 
@@ -170,7 +173,7 @@ export default function SeedIntelligence() {
             {/* Image Preview & Uniformity */}
             <div className="lg:col-span-1 print:col-span-1 space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Batch Image</h3>
+                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">{t('seed.batchImage')}</h3>
                 <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 relative">
                   <img src={image} alt="Seed Batch" className="w-full h-full object-cover" />
                   {/* Fake overlay to look like AI bounding boxes */}
@@ -179,12 +182,12 @@ export default function SeedIntelligence() {
               </div>
 
               <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Uniformity Metrics</h3>
+                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">{t('seed.uniformity')}</h3>
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">Size Variance</span>
-                      <span className="font-medium text-gray-900">Low (4.2%)</span>
+                      <span className="text-gray-600">{t('seed.sizeVar')}</span>
+                      <span className="font-medium text-gray-900">{t('seed.sizeVarVal')}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div className="bg-green-500 h-2 rounded-full" style={{ width: '85%' }}></div>
@@ -192,8 +195,8 @@ export default function SeedIntelligence() {
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">Color Consistency</span>
-                      <span className="font-medium text-gray-900">High (92%)</span>
+                      <span className="text-gray-600">{t('seed.colorCon')}</span>
+                      <span className="font-medium text-gray-900">{t('seed.colorConVal')}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div className="bg-green-500 h-2 rounded-full" style={{ width: '92%' }}></div>
@@ -206,7 +209,7 @@ export default function SeedIntelligence() {
             {/* Classification & Actions */}
             <div className="lg:col-span-2 print:col-span-2 space-y-6">
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">Seed Classification Breakdown</h3>
+                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">{t('seed.breakdown')}</h3>
                 <div className="flex flex-col sm:flex-row print:flex-row items-center">
                   <div className="w-full sm:w-1/2 print:w-1/2 h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -245,20 +248,20 @@ export default function SeedIntelligence() {
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
                   <Sprout className="w-5 h-5 text-green-600 mr-2" />
-                  Recommended Actions
+                  {t('seed.actions')}
                 </h3>
                 <ul className="space-y-3">
                   <li className="flex items-start bg-green-50 p-3 rounded-lg">
                     <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-green-900"><strong>Proceed with Planting:</strong> The batch has a high germination potential. Ensure optimal soil moisture before sowing.</p>
+                    <p className="text-sm text-green-900"><strong>{t('seed.proceedTitle')}</strong> {t('seed.proceedDesc')}</p>
                   </li>
                   <li className="flex items-start bg-orange-50 p-3 rounded-lg">
                     <AlertTriangle className="w-5 h-5 text-orange-500 mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-orange-900"><strong>Manual Sorting Recommended:</strong> Remove approximately 8% damaged seeds to improve overall yield uniformity.</p>
+                    <p className="text-sm text-orange-900"><strong>{t('seed.manualTitle')}</strong> {t('seed.manualDesc')}</p>
                   </li>
                   <li className="flex items-start bg-blue-50 p-3 rounded-lg">
                     <FileText className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-blue-900"><strong>Save Report:</strong> Download this quality report for future benchmarking and traceability.</p>
+                    <p className="text-sm text-blue-900"><strong>{t('seed.saveTitle')}</strong> {t('seed.saveDesc')}</p>
                   </li>
                 </ul>
               </div>

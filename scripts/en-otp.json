@@ -1,0 +1,14 @@
+{
+  "auth": {
+    "otp": {
+      "title": "Verify Account",
+      "subtitle": "Enter the 6-digit code sent to",
+      "errorLength": "Please enter a 6-digit OTP",
+      "errorInvalid": "Invalid OTP",
+      "submitBtn": "Verify OTP",
+      "notReceived": "Didn't receive the code?",
+      "resendBtn": "Resend",
+      "changeContact": "Change phone/email"
+    }
+  }
+}

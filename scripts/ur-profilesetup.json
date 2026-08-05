@@ -1,0 +1,20 @@
+{
+  "auth": {
+    "profileSetup": {
+      "title": "اپنی پروفائل مکمل کریں",
+      "subtitle": "تقریباً ہو گیا! ہمیں اپنے بارے میں کچھ اور بتائیں۔",
+      "fullName": "پورا نام",
+      "namePlaceholder": "مثلاً احمد خان",
+      "role": "کردار",
+      "roleFarmer": "کسان",
+      "roleResearcher": "محقق",
+      "roleAdmin": "ایڈمنسٹریٹر",
+      "farmLocation": "فارم کا مقام",
+      "locationPlaceholder": "مثلاً اٹک، پنجاب",
+      "languagePreference": "زبان کی ترجیح",
+      "langEnglish": "انگریزی",
+      "langUrdu": "اردو",
+      "submitBtn": "اکاؤنٹ بنائیں"
+    }
+  }
+}

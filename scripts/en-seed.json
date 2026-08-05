@@ -1,0 +1,42 @@
+{
+  "seed": {
+    "title": "Seed Intelligence",
+    "subtitle": "AI-powered seed batch analysis and quality grading.",
+    "newAnalysis": "New Analysis",
+    "downloadReport": "Download Report",
+    "uploadTitle": "Upload Seed Batch Image",
+    "uploadDesc": "Drag and drop a clear image of your seed batch here, or click to browse. On mobile, you can use your camera directly.",
+    "captureBtn": "Capture / Select Image",
+    "analyzing": "Analyzing Seeds...",
+    "analyzingDesc": "Our AI model is segmenting and evaluating each seed.",
+    "step1": "OpenCV Segmentation complete",
+    "step2": "CNN Classification in progress...",
+    "step3": "Generating Health Score",
+    "overallGrade": "Overall Quality Grade",
+    "overallDesc": "Excellent batch for planting.",
+    "germination": "Germination Potential",
+    "germinationDesc": "Estimated viability based on visual health.",
+    "totalAnalyzed": "Total Seeds Analyzed",
+    "totalDesc": "Successfully segmented from batch.",
+    "batchImage": "Batch Image",
+    "uniformity": "Uniformity Metrics",
+    "sizeVar": "Size Variance",
+    "sizeVarVal": "Low (4.2%)",
+    "colorCon": "Color Consistency",
+    "colorConVal": "High (92%)",
+    "breakdown": "Seed Classification Breakdown",
+    "actions": "Recommended Actions",
+    "proceedTitle": "Proceed with Planting:",
+    "proceedDesc": "The batch has a high germination potential. Ensure optimal soil moisture before sowing.",
+    "manualTitle": "Manual Sorting Recommended:",
+    "manualDesc": "Remove approximately 8% damaged seeds to improve overall yield uniformity.",
+    "saveTitle": "Save Report:",
+    "saveDesc": "Download this quality report for future benchmarking and traceability.",
+    "data": {
+      "healthy": "Healthy",
+      "underdeveloped": "Underdeveloped",
+      "damaged": "Damaged",
+      "diseased": "Diseased"
+    }
+  }
+}

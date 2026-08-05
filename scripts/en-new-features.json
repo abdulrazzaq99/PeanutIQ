@@ -1,0 +1,26 @@
+{
+  "aiCompanion": {
+    "title": "Agentic AI Companion",
+    "subtitle": "Always here to help",
+    "inputPlaceholder": "Ask me anything about your crops...",
+    "mockAiGreeting": "Hello! I am your PeanutIQ Agricultural AI Assistant. How can I help you with your farm today?",
+    "mockAiResponse": "I understand you have a question. Based on agricultural data, **adequate irrigation** is crucial during the flowering stage of peanut crops. \n\nHere are some tips:\n- Monitor soil moisture weekly.\n- Avoid waterlogging to prevent root rot.\n- Check for early signs of leaf spot disease."
+  },
+  "history": {
+    "title": "History & Reports",
+    "subtitle": "Review your past AI scans and download detailed PDFs.",
+    "tabAll": "All",
+    "tabSeed": "Seed Intelligence",
+    "tabDisease": "Disease Intelligence",
+    "statusHealthy": "Healthy",
+    "statusHighRisk": "High Risk",
+    "statusModerate": "Moderate",
+    "downloadPdf": "Download PDF",
+    "noRecords": "No records found",
+    "tryFilters": "Try changing your filters."
+  },
+  "dashboard": {
+    "recentActivity": "Recent Activity",
+    "viewAllHistory": "View All History & Reports"
+  }
+}

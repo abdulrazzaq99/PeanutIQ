@@ -1,0 +1,30 @@
+{
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your account",
+      "phoneTab": "Phone Number",
+      "emailTab": "Email Address",
+      "phoneLabel": "Phone Number",
+      "emailLabel": "Email Address",
+      "phonePlaceholder": "+92 300 0000000",
+      "emailPlaceholder": "you@example.com",
+      "submitBtn": "Continue Securely",
+      "noAccount": "Don't have an account?",
+      "signupLink": "Sign up",
+      "adminHint": "Admin login:",
+      "adminOtp": "(OTP: 123456)"
+    },
+    "signup": {
+      "title": "Create an Account",
+      "subtitle": "Join PeanutIQ today.",
+      "phoneTab": "Use Phone",
+      "emailTab": "Use Email",
+      "phoneLabel": "Phone Number",
+      "emailLabel": "Email Address",
+      "submitBtn": "Send OTP",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign in"
+    }
+  }
+}

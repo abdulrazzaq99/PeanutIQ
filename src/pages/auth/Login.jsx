@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Mail, Phone, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
@@ -9,6 +10,7 @@ export default function Login() {
   const [method, setMethod] = useState('phone'); // 'phone' or 'email'
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,8 +28,8 @@ export default function Login() {
   return (
     <div>
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-slate-900 text-center tracking-tight">Welcome Back</h3>
-        <p className="text-sm text-slate-500 text-center mt-2">Sign in to your account</p>
+        <h3 className="text-2xl font-bold text-slate-900 text-center tracking-tight">{t('auth.login.title')}</h3>
+        <p className="text-sm text-slate-500 text-center mt-2">{t('auth.login.subtitle')}</p>
       </div>
 
       <div className="flex bg-slate-100 p-1 rounded-xl mb-8">
@@ -37,7 +39,7 @@ export default function Login() {
             method === 'phone' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'
           }`}
         >
-          Phone Number
+          {t('auth.login.phoneTab')}
         </button>
         <button
           onClick={() => { setMethod('email'); setIdentifier(''); }}
@@ -45,16 +47,16 @@ export default function Login() {
             method === 'email' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'
           }`}
         >
-          Email Address
+          {t('auth.login.emailTab')}
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="identifier" className="block text-sm font-semibold text-slate-700">
-            {method === 'phone' ? 'Phone Number' : 'Email Address'}
+            {method === 'phone' ? t('auth.login.phoneLabel') : t('auth.login.emailLabel')}
           </label>
-          <div className="mt-2 relative rounded-xl shadow-sm">
+          <div className="mt-2 relative rounded-xl shadow-sm" dir="ltr">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               {method === 'phone' ? (
                 <Phone className="h-5 w-5 text-slate-400" />
@@ -66,8 +68,8 @@ export default function Login() {
               id="identifier"
               type={method === 'phone' ? 'tel' : 'email'}
               required
-              className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-11 sm:text-sm border-slate-200 rounded-xl py-3 transition-colors bg-white/50"
-              placeholder={method === 'phone' ? '+92 300 0000000' : 'you@example.com'}
+              className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-11 sm:text-sm border-slate-200 rounded-xl py-3 transition-colors bg-white/50 text-left"
+              placeholder={method === 'phone' ? t('auth.login.phonePlaceholder') : t('auth.login.emailPlaceholder')}
               value={identifier}
               onChange={(e) => {
                 if (method === 'phone') {
@@ -95,7 +97,7 @@ export default function Login() {
               </svg>
             ) : (
               <span className="flex items-center">
-                Continue Securely <ArrowRight className="ml-2 w-4 h-4" />
+                {t('auth.login.submitBtn')} <ArrowRight className="ms-2 w-4 h-4 rtl:rotate-180" />
               </span>
             )}
           </button>
@@ -104,14 +106,22 @@ export default function Login() {
       
       <div className="mt-8 text-center space-y-4">
         <p className="text-sm text-slate-600">
-          Don't have an account?{' '}
+          {t('auth.login.noAccount')}{' '}
           <Link to="/signup" className="text-emerald-600 font-bold hover:text-emerald-500 transition-colors">
-            Sign up
+            {t('auth.login.signupLink')}
           </Link>
         </p>
-        <p className="text-xs text-slate-400 bg-slate-50 inline-block px-3 py-1.5 rounded-lg border border-slate-100">
-          Admin login: <span className="font-bold text-slate-600">admin@peanutiq.pk</span> (OTP: 123456)
-        </p>
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-2 flex-wrap">
+          <p className="text-xs text-slate-400 bg-slate-50 inline-block px-3 py-1.5 rounded-lg border border-slate-100">
+            {t('auth.login.adminHint')} <span className="font-bold text-slate-600">admin@peanutiq.pk</span> {t('auth.login.adminOtp')}
+          </p>
+          <p className="text-xs text-slate-400 bg-slate-50 inline-block px-3 py-1.5 rounded-lg border border-slate-100">
+            Researcher: <span className="font-bold text-slate-600">researcher@peanutiq.pk</span>
+          </p>
+          <p className="text-xs text-slate-400 bg-slate-50 inline-block px-3 py-1.5 rounded-lg border border-slate-100">
+            Farmer: <span className="font-bold text-slate-600">farmer@peanutiq.pk</span>
+          </p>
+        </div>
       </div>
     </div>
   );

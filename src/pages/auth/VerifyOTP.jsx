@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function VerifyOTP() {
   const location = useLocation();
@@ -11,6 +12,7 @@ export default function VerifyOTP() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const inputs = useRef([]);
+  const { t } = useTranslation();
   
   const identifier = location.state?.identifier || '';
   const isLoginIntent = location.state?.isLoginIntent ?? true;
@@ -47,7 +49,7 @@ export default function VerifyOTP() {
     e.preventDefault();
     const otpValue = otp.join('');
     if (otpValue.length !== 6) {
-      setError('Please enter a 6-digit OTP');
+      setError(t('auth.otp.errorLength'));
       return;
     }
     
@@ -69,7 +71,7 @@ export default function VerifyOTP() {
       }
     } else {
       setIsLoading(false);
-      setError(res.error || 'Invalid OTP');
+      setError(res.error || t('auth.otp.errorInvalid'));
     }
   };
 
@@ -81,15 +83,15 @@ export default function VerifyOTP() {
             <ShieldCheck className="w-8 h-8" />
           </div>
         </div>
-        <h3 className="text-xl font-bold text-gray-900">Verify Account</h3>
+        <h3 className="text-xl font-bold text-gray-900">{t('auth.otp.title')}</h3>
         <p className="text-sm text-gray-500 mt-2">
-          Enter the 6-digit code sent to <span className="font-semibold text-gray-800">{identifier}</span>
+          {t('auth.otp.subtitle')} <span className="font-semibold text-gray-800 dir-ltr inline-block">{identifier}</span>
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <div className="flex justify-center space-x-2 sm:space-x-4">
+          <div className="flex justify-center gap-2 sm:gap-4" dir="ltr">
             {otp.map((digit, idx) => (
               <input
                 key={idx}
@@ -120,7 +122,7 @@ export default function VerifyOTP() {
               </svg>
             ) : (
               <span className="flex items-center">
-                Verify OTP <ArrowRight className="ml-2 w-4 h-4" />
+                {t('auth.otp.submitBtn')} <ArrowRight className="ms-2 w-4 h-4 rtl:rotate-180" />
               </span>
             )}
           </button>
@@ -129,12 +131,12 @@ export default function VerifyOTP() {
       
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-500">
-          Didn't receive the code?{' '}
-          <button className="text-green-600 font-medium hover:text-green-500">Resend</button>
+          {t('auth.otp.notReceived')}{' '}
+          <button className="text-green-600 font-medium hover:text-green-500">{t('auth.otp.resendBtn')}</button>
         </p>
         <div className="mt-4">
           <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-            Change phone/email
+            {t('auth.otp.changeContact')}
           </Link>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { KnowledgeProvider } from './context/KnowledgeContext';
 import ScrollToTop from './components/ScrollToTop';
 import AuthGuard from './components/AuthGuard';
 import AuthLayout from './layouts/AuthLayout';
@@ -8,9 +9,12 @@ import UserLayout from './layouts/UserLayout';
 import Dashboard from './pages/Dashboard';
 import KnowledgeBase from './pages/KnowledgeBase';
 import AdminPanel from './pages/AdminPanel';
+import AdminProfile from './pages/AdminProfile';
 import Users from './pages/Users';
 import SeedIntelligence from './pages/SeedIntelligence';
 import DiseaseIntelligence from './pages/DiseaseIntelligence';
+import AiCompanion from './pages/AiCompanion';
+import HistoryReports from './pages/HistoryReports';
 import Login from './pages/auth/Login';
 import VerifyOTP from './pages/auth/VerifyOTP';
 import Signup from './pages/auth/Signup';
@@ -20,8 +24,9 @@ import UserDashboard from './pages/UserDashboard';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <ScrollToTop />
+      <KnowledgeProvider>
+        <BrowserRouter>
+          <ScrollToTop />
         <Routes>
           <Route path="/" element={<Navigate to="/user" replace />} />
           
@@ -39,6 +44,8 @@ function App() {
               <Route index element={<UserDashboard />} />
               <Route path="seed" element={<SeedIntelligence />} />
               <Route path="disease" element={<DiseaseIntelligence />} />
+              <Route path="ai-companion" element={<AiCompanion />} />
+              <Route path="history" element={<HistoryReports />} />
               <Route path="knowledge-base" element={<KnowledgeBase />} />
               <Route path="profile" element={<Users />} />
             </Route>
@@ -52,10 +59,12 @@ function App() {
               <Route path="knowledge-base" element={<KnowledgeBase />} />
               <Route path="seed-intelligence" element={<SeedIntelligence />} />
               <Route path="disease-intelligence" element={<DiseaseIntelligence />} />
+              <Route path="profile" element={<AdminProfile />} />
             </Route>
           </Route>
         </Routes>
       </BrowserRouter>
+      </KnowledgeProvider>
     </AuthProvider>
   );
 }

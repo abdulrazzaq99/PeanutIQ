@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { User, Mail, Phone, MapPin, Edit3, Target } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Users() {
   const { user, logout, updateProfile } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -28,8 +30,8 @@ export default function Users() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">User Profile</h1>
-          <p className="mt-1 text-sm text-gray-500">Manage your personal information and preferences.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('profile.title')}</h1>
+          <p className="mt-1 text-sm text-gray-500">{t('profile.subtitle')}</p>
         </div>
         <div className="mt-4 sm:mt-0 flex gap-3">
           {isEditing ? (
@@ -37,7 +39,7 @@ export default function Users() {
               onClick={handleSave}
               className="px-4 py-2 bg-green-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-green-700 flex items-center cursor-pointer transition-colors"
             >
-              Save Changes
+              {t('profile.saveChanges')}
             </button>
           ) : (
             <button 
@@ -45,7 +47,7 @@ export default function Users() {
               className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center cursor-pointer transition-colors"
             >
               <Edit3 className="w-4 h-4 mr-2" />
-              Edit Profile
+              {t('profile.editProfile')}
             </button>
           )}
 
@@ -58,7 +60,7 @@ export default function Users() {
             <div className="flex-shrink-0">
               <img 
                 className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg" 
-                src={`https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=${user.role === 'admin' ? '0D8ABC' : '16a34a'}&color=fff&size=128`} 
+                src={`https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=16a34a&color=fff&size=128`} 
                 alt="Profile" 
               />
             </div>
@@ -84,10 +86,10 @@ export default function Users() {
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
                       className="border-b border-gray-300 focus:border-green-500 focus:outline-none bg-transparent w-full"
-                      placeholder="Phone or Email"
+                      placeholder={t('profile.placeholder.phoneOrEmail')}
                     />
                   ) : (
-                    <>{user.email || user.identifier || 'No contact provided'}</>
+                    <>{user.email || user.identifier || t('profile.noContact')}</>
                   )}
                 </div>
                 
@@ -100,10 +102,10 @@ export default function Users() {
                         value={formData.location}
                         onChange={(e) => setFormData({...formData, location: e.target.value})}
                         className="border-b border-gray-300 focus:border-green-500 focus:outline-none bg-transparent w-full"
-                        placeholder="Location"
+                        placeholder={t('profile.placeholder.location')}
                       />
                     ) : (
-                      <>{user.location || 'Unknown Location'}</>
+                      <>{user.location || t('profile.unknownLocation')}</>
                     )}
                   </div>
                 )}
@@ -117,7 +119,7 @@ export default function Users() {
                         value={formData.cropType}
                         onChange={(e) => setFormData({...formData, cropType: e.target.value})}
                         className="border-b border-gray-300 focus:border-green-500 focus:outline-none bg-transparent w-full"
-                        placeholder="Crop Type"
+                        placeholder={t('profile.placeholder.cropType')}
                       />
                     ) : (
                       <>{user.cropType || 'Peanut'}</>
@@ -135,12 +137,12 @@ export default function Users() {
         </div>
         
         <div className="bg-slate-50 px-6 sm:px-8 py-6 border-t border-slate-200">
-          <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">Account Preferences</h3>
+          <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">{t('profile.accountPreferences')}</h3>
           <div className="space-y-4 max-w-2xl">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-900">Language Preference</p>
-                <p className="text-xs text-gray-500">Choose your preferred language for the dashboard.</p>
+                <p className="text-sm font-medium text-gray-900">{t('profile.languagePreference')}</p>
+                <p className="text-xs text-gray-500">{t('profile.languageDescription')}</p>
               </div>
               <select 
                 disabled={!isEditing}
@@ -148,8 +150,8 @@ export default function Users() {
                 onChange={(e) => setFormData({...formData, language: e.target.value})}
                 className="mt-1 block w-32 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md shadow-sm border bg-white disabled:opacity-75"
               >
-                <option>English</option>
-                <option>Urdu</option>
+                <option value="English">{t('profile.english')}</option>
+                <option value="Urdu">{t('profile.urdu')}</option>
               </select>
             </div>
           </div>

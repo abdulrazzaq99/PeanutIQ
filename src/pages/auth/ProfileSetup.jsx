@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { User, MapPin, Languages, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function ProfileSetup() {
   const location = useLocation();
   const navigate = useNavigate();
   const { signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
   
   const identifier = location.state?.identifier || '';
 
@@ -26,7 +28,24 @@ export default function ProfileSetup() {
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    if (name === 'name') {
+      // Allow only letters (including Urdu/Arabic characters) and spaces
+      const regex = /^[\p{L}\p{M}\s]*$/u;
+      if (!regex.test(value)) {
+        return; // Ignore invalid input
+      }
+    }
+    
+    setFormData(prev => {
+      const updated = { ...prev, [name]: value };
+      // Force Admin and Researcher to English
+      if (name === 'role' && value !== 'farmer') {
+        updated.language = 'English';
+      }
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -47,15 +66,15 @@ export default function ProfileSetup() {
   return (
     <div>
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 text-center">Complete Your Profile</h3>
-        <p className="text-sm text-gray-500 text-center mt-1">Almost there! Tell us a bit more about yourself.</p>
+        <h3 className="text-xl font-bold text-gray-900 text-center">{t('auth.profileSetup.title')}</h3>
+        <p className="text-sm text-gray-500 text-center mt-1">{t('auth.profileSetup.subtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.profileSetup.fullName')}</label>
           <div className="relative rounded-md shadow-sm">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none">
               <User className="h-4 w-4 text-gray-400" />
             </div>
             <input
@@ -64,31 +83,31 @@ export default function ProfileSetup() {
               required
               value={formData.name}
               onChange={handleChange}
-              className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border"
-              placeholder="e.g. Ahmad Khan"
+              className="focus:ring-green-500 focus:border-green-500 block w-full ps-10 sm:text-sm border-gray-300 rounded-md py-2 border"
+              placeholder={t('auth.profileSetup.namePlaceholder')}
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.profileSetup.role')}</label>
           <select
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className="block w-full pl-3 pr-10 py-2 text-sm border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 rounded-md shadow-sm border bg-white"
+            className="block w-full ps-3 pe-10 py-2 text-sm border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 rounded-md shadow-sm border bg-white"
           >
-            <option value="farmer">Farmer</option>
-            <option value="researcher">Researcher</option>
-            <option value="admin">Administrator</option>
+            <option value="farmer">{t('auth.profileSetup.roleFarmer')}</option>
+            <option value="researcher">{t('auth.profileSetup.roleResearcher')}</option>
+            <option value="admin">{t('auth.profileSetup.roleAdmin')}</option>
           </select>
         </div>
 
         {formData.role === 'farmer' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Farm Location</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.profileSetup.farmLocation')}</label>
             <div className="relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none">
                 <MapPin className="h-4 w-4 text-gray-400" />
               </div>
               <input
@@ -97,30 +116,32 @@ export default function ProfileSetup() {
                 required={formData.role === 'farmer'}
                 value={formData.location}
                 onChange={handleChange}
-                className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border"
-                placeholder="e.g. Attock, Punjab"
+                className="focus:ring-green-500 focus:border-green-500 block w-full ps-10 sm:text-sm border-gray-300 rounded-md py-2 border"
+                placeholder={t('auth.profileSetup.locationPlaceholder')}
               />
             </div>
           </div>
         )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Language Preference</label>
-          <div className="relative rounded-md shadow-sm">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Languages className="h-4 w-4 text-gray-400" />
+        {formData.role === 'farmer' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.profileSetup.languagePreference')}</label>
+            <div className="relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none">
+                <Languages className="h-4 w-4 text-gray-400" />
+              </div>
+              <select
+                name="language"
+                value={formData.language}
+                onChange={handleChange}
+                className="focus:ring-green-500 focus:border-green-500 block w-full ps-10 sm:text-sm border-gray-300 rounded-md py-2 border bg-white"
+              >
+                <option value="English">{t('auth.profileSetup.langEnglish')}</option>
+                <option value="Urdu">{t('auth.profileSetup.langUrdu')}</option>
+              </select>
             </div>
-            <select
-              name="language"
-              value={formData.language}
-              onChange={handleChange}
-              className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border bg-white"
-            >
-              <option value="English">English</option>
-              <option value="Urdu">Urdu</option>
-            </select>
           </div>
-        </div>
+        )}
 
         <div className="pt-4">
           <button
@@ -135,7 +156,7 @@ export default function ProfileSetup() {
               </svg>
             ) : (
               <span className="flex items-center">
-                Create Account <ArrowRight className="ml-2 w-4 h-4" />
+                {t('auth.profileSetup.submitBtn')} <ArrowRight className="ms-2 w-4 h-4 rtl:rotate-180" />
               </span>
             )}
           </button>

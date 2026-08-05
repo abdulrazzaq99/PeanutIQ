@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Mail, Phone, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Signup() {
   const [identifier, setIdentifier] = useState('');
@@ -9,6 +10,7 @@ export default function Signup() {
   const [method, setMethod] = useState('phone');
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,8 +28,8 @@ export default function Signup() {
   return (
     <div>
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 text-center">Create an Account</h3>
-        <p className="text-sm text-gray-500 text-center mt-1">Join PeanutIQ today.</p>
+        <h3 className="text-xl font-bold text-gray-900 text-center">{t('auth.signup.title')}</h3>
+        <p className="text-sm text-gray-500 text-center mt-1">{t('auth.signup.subtitle')}</p>
       </div>
 
       <div className="flex bg-gray-100 p-1 rounded-lg mb-6">
@@ -38,7 +40,7 @@ export default function Signup() {
             method === 'phone' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Use Phone
+          {t('auth.signup.phoneTab')}
         </button>
         <button
           type="button"
@@ -47,16 +49,16 @@ export default function Signup() {
             method === 'email' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Use Email
+          {t('auth.signup.emailTab')}
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {method === 'phone' ? 'Phone Number' : 'Email Address'}
+            {method === 'phone' ? t('auth.signup.phoneLabel') : t('auth.signup.emailLabel')}
           </label>
-          <div className="relative rounded-md shadow-sm">
+          <div className="relative rounded-md shadow-sm" dir="ltr">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               {method === 'phone' ? <Phone className="h-4 w-4 text-gray-400" /> : <Mail className="h-4 w-4 text-gray-400" />}
             </div>
@@ -72,8 +74,8 @@ export default function Signup() {
                   setIdentifier(e.target.value.replace(/[^a-zA-Z0-9@._\-+]/g, ''));
                 }
               }}
-              className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border"
-              placeholder={method === 'phone' ? '+92 300 0000000' : 'you@example.com'}
+              className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 border text-left"
+              placeholder={method === 'phone' ? t('auth.login.phonePlaceholder') : t('auth.login.emailPlaceholder')}
             />
           </div>
         </div>
@@ -91,7 +93,7 @@ export default function Signup() {
               </svg>
             ) : (
               <span className="flex items-center">
-                Send OTP <ArrowRight className="ml-2 w-4 h-4" />
+                {t('auth.signup.submitBtn')} <ArrowRight className="ms-2 w-4 h-4 rtl:rotate-180" />
               </span>
             )}
           </button>
@@ -100,9 +102,9 @@ export default function Signup() {
       
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
-          Already have an account?{' '}
+          {t('auth.signup.hasAccount')}{' '}
           <Link to="/login" className="text-green-600 font-semibold hover:text-green-500">
-            Sign in
+            {t('auth.signup.loginLink')}
           </Link>
         </p>
       </div>

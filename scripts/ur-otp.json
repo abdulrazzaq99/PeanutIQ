@@ -1,0 +1,14 @@
+{
+  "auth": {
+    "otp": {
+      "title": "اکاؤنٹ کی تصدیق کریں",
+      "subtitle": "کو بھیجا گیا 6 ہندسوں کا کوڈ درج کریں",
+      "errorLength": "براہ کرم 6 ہندسوں کا OTP درج کریں",
+      "errorInvalid": "غلط OTP",
+      "submitBtn": "OTP کی تصدیق کریں",
+      "notReceived": "کوڈ موصول نہیں ہوا؟",
+      "resendBtn": "دوبارہ بھیجیں",
+      "changeContact": "فون/ای میل تبدیل کریں"
+    }
+  }
+}

@@ -7,22 +7,20 @@
   --shadow-glass-heavy: 0 16px 48px 0 rgba(0, 0, 0, 0.08);
 }
 
-@layer utilities {
-  .bg-mesh {
-    background-color: #f8fafc;
-    background-image: 
-      radial-gradient(at 0% 0%, hsla(158,100%,74%,0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(189,100%,56%,0.12) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, hsla(163,100%,82%,0.18) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(158,100%,74%,0.12) 0px, transparent 50%);
-    background-attachment: fixed;
-  }
-  .glass-panel {
-    @apply bg-white border border-slate-200 shadow-sm;
-  }
-  .glass-card {
-    @apply bg-white border border-slate-200 shadow-sm;
-  }
+@utility bg-mesh {
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(158,100%,74%,0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(189,100%,56%,0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(163,100%,82%,0.18) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(158,100%,74%,0.12) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+@utility glass-panel {
+  @apply bg-white border border-slate-200 shadow-sm;
+}
+@utility glass-card {
+  @apply bg-white border border-slate-200 shadow-sm;
 }
 
 @layer base {
@@ -38,6 +36,27 @@
     -webkit-box-shadow: 0 0 0 30px white inset !important;
     -webkit-text-fill-color: #111827 !important;
     transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* Make all interactive elements show a pointer cursor globally */
+  button, 
+  a, 
+  [role="button"], 
+  select, 
+  input[type="submit"], 
+  input[type="button"], 
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"] {
+    cursor: pointer;
+  }
+  
+  button:disabled,
+  input:disabled,
+  select:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed !important;
   }
 }
 

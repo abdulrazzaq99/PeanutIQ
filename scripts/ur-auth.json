@@ -1,0 +1,30 @@
+{
+  "auth": {
+    "login": {
+      "title": "خوش آمدید",
+      "subtitle": "اپنے اکاؤنٹ میں سائن ان کریں",
+      "phoneTab": "فون نمبر",
+      "emailTab": "ای میل ایڈریس",
+      "phoneLabel": "فون نمبر",
+      "emailLabel": "ای میل ایڈریس",
+      "phonePlaceholder": "+92 300 0000000",
+      "emailPlaceholder": "you@example.com",
+      "submitBtn": "محفوظ طریقے سے جاری رکھیں",
+      "noAccount": "کیا آپ کے پاس اکاؤنٹ نہیں ہے؟",
+      "signupLink": "سائن اپ کریں",
+      "adminHint": "ایڈمن لاگ ان:",
+      "adminOtp": "(OTP: 123456)"
+    },
+    "signup": {
+      "title": "اکاؤنٹ بنائیں",
+      "subtitle": "آج ہی PeanutIQ میں شامل ہوں۔",
+      "phoneTab": "فون استعمال کریں",
+      "emailTab": "ای میل استعمال کریں",
+      "phoneLabel": "فون نمبر",
+      "emailLabel": "ای میل ایڈریس",
+      "submitBtn": "OTP بھیجیں",
+      "hasAccount": "پہلے سے ہی اکاؤنٹ ہے؟",
+      "loginLink": "سائن ان کریں"
+    }
+  }
+}
