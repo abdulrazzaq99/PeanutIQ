@@ -195,7 +195,7 @@ export default function UserLayout() {
               </button>
 
               {showNotifications && (
-                <div className="origin-top-right rtl:origin-top-left absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-[90vw] sm:w-80 rounded-xl shadow-none bg-white border-2 border-earth overflow-hidden z-50">
+                <div className="origin-top-right rtl:origin-top-left fixed left-4 right-4 top-16 sm:absolute sm:top-auto sm:left-auto sm:right-0 rtl:sm:left-0 rtl:sm:right-auto mt-2 w-auto sm:w-80 rounded-xl shadow-none bg-white border-2 border-earth overflow-hidden z-50">
                   <div className="py-1">
                     <div className="px-4 py-2 border-b border-earth flex justify-between items-center bg-sand">
                       <p className="text-sm font-bold text-charcoal">{t('layout.header.notifications')}</p>
