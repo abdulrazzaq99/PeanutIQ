@@ -95,7 +95,6 @@ export default function SeedIntelligence() {
           <input 
             type="file" 
             accept="image/*" 
-            capture="environment"
             className="hidden" 
             ref={fileInputRef}
             onChange={handleImageUpload}
