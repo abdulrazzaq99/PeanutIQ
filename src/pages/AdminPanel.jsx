@@ -310,9 +310,9 @@ export default function AdminPanel() {
               <ul className="divide-y divide-earth/40 flex-1">
                 {issues.map(issue => (
                   <li key={issue.id} className="py-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <div className="flex items-center gap- mb-1.5">
+                        <div className="flex flex-wrap items-center gap-2 mb-1.5">
                           <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${issue.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
                             {t(`admin.management.priorities.${issue.priority.toLowerCase()}`)} Priority
                           </span>
@@ -320,7 +320,7 @@ export default function AdminPanel() {
                         </div>
                         <h4 className="text-[15px] font-bold text-charcoal">{issue.titleKey ? t(`admin.management.issues.${issue.titleKey}`) : issue.title}</h4>
                       </div>
-                      <div>
+                      <div className="shrink-0">
                         <span className={`px-3 py-1 rounded-full text-[12px] font-bold border shadow-sm ${issue.status === 'Open' ? 'border-red-200 text-red-700 bg-red-50' : 'border-blue-200 text-blue-700 bg-blue-50'}`}>
                           {t(`admin.management.issueStatuses.${issue.status === 'In Progress' ? 'inProgress' : issue.status.toLowerCase()}`)}
                         </span>
