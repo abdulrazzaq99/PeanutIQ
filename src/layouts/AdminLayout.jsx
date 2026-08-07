@@ -90,7 +90,7 @@ export default function AdminLayout() {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 rtl:right-0 rtl:left-auto bg-white border-r rtl:border-l rtl:border-r-0 border-earth shadow-none flex flex-col z-50 transition-all duration-300 overflow-hidden 
+      <aside className={`fixed inset-y-0 start-0 bg-white border-r rtl:border-l rtl:border-r-0 border-earth shadow-none flex flex-col z-50 transition-all duration-300 overflow-hidden 
         ${isMobileMenuOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'} 
         md:ltr:translate-x-0 md:rtl:translate-x-0
         ${isSidebarCollapsed ? 'md:w-20' : 'md:w-64'} w-64`}
@@ -117,9 +117,9 @@ export default function AdminLayout() {
               className={({ isActive }) =>
                 `flex items-center whitespace-nowrap py-4 text-sm font-bold transition-all duration-300 group ${
                   isActive
-                    ? 'bg-forest text-white border-r-4 rtl:border-l-4 rtl:border-r-0 border-forest shadow-md'
-                    : 'text-charcoal opacity-80 hover:bg-forest/10 hover:text-forest hover:opacity-100 border-r-4 rtl:border-l-4 rtl:border-r-0 border-transparent'
-                } ${isSidebarCollapsed ? 'justify-center px-0' : 'pl-8 pr-4 rtl:pr-8 rtl:pl-4'}`
+                    ? 'bg-forest text-white border-e-4 border-forest shadow-md'
+                    : 'text-charcoal opacity-80 hover:bg-forest/10 hover:text-forest hover:opacity-100 border-e-4 border-transparent'
+                } ${isSidebarCollapsed ? 'justify-center px-0' : 'ps-8 pe-4'}`
               }
               title={isSidebarCollapsed ? t(item.translationKey) : ''}
             >
@@ -148,7 +148,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main ref={mainContentRef} className={`flex flex-col h-screen transition-all duration-300 md:ltr:pl-0 md:rtl:pr-0 ${isSidebarCollapsed ? 'md:ltr:pl-20 md:rtl:pr-20' : 'md:ltr:pl-64 md:rtl:pr-64'}`}>
+      <main ref={mainContentRef} className={`flex flex-col h-screen transition-all duration-300 md:ltr:pl-0 md:rtl:pr-0 ${isSidebarCollapsed ? 'md:ps-20' : 'md:ltr:pl-64 md:rtl:pr-64'}`}>
         {/* Header */}
         <header className="h-16 flex-shrink-0 bg-white border-b border-earth flex items-center justify-between px-4 md:px-6 z-30 transition-all duration-300 shadow-none">
           
@@ -165,7 +165,7 @@ export default function AdminLayout() {
           {/* Search Bar */}
           <div className="flex-1 max-w-md hidden sm:block md:ml-0 ml-4">
             <form onSubmit={handleSearch} className="max-w-md w-full lg:max-w-xs relative bg-sand shadow-sm border border-earth rounded-xl">
-              <div className="absolute inset-y-0 left-0 rtl:right-0 rtl:left-auto px-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 start-0 px-3 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-charcoal opacity-50" />
               </div>
               <input 

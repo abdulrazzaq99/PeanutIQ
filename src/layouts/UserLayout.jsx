@@ -100,9 +100,9 @@ export default function UserLayout() {
               className={({ isActive }) =>
                 `flex items-center whitespace-nowrap py-4 text-sm font-bold transition-all duration-300 group ${
                   isActive
-                    ? 'bg-forest text-white border-r-4 rtl:border-l-4 rtl:border-r-0 border-forest shadow-md'
-                    : 'text-charcoal opacity-80 hover:bg-forest/10 hover:text-forest hover:opacity-100 border-r-4 rtl:border-l-4 rtl:border-r-0 border-transparent'
-                } ${isSidebarCollapsed ? 'justify-center px-0' : 'pl-8 pr-4 rtl:pr-8 rtl:pl-4'}`
+                    ? 'bg-forest text-white border-e-4 border-forest shadow-md'
+                    : 'text-charcoal opacity-80 hover:bg-forest/10 hover:text-forest hover:opacity-100 border-e-4 border-transparent'
+                } ${isSidebarCollapsed ? 'justify-center px-0' : 'ps-8 pe-4'}`
               }
               title={isSidebarCollapsed ? t(item.labelKey) : ''}
             >
@@ -131,7 +131,7 @@ export default function UserLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className={`flex flex-col h-screen print:ps-0 transition-all duration-300 md:ps-0 ${isSidebarCollapsed ? 'md:ltr:pl-20 md:rtl:pr-20' : 'md:ltr:pl-56 md:rtl:pr-56'}`}>
+      <main className={`flex flex-col h-screen print:ps-0 transition-all duration-300  ${isSidebarCollapsed ? 'md:ps-20' : 'md:ps-56'}`}>
         {/* Header */}
         <header className="h-16 flex-shrink-0 bg-white border-b border-earth flex items-center justify-between px-4 md:px-6 z-30 print:hidden transition-all duration-300 shadow-none">
           
