@@ -140,7 +140,9 @@
       "underdeveloped": "Underdeveloped",
       "damaged": "Damaged",
       "diseased": "Diseased"
-    }
+    },
+    "captureCamera": "Camera",
+    "selectGallery": "Gallery"
   },
   "disease": {
     "title": "Disease Intelligence",
@@ -183,7 +185,9 @@
       "dayPlus3": "Day +3",
       "dayPlus7": "Day +7",
       "severity": "Severity"
-    }
+    },
+    "captureCamera": "Camera",
+    "selectGallery": "Gallery"
   },
   "kb": {
     "title": "Knowledge Base & Research",

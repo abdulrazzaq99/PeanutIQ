@@ -21,7 +21,8 @@ export default function SeedIntelligence() {
 
   const [status, setStatus] = useState('idle'); // idle, analyzing, complete
   const [image, setImage] = useState(null);
-  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -90,15 +91,10 @@ export default function SeedIntelligence() {
           className="mt-8 border-2 border-dashed border-earth rounded-2xl p-12 text-center hover:border-forest hover:bg-forest/10 hover:text-forest hover:border-transparent transition-all cursor-pointer bg-white"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => galleryInputRef.current?.click()}
         >
-          <input 
-            type="file" 
-            accept="image/*" 
-            className="hidden" 
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-          />
+          <input type="file" accept="image/*" capture="environment" className="hidden" ref={cameraInputRef} onChange={handleImageUpload} />
+          <input type="file" accept="image/*" className="hidden" ref={galleryInputRef} onChange={handleImageUpload} />
           <div className="mx-auto w-20 h-20 bg-sand border border-forest rounded-full flex items-center justify-center mb-6">
             <i className="fa-solid fa-cloud-arrow-up text-4xl text-forest"></i>
           </div>
@@ -106,10 +102,22 @@ export default function SeedIntelligence() {
           <p className="text-charcoal opacity-70 max-w-md mx-auto mb-6">
             {t('seed.uploadDesc')}
           </p>
-          <button className="btn-primary px-6 py-2.5 inline-flex items-center">
-            <i className="fa-solid fa-camera mr-2 text-lg"></i>
-            {t('seed.captureBtn')}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button 
+              className="btn-primary px-6 py-2.5 inline-flex items-center justify-center"
+              onClick={(e) => { e.stopPropagation(); cameraInputRef.current?.click(); }}
+            >
+              <i className="fa-solid fa-camera mr-2 text-lg"></i>
+              {t('seed.captureCamera')}
+            </button>
+            <button 
+              className="btn-secondary px-6 py-2.5 inline-flex items-center justify-center"
+              onClick={(e) => { e.stopPropagation(); galleryInputRef.current?.click(); }}
+            >
+              <i className="fa-solid fa-image mr-2 text-lg"></i>
+              {t('seed.selectGallery')}
+            </button>
+          </div>
         </div>
       )}
 

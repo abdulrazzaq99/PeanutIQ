@@ -143,7 +143,9 @@
       "underdeveloped": "پسماندہ",
       "damaged": "نقصان زدہ",
       "diseased": "بیمار"
-    }
+    },
+    "captureCamera": "کیمرہ",
+    "selectGallery": "گیلری"
   },
   "disease": {
     "title": "بیماری کی ذہانت",
@@ -186,7 +188,9 @@
       "dayPlus3": "دن +3",
       "dayPlus7": "دن +7",
       "severity": "شدت"
-    }
+    },
+    "captureCamera": "کیمرہ",
+    "selectGallery": "گیلری"
   },
   "kb": {
     "title": "نالج بیس اور ریسرچ",
