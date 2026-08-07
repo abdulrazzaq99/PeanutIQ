@@ -19,8 +19,7 @@ export default function DiseaseIntelligence() {
 
   const [status, setStatus] = useState('idle'); // idle, analyzing, complete
   const [image, setImage] = useState(null);
-  const cameraInputRef = useRef(null);
-  const galleryInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -86,13 +85,12 @@ export default function DiseaseIntelligence() {
 
       {status === 'idle' && (
         <div 
-          className="mt-8 border-2 border-dashed border-earth rounded-2xl p-12 text-center hover:border-terracotta hover:bg-forest/10 hover:text-forest hover:border-transparent transition-all cursor-pointer bg-white"
+          className="mt-8 border-2 border-dashed border-terracotta/50 rounded-2xl p-12 text-center hover:border-terracotta hover:bg-terracotta/5 hover:text-terracotta transition-all cursor-pointer bg-white"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
-          onClick={() => galleryInputRef.current?.click()}
+          onClick={() => fileInputRef.current?.click()}
         >
-          <input type="file" accept="image/*" capture="environment" className="hidden" ref={cameraInputRef} onChange={handleImageUpload} />
-          <input type="file" accept="image/*" className="hidden" ref={galleryInputRef} onChange={handleImageUpload} />
+          <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
           <div className="mx-auto w-20 h-20 bg-sand border border-terracotta rounded-full flex items-center justify-center mb-6">
             <i className="fa-solid fa-cloud-arrow-up text-4xl text-terracotta"></i>
           </div>
