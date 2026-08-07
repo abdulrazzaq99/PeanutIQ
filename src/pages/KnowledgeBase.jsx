@@ -9,7 +9,7 @@ import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
 
 export default function KnowledgeBase() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const tCategories = t('kb.categories', { returnObjects: true });
   const tArticles = t('kb.articles', { returnObjects: true });
   const categories = Array.isArray(tCategories) ? tCategories : [];
@@ -23,6 +23,11 @@ export default function KnowledgeBase() {
   const [activeCategory, setActiveCategory] = useState(t('kb.allArticles'));
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [editingArticleId, setEditingArticleId] = useState(null);
+  
+  // Reset category when language changes to prevent empty states
+  useEffect(() => {
+    setActiveCategory(t('kb.allArticles'));
+  }, [i18n.language, t]);
   const [isCreatingArticle, setIsCreatingArticle] = useState(false);
   const { showToast } = useToast();
   
