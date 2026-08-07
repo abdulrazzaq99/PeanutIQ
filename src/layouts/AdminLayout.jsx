@@ -181,7 +181,7 @@ export default function AdminLayout() {
             <div className="relative" ref={languageRef}>
               <button
                 onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                className={`flex items-center space-x-1.5 rtl:space-x-reverse bg-white p-2 rounded-full transition-colors focus:outline-none cursor-pointer border-2 shadow-none ${showLanguageMenu ? "bg-green-50 text-forest opacity-100 border-green-50" : "text-charcoal opacity-70 border-earth hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
+                className={`flex items-center gap- bg-white p-2 rounded-full transition-colors focus:outline-none cursor-pointer border-2 shadow-none ${showLanguageMenu ? "bg-green-50 text-forest opacity-100 border-green-50" : "text-charcoal opacity-70 border-earth hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
                 title="Change Language"
               >
                 <Globe className="h-5 w-5" />
@@ -190,7 +190,7 @@ export default function AdminLayout() {
               </button>
 
               {showLanguageMenu && (
-                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-32 rounded-xl shadow-none py-1 bg-white border-2 border-earth overflow-hidden z-50">
+                <div className="origin-top-right rtl:origin-top-left absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-32 rounded-xl shadow-none py-1 bg-white border-2 border-earth overflow-hidden z-50">
                   <button
                     onClick={() => handleLanguageChange('en')}
                     className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer transition-colors"
@@ -212,7 +212,7 @@ export default function AdminLayout() {
                 className={`relative bg-white p-2 rounded-full transition-colors focus:outline-none cursor-pointer ${showNotifications ? "bg-green-50 text-forest opacity-100" : "text-charcoal opacity-70 hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
               >
                 <Bell className="h-6 w-6" />
-                <span className="absolute top-0 end-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
+                <span className="absolute top-0 right-0 rtl:right-auto rtl:left-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
               </button>
 
               {showNotifications && (
@@ -230,7 +230,7 @@ export default function AdminLayout() {
             <div className="relative" ref={profileRef}>
               <button 
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center space-x-1.5 rtl:space-x-reverse text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forest transition-colors cursor-pointer"
+                className="flex items-center gap- text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forest transition-colors cursor-pointer"
               >
                 <img
                   className="h-8 w-8 rounded-full object-cover border-2 border-earth shadow-sm"

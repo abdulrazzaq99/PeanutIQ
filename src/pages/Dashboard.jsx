@@ -193,7 +193,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="relative z-10 flex space-x-3 rtl:space-x-reverse">
+        <div className="relative z-10 flex gap-">
           <button 
             onClick={handleExport}
             disabled={isExporting}
@@ -395,7 +395,7 @@ export default function Dashboard() {
             <div className="w-full md:w-1/2 space-y-4 mt-6 md:mt-0 md:pl-4">
               {getAiData(t).map((item, idx) => (
                 <div key={idx} className="bg-sand p-4 rounded-2xl">
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse mb-1 overflow-hidden">
+                  <div className="flex items-center gap- mb-1 overflow-hidden">
                     <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{backgroundColor: item.color}}></span>
                     <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wide whitespace-nowrap truncate">{item.name}</span>
                   </div>
@@ -440,7 +440,7 @@ export default function Dashboard() {
                 onClick={() => setSelectedArticle(article)}
                 className="group p-4 rounded-2xl bg-sand/50 hover:bg-teal-50 hover:shadow-sm transition-all flex justify-between items-center cursor-pointer border border-transparent hover:border-teal-200"
               >
-                <div className="flex items-center space-x-4 rtl:space-x-reverse overflow-hidden">
+                <div className="flex items-center gap- overflow-hidden">
                   <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center font-black text-slate-400 group-hover:text-teal-600 transition-colors flex-shrink-0 text-lg">
                     {idx + 1}
                   </div>
@@ -551,7 +551,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Metric 1 */}
           <div className="flex flex-col">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
+            <div className="flex items-center gap- mb-4">
               <div className="w-10 h-10 rounded-2xl bg-teal-50 flex items-center justify-center">
                 <Server className="w-5 h-5 text-teal-600" />
               </div>
@@ -571,7 +571,7 @@ export default function Dashboard() {
           
           {/* Metric 2 */}
           <div className="flex flex-col">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
+            <div className="flex items-center gap- mb-4">
               <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center">
                 <Mic className="w-5 h-5 text-amber-500" />
               </div>
@@ -591,7 +591,7 @@ export default function Dashboard() {
           
           {/* Metric 3 */}
           <div className="flex flex-col">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
+            <div className="flex items-center gap- mb-4">
               <div className="w-10 h-10 rounded-2xl bg-sky-50 flex items-center justify-center">
                 <Database className="w-5 h-5 text-sky-600" />
               </div>
@@ -647,7 +647,7 @@ export default function Dashboard() {
               <AlertTriangle className="w-5 h-5 text-terracotta flex-shrink-0" />
               <p className="text-xs text-charcoal font-bold">{t('admin.dashboard.advisoryWarning')}</p>
             </div>
-            <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-earth">
+            <div className="flex justify-end gap- pt-4 border-t border-earth">
               <button type="button" onClick={() => setIsAdvisoryModalOpen(false)} className="px-4 py-2 bg-sand border-2 border-earth text-charcoal rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent font-bold cursor-pointer">{t('admin.dashboard.cancel')}</button>
               <button type="submit" className="btn-primary px-4 py-2 text-sm cursor-pointer">{t('admin.dashboard.broadcastNow')}</button>
             </div>
@@ -661,7 +661,7 @@ export default function Dashboard() {
       <div className="fixed inset-0 z-50 flex items-center justify-center p-6 md:p-12 bg-slate-900/40 backdrop-blur-sm">
         <div className="bg-white rounded-3xl w-full max-w-3xl max-h-[80vh] shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
           <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 shrink-0">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+            <div className="flex items-center gap-">
               <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
                 <BookOpen className="w-5 h-5" />
               </div>

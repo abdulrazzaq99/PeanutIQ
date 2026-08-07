@@ -61,7 +61,7 @@ export default function FloatingRobot() {
       {isOpen && (
         <div className="bg-white rounded-2xl shadow-2xl border-2 border-earth w-80 sm:w-96 mb-4 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-300">
           <div className="bg-forest p-4 text-white flex justify-between items-center">
-            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            <div className="flex items-center gap-">
               <div className="bg-white/20 p-1.5 rounded-full">
                 <Bot className="w-5 h-5" />
               </div>
@@ -83,7 +83,7 @@ export default function FloatingRobot() {
             <div ref={messagesEndRef} />
           </div>
           
-          <form onSubmit={handleSend} className="p-3 bg-white border-t border-earth flex items-center space-x-2 rtl:space-x-reverse">
+          <form onSubmit={handleSend} className="p-3 bg-white border-t border-earth flex items-center gap-">
             <input 
               type="text" 
               value={inputValue}

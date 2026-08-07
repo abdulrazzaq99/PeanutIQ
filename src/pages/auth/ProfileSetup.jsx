@@ -75,7 +75,7 @@ export default function ProfileSetup() {
         <div>
           <label className="block text-xs font-bold text-gray-600 mb-1">{t('auth.profileSetup.fullName')}</label>
           <div className="relative rounded-xl shadow-sm" dir="ltr">
-            <div className="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 rtl:left-auto rtl:right-0 ps-4 flex items-center pointer-events-none">
               <User className="h-5 w-5 text-gray-400" />
             </div>
             <input
@@ -104,7 +104,7 @@ export default function ProfileSetup() {
               <option value="admin">{t('auth.profileSetup.roleAdmin')}</option>
             </select>
             {/* Custom arrow for select since appearance is none */}
-            <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center px-4">
+            <div className="pointer-events-none absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center px-4">
               <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function ProfileSetup() {
           <div>
             <label className="block text-xs font-bold text-gray-600 mb-1">{t('auth.profileSetup.farmLocation')}</label>
             <div className="relative rounded-xl shadow-sm" dir="ltr">
-              <div className="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 rtl:left-auto rtl:right-0 ps-4 flex items-center pointer-events-none">
                 <MapPin className="h-5 w-5 text-gray-400" />
               </div>
               <input
@@ -134,7 +134,7 @@ export default function ProfileSetup() {
           <div>
             <label className="block text-xs font-bold text-gray-600 mb-1">{t('auth.profileSetup.languagePreference')}</label>
             <div className="relative rounded-xl shadow-sm" dir="ltr">
-              <div className="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 rtl:left-auto rtl:right-0 ps-4 flex items-center pointer-events-none">
                 <Languages className="h-5 w-5 text-gray-400" />
               </div>
               <select
@@ -146,7 +146,7 @@ export default function ProfileSetup() {
                 <option value="English">{t('auth.profileSetup.langEnglish')}</option>
                 <option value="Urdu">{t('auth.profileSetup.langUrdu')}</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center px-4">
+              <div className="pointer-events-none absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center px-4">
                 <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </div>
             </div>

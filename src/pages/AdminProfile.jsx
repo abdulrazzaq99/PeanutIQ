@@ -175,7 +175,7 @@ export default function AdminProfile() {
                   )}
                 </div>
               </div>
-              <div className="mt-4 sm:mt-0 flex items-center space-x-3 rtl:space-x-reverse">
+              <div className="mt-4 sm:mt-0 flex items-center gap-">
                 <div className="px-4 py-1.5 bg-emerald-50 text-forest text-sm font-semibold rounded-full border border-emerald-100 flex items-center shadow-sm">
                   <Shield className="w-4 h-4 rtl:ml-1.5 ltr:mr-1.5" />
                   <span className="capitalize whitespace-nowrap">{user?.role === 'admin' ? t('admin.profile.role') : t('admin.profile.researcherRole')}</span>

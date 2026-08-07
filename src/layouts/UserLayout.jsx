@@ -78,7 +78,7 @@ export default function UserLayout() {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 start-0 bg-white border-e border-earth shadow-none flex flex-col z-50 print:hidden transition-all duration-300 overflow-hidden 
+      <aside className={`fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 bg-white border-e border-earth shadow-none flex flex-col z-50 print:hidden transition-all duration-300 overflow-hidden 
         ${isMobileMenuOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'} 
         md:ltr:translate-x-0 md:rtl:translate-x-0 
         ${isSidebarCollapsed ? 'md:w-20' : 'md:w-56'} w-64`}
@@ -91,7 +91,7 @@ export default function UserLayout() {
             </span>
           )}
         </div>
-        <nav className="flex-1 py-6 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-6 space-y-1 overflow-y-auto no-scrollbar">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -148,7 +148,7 @@ export default function UserLayout() {
           {/* Search Bar */}
           <div className="flex-1 max-w-md hidden sm:block md:ml-0 ml-4">
             <div className="relative">
-              <div className="absolute inset-y-0 start-0 pl-3 rtl:pl-0 rtl:pr-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 rtl:left-auto rtl:right-0 pl-3 rtl:pl-0 rtl:pr-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
               </div>
               <input
@@ -163,7 +163,7 @@ export default function UserLayout() {
             <div className="relative" ref={languageRef}>
               <button
                 onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                className={`flex items-center space-x-1.5 rtl:space-x-reverse p-2 rounded-full transition-colors focus:outline-none cursor-pointer ${showLanguageMenu ? "bg-green-50 text-forest opacity-100" : "text-charcoal opacity-70 hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
+                className={`flex items-center gap- p-2 rounded-full transition-colors focus:outline-none cursor-pointer ${showLanguageMenu ? "bg-green-50 text-forest opacity-100" : "text-charcoal opacity-70 hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
                 title="Change Language"
               >
                 <Globe className="h-5 w-5" />
@@ -172,7 +172,7 @@ export default function UserLayout() {
               </button>
 
               {showLanguageMenu && (
-                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-32 rounded-xl shadow-none py-1 bg-white border-2 border-earth overflow-hidden z-50">
+                <div className="origin-top-right rtl:origin-top-left absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-32 rounded-xl shadow-none py-1 bg-white border-2 border-earth overflow-hidden z-50">
                   <button
                     onClick={() => handleLanguageChange('en')}
                     className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
@@ -191,11 +191,11 @@ export default function UserLayout() {
             <div className="relative" ref={notificationRef}>
               <button onClick={() => setShowNotifications(!showNotifications)} className={`p-2 rounded-full transition-colors focus:outline-none relative cursor-pointer ${showNotifications ? "bg-green-50 text-forest opacity-100" : "text-charcoal opacity-70 hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}>
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-0 end-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
+                <span className="absolute top-0 right-0 rtl:right-auto rtl:left-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
               </button>
 
               {showNotifications && (
-                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-80 rounded-xl shadow-none bg-white border-2 border-earth overflow-hidden z-50">
+                <div className="origin-top-right rtl:origin-top-left absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-80 rounded-xl shadow-none bg-white border-2 border-earth overflow-hidden z-50">
                   <div className="py-1">
                     <div className="px-4 py-2 border-b border-earth flex justify-between items-center bg-sand">
                       <p className="text-sm font-bold text-charcoal">{t('layout.header.notifications')}</p>
@@ -220,7 +220,7 @@ export default function UserLayout() {
             <div className="relative" ref={profileRef}>
               <button 
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className={`flex items-center space-x-1.5 rtl:space-x-reverse p-1 rounded-full text-sm focus:outline-none transition-colors cursor-pointer ${showProfileMenu ? "bg-green-50 opacity-100" : "opacity-90 hover:opacity-100 hover:bg-forest/10"}`}
+                className={`flex items-center gap- p-1 rounded-full text-sm focus:outline-none transition-colors cursor-pointer ${showProfileMenu ? "bg-green-50 opacity-100" : "opacity-90 hover:opacity-100 hover:bg-forest/10"}`}
               >
                 <img
                   className="h-8 w-8 rounded-full object-cover"
@@ -231,7 +231,7 @@ export default function UserLayout() {
               </button>
 
               {showProfileMenu && (
-                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-48 rounded-xl shadow-none py-1 bg-white border-2 border-earth overflow-hidden z-50">
+                <div className="origin-top-right rtl:origin-top-left absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-48 rounded-xl shadow-none py-1 bg-white border-2 border-earth overflow-hidden z-50">
                   <NavLink
                     to="/user/profile"
                     onClick={() => setShowProfileMenu(false)}

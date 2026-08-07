@@ -170,7 +170,7 @@ export default function AdminPanel() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">{user.loginKey ? t(`admin.management.times.${user.loginKey}`) : user.login}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right rtl:text-left text-[13px] font-bold">
-                        <div className="flex justify-end rtl:justify-start items-center space-x-2 rtl:space-x-reverse">
+                        <div className="flex justify-end rtl:justify-start items-center gap-">
                           <button onClick={() => setEditingUserId(user.id)} title={t('admin.management.editRole')} aria-label={t('admin.management.editRole')} className="p-2 text-gray-400 hover:text-[#07571C] hover:bg-forest/10 rounded-lg cursor-pointer transition-colors">
                             <Edit2 className="w-4 h-4"/>
                           </button>
@@ -227,7 +227,7 @@ export default function AdminPanel() {
                         <h4 className="text-[16px] font-bold text-charcoal">{item.titleKey ? t(`admin.management.contentData.${item.titleKey}`) : item.title}</h4>
                         <p className="text-[13px] font-medium text-charcoal/70 mt-1">{t('admin.management.contentData.by', 'By')} {item.authorKey ? t(`admin.management.names.${item.authorKey}`) : item.author}</p>
                       </div>
-                      <div className="flex space-x-3 rtl:space-x-reverse">
+                      <div className="flex gap-">
                         <button onClick={() => setReviewingContentId(item.id)} className="px-4 py-2 border border-earth/70 bg-white rounded-lg text-[13px] font-bold text-charcoal/80 hover:bg-forest/5 hover:text-charcoal cursor-pointer transition-colors shadow-sm">{t('admin.management.reviewDocument')}</button>
                         <button onClick={() => handleContentAction(item.id, 'reject')} className="p-2 border border-red-200 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors shadow-sm"><X className="w-5 h-5"/></button>
                         <button onClick={() => handleContentAction(item.id, 'approve')} className="p-2 border border-green-200 bg-green-50 text-forest rounded-lg hover:bg-green-100 transition-colors shadow-sm"><Check className="w-5 h-5"/></button>
@@ -252,7 +252,7 @@ export default function AdminPanel() {
                 </div>
                 <h3 className="text-charcoal font-bold text-[14px]">{t('admin.management.seedIntelligenceCNN')}</h3>
               </div>
-              <div className="flex items-end space-x-2 rtl:space-x-reverse mt-2">
+              <div className="flex items-end gap- mt-2">
                 <span className="text-4xl font-black text-charcoal tracking-tight" dir="ltr">98.4%</span>
                 <span className="text-[13px] text-[#07571C] font-bold mb-1.5">{t('admin.management.accuracy')}</span>
               </div>
@@ -270,7 +270,7 @@ export default function AdminPanel() {
                 </div>
                 <h3 className="text-charcoal font-bold text-[14px]">{t('admin.management.diseaseDetectionCNN')}</h3>
               </div>
-              <div className="flex items-end space-x-2 rtl:space-x-reverse mt-2">
+              <div className="flex items-end gap- mt-2">
                 <span className="text-4xl font-black text-charcoal tracking-tight" dir="ltr">94.2%</span>
                 <span className="text-[13px] text-terracotta font-bold mb-1.5">{t('admin.management.accuracy')}</span>
               </div>
@@ -312,7 +312,7 @@ export default function AdminPanel() {
                   <li key={issue.id} className="py-5">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse mb-1.5">
+                        <div className="flex items-center gap- mb-1.5">
                           <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${issue.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
                             {t(`admin.management.priorities.${issue.priority.toLowerCase()}`)} Priority
                           </span>
@@ -332,7 +332,7 @@ export default function AdminPanel() {
             </div>
 
             <div className="lg:col-span-1 bg-white border border-earth rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:border-forest/30 transition-colors flex flex-col">
-              <div className="flex items-center space-x-3 rtl:space-x-reverse mb-6">
+              <div className="flex items-center gap- mb-6">
                 <div className="p-2.5 bg-sand rounded-xl border border-gray-100">
                   <Server className="w-5 h-5 text-gray-600" />
                 </div>
@@ -383,7 +383,7 @@ export default function AdminPanel() {
                 <option value="Admin">{t('admin.management.roles.admin', 'Admin')}</option>
               </select>
             </div>
-            <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-gray-100">
+            <div className="flex justify-end gap- pt-4 border-t border-gray-100">
               <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent font-medium cursor-pointer">{t('admin.management.cancel', 'Cancel')}</button>
               <button type="submit" className="px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest hover:opacity-90 font-medium cursor-pointer">{t('admin.management.addUser', 'Add User')}</button>
             </div>
@@ -412,7 +412,7 @@ export default function AdminPanel() {
                 <option value="Admin">{t('admin.management.roles.admin', 'Admin')}</option>
               </select>
             </div>
-            <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-gray-100">
+            <div className="flex justify-end gap- pt-4 border-t border-gray-100">
               <button type="button" onClick={() => setEditingUserId(null)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent font-medium cursor-pointer">{t('admin.management.modals.cancel', 'Cancel')}</button>
               <button type="submit" className="px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest hover:opacity-90 font-medium cursor-pointer">{t('admin.management.modals.saveChanges', 'Save Changes')}</button>
             </div>

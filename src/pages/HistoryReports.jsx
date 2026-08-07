@@ -75,7 +75,7 @@ export default function HistoryReports() {
           <h1 className="text-2xl font-bold text-slate-900">{t('history.title')}</h1>
           <p className="text-sm text-slate-500 mt-1">{t('history.subtitle')}</p>
         </div>
-        <div className="flex space-x-2 rtl:space-x-reverse">
+        <div className="flex gap-">
           {['All', 'Seed Intelligence', 'Disease Intelligence'].map(tab => (
             <button
               key={tab}
@@ -111,7 +111,7 @@ export default function HistoryReports() {
             </div>
             
             <div className="p-5 flex-1 flex flex-col">
-              <div className="flex items-center space-x-2 rtl:space-x-reverse text-xs font-medium text-slate-500 mb-2">
+              <div className="flex items-center gap- text-xs font-medium text-slate-500 mb-2">
                 <span className="flex items-center text-forest bg-sand border border-earth px-2 py-0.5 rounded whitespace-nowrap">
                   {getTypeIcon(record.type)}
                   <span className="ms-1">{record.type === 'Seed Intelligence' ? t('history.tabSeed') : t('history.tabDisease')}</span>
@@ -170,7 +170,7 @@ export default function HistoryReports() {
             
             <div className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-slate-500">
+                <div className="flex items-center gap- text-sm font-medium text-slate-500">
                   <span className="flex items-center text-forest bg-sand border border-earth px-2.5 py-1 rounded-md whitespace-nowrap">
                     {getTypeIcon(selectedReport.type)}
                     <span className="ms-1.5">{selectedReport.type === 'Seed Intelligence' ? t('history.tabSeed') : t('history.tabDisease')}</span>

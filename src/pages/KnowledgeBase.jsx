@@ -170,7 +170,7 @@ export default function KnowledgeBase() {
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editContent')}</label>
             <textarea name="content" rows={10} className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm" required />
           </div>
-          <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4">
+          <div className="flex justify-end gap- pt-4">
             <button type="button" onClick={() => setIsCreatingArticle(false)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent font-medium cursor-pointer">{t('kb.cancel')}</button>
             <button type="submit" className="px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest hover:opacity-90 font-medium cursor-pointer">{t('kb.submitForApproval')}</button>
           </div>
@@ -232,7 +232,7 @@ export default function KnowledgeBase() {
       <div className="flat-card p-2">
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row relative">
           <div className="relative flex-1">
-            <div className="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 rtl:left-auto rtl:right-0 ps-4 flex items-center pointer-events-none">
               {isAiMode ? <Sparkles className="h-5 w-5 text-forest" /> : <Search className="h-5 w-5 text-slate-400" />}
             </div>
             <input 
@@ -291,7 +291,7 @@ export default function KnowledgeBase() {
         {/* Sidebar Categories */}
         <div className="w-full lg:w-64 flex-shrink-0 lg:flat-card lg:p-5 relative lg:sticky lg:top-28 z-20 bg-sand lg:bg-transparent -mx-4 px-4 lg:mx-0 lg:px-5 pb-2 lg:pb-0">
           <h3 className="hidden lg:block text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">{t('kb.categoriesTitle')}</h3>
-          <ul className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible space-x-3 rtl:space-x-reverse lg:space-x-0 lg:space-y-2 pb-2 lg:pb-0 no-scrollbar">
+          <ul className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible gap- lg:space-x-0 lg:space-y-2 pb-2 lg:pb-0 no-scrollbar">
             <li 
               onClick={() => setActiveCategory(t('kb.allArticles'))}
               className={`${activeCategory === t('kb.allArticles') ? 'bg-forest text-white shadow-md' : 'text-charcoal bg-white lg:bg-transparent border border-earth lg:border-transparent hover:bg-forest/10 hover:text-forest'} rounded-xl px-4 lg:px-3 py-2 flex-shrink-0 flex items-center justify-between gap-3 text-sm font-bold cursor-pointer transition-all duration-300`}
@@ -359,7 +359,7 @@ export default function KnowledgeBase() {
                     </span>
                   </span>
                   {(user?.role === 'admin' || article.author === user?.name) && (
-                    <div className="flex space-x-2 rtl:space-x-reverse">
+                    <div className="flex gap-">
                       <button onClick={(e) => { e.stopPropagation(); setEditingArticleId(article.id); }} className="p-2 text-slate-600 hover:text-forest bg-slate-100 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent border border-transparent hover:border-earth transition-colors cursor-pointer" title={t('kb.editArticle')}>
                         <Pencil className="w-4 h-4" />
                       </button>

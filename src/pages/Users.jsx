@@ -57,7 +57,7 @@ export default function Users() {
 
       <div className="flat-card">
         <div className="p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 space-x-0 sm:space-x-8 rtl:space-x-reverse">
+          <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 space-x-0 sm:gap-">
             <div className="flex-shrink-0">
               <img 
                 className="h-24 w-24 sm:h-32 sm:w-32 rounded-full object-cover border-4 border-white shadow-lg" 
