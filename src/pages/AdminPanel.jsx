@@ -102,21 +102,21 @@ export default function AdminPanel() {
 
 
       {/* Tabs */}
-      <div className="bg-white border border-earth rounded-2xl p-2 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]">
-        <nav className="flex space-x-2">
+      <div className="bg-white border border-earth rounded-2xl p-2 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
+        <nav className="flex space-x-2 overflow-x-auto no-scrollbar">
           {authorizedTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                group inline-flex items-center py-2.5 px-4 rounded-xl font-bold text-[14px] transition-colors
+                group inline-flex items-center flex-shrink-0 whitespace-nowrap py-2.5 px-4 rounded-xl font-bold text-[14px] transition-all duration-300
                 ${activeTab === tab.id 
-                  ? 'bg-green-50 text-[#07571C]' 
+                  ? 'bg-forest text-white shadow-md' 
                   : 'text-charcoal/70 hover:text-[#07571C] hover:bg-forest/10'
                 }
               `}
             >
-              <tab.icon className={`w-4 h-4 rtl:ml-2 ltr:mr-2 ${activeTab === tab.id ? 'text-[#07571C]' : 'text-charcoal/50 group-hover:text-[#07571C]'}`} />
+              <tab.icon className={`w-4 h-4 rtl:ml-2 ltr:mr-2 ${activeTab === tab.id ? 'text-white' : 'text-charcoal/50 group-hover:text-[#07571C]'}`} />
               {t(tab.translationKey)}
             </button>
           ))}
@@ -129,9 +129,9 @@ export default function AdminPanel() {
       {activeTab === 'users' && role === 'admin' && (
         <div className="space-y-6">
           <div className="bg-white border border-earth rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden hover:border-forest/30 transition-colors">
-            <div className="pb-5 border-b border-earth/60 flex justify-between items-center mb-2">
+            <div className="pb-5 border-b border-earth/60 flex flex-wrap gap-4 justify-between items-center mb-2">
               <h3 className="text-[17px] font-bold text-charcoal">{t('admin.management.userAccountsManagement')}</h3>
-              <button onClick={() => setIsAddModalOpen(true)} className="px-4 py-2 bg-[#07571C] text-white text-[13px] font-bold rounded-lg hover:bg-[#0a7526] cursor-pointer shadow-sm">{t('admin.management.addUser')}</button>
+              <button onClick={() => setIsAddModalOpen(true)} className="px-4 py-2 bg-[#07571C] text-white text-[13px] font-bold rounded-lg hover:bg-[#0a7526] cursor-pointer shadow-sm shrink-0">{t('admin.management.addUser')}</button>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -218,7 +218,7 @@ export default function AdminPanel() {
               <ul className="divide-y divide-gray-200">
                 {pendingArticles.map(item => (
                   <li key={item.id} className="p-5 hover:bg-forest/5 rounded-xl transition-colors border border-transparent hover:border-earth/50">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <div className="flex items-center space-x-3 mb-1">
                           <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold px-2 py-0.5 rounded-full uppercase">{item.typeKey ? t(`admin.management.contentData.${item.typeKey}`) : item.type}</span>
@@ -227,7 +227,7 @@ export default function AdminPanel() {
                         <h4 className="text-[16px] font-bold text-charcoal">{item.titleKey ? t(`admin.management.contentData.${item.titleKey}`) : item.title}</h4>
                         <p className="text-[13px] font-medium text-charcoal/70 mt-1">{t('admin.management.contentData.by', 'By')} {item.authorKey ? t(`admin.management.names.${item.authorKey}`) : item.author}</p>
                       </div>
-                      <div className="flex gap-">
+                      <div className="flex gap-2">
                         <button onClick={() => setReviewingContentId(item.id)} className="px-4 py-2 border border-earth/70 bg-white rounded-lg text-[13px] font-bold text-charcoal/80 hover:bg-forest/5 hover:text-charcoal cursor-pointer transition-colors shadow-sm">{t('admin.management.reviewDocument')}</button>
                         <button onClick={() => handleContentAction(item.id, 'reject')} className="p-2 border border-red-200 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors shadow-sm"><X className="w-5 h-5"/></button>
                         <button onClick={() => handleContentAction(item.id, 'approve')} className="p-2 border border-green-200 bg-green-50 text-forest rounded-lg hover:bg-green-100 transition-colors shadow-sm"><Check className="w-5 h-5"/></button>
