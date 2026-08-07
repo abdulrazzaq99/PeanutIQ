@@ -1,6 +1,23 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import i18n from '../i18n';
 
+const setGlobalLanguage = (userLangStr, isExplicitUpdate = false) => {
+  const localPref = localStorage.getItem('preferredLanguage');
+  const dbCode = userLangStr === 'Urdu' ? 'ur' : (userLangStr === 'English' ? 'en' : null);
+  
+  let finalLang = 'en';
+  
+  if (isExplicitUpdate) {
+    finalLang = dbCode || 'en';
+  } else {
+    finalLang = localPref || dbCode || i18n.language || 'en';
+  }
+  
+  i18n.changeLanguage(finalLang);
+  document.documentElement.dir = finalLang === 'ur' ? 'rtl' : 'ltr';
+  localStorage.setItem('preferredLanguage', finalLang);
+};
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -14,9 +31,7 @@ export function AuthProvider({ children }) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
       if (parsedUser.language) {
-        const langCode = parsedUser.language === 'Urdu' ? 'ur' : 'en';
-        i18n.changeLanguage(langCode);
-        document.documentElement.dir = langCode === 'ur' ? 'rtl' : 'ltr';
+        setGlobalLanguage(parsedUser.language);
       }
     }
     setLoading(false);
@@ -49,11 +64,8 @@ export function AuthProvider({ children }) {
             setUser(adminUser);
             localStorage.setItem('peanutiq_user', JSON.stringify(adminUser));
             
-            // Enforce user's language preference with English fallback
-            const pref = adminUser.language || 'English';
-            const langCode = pref === 'Urdu' ? 'ur' : 'en';
-            i18n.changeLanguage(langCode);
-            document.documentElement.dir = langCode === 'ur' ? 'rtl' : 'ltr';
+            // Enforce user's language preference
+            setGlobalLanguage(adminUser.language);
             
             resolve({ success: true, isNewUser: false, user: adminUser });
           } else if (identifier === 'researcher@peanutiq.pk' || identifier === '923000000001') {
@@ -68,11 +80,8 @@ export function AuthProvider({ children }) {
             setUser(researcherUser);
             localStorage.setItem('peanutiq_user', JSON.stringify(researcherUser));
             
-            // Enforce user's language preference with English fallback
-            const pref = researcherUser.language || 'English';
-            const langCode = pref === 'Urdu' ? 'ur' : 'en';
-            i18n.changeLanguage(langCode);
-            document.documentElement.dir = langCode === 'ur' ? 'rtl' : 'ltr';
+            // Enforce user's language preference
+            setGlobalLanguage(researcherUser.language);
             
             resolve({ success: true, isNewUser: false, user: researcherUser });
           } else if (isLoginIntent) {
@@ -90,11 +99,8 @@ export function AuthProvider({ children }) {
             setUser(returningUser);
             localStorage.setItem('peanutiq_user', JSON.stringify(returningUser));
             
-            // Enforce user's language preference with English fallback
-            const pref = returningUser.language || 'English';
-            const langCode = pref === 'Urdu' ? 'ur' : 'en';
-            i18n.changeLanguage(langCode);
-            document.documentElement.dir = langCode === 'ur' ? 'rtl' : 'ltr';
+            // Enforce user's language preference
+            setGlobalLanguage(returningUser.language);
             
             resolve({ success: true, isNewUser: false, user: returningUser });
           } else {
@@ -119,11 +125,8 @@ export function AuthProvider({ children }) {
         setUser(newUser);
         localStorage.setItem('peanutiq_user', JSON.stringify(newUser));
         
-        // Enforce user's language preference upon signup completion with English fallback
-        const pref = newUser.language || 'English';
-        const langCode = pref === 'Urdu' ? 'ur' : 'en';
-        i18n.changeLanguage(langCode);
-        document.documentElement.dir = langCode === 'ur' ? 'rtl' : 'ltr';
+        // Enforce user's language preference upon signup completion
+        setGlobalLanguage(newUser.language);
         
         resolve({ success: true, user: newUser });
       }, 1000);
@@ -141,9 +144,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('peanutiq_user', JSON.stringify(updatedUser));
     
     if (updates.language) {
-      const langCode = updates.language === 'Urdu' ? 'ur' : 'en';
-      i18n.changeLanguage(langCode);
-      document.documentElement.dir = langCode === 'ur' ? 'rtl' : 'ltr';
+      setGlobalLanguage(updates.language, true);
     }
   };
 

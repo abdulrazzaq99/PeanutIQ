@@ -1,31 +1,50 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Outfit', sans-serif;
-  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
-  --shadow-glass-heavy: 0 16px 48px 0 rgba(0, 0, 0, 0.08);
+  --font-sans: 'Inter', sans-serif;
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --color-sand: #F9FAFC;
+  --color-forest: #07571C;
+  --color-terracotta: #E07A5F;
+  --color-charcoal: #3D4035;
+  --color-earth: #E5E7EB;
 }
 
-@utility bg-mesh {
-  background-color: #f8fafc;
-  background-image: 
-    radial-gradient(at 0% 0%, hsla(158,100%,74%,0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(189,100%,56%,0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(163,100%,82%,0.18) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, hsla(158,100%,74%,0.12) 0px, transparent 50%);
-  background-attachment: fixed;
+@utility flat-card {
+  @apply bg-white border border-earth rounded-2xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)];
 }
-@utility glass-panel {
-  @apply bg-white border border-slate-200 shadow-sm;
+
+@utility flat-panel {
+  @apply bg-white border-2 border-earth rounded-xl;
 }
-@utility glass-card {
-  @apply bg-white border border-slate-200 shadow-sm;
+
+@utility btn-primary {
+  @apply bg-forest text-white font-bold py-3 px-4 rounded-xl transition-colors;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer base {
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  *::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
   body {
-    @apply bg-mesh text-slate-800 font-sans antialiased;
+    @apply bg-sand text-charcoal font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
   }
 
   /* Remove WebKit autofill highlight color */
@@ -58,6 +77,22 @@
   [aria-disabled="true"] {
     cursor: not-allowed !important;
   }
+
+  /* Custom Select Arrow Styling */
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.2em 1.2em;
+    padding-right: 2.5rem !important;
+  }
+  
+  [dir="rtl"] select {
+    background-position: left 0.75rem center;
+    padding-left: 2.5rem !important;
+    padding-right: 0.75rem !important;
+  }
 }
 
 @media print {
@@ -83,4 +118,13 @@
   .shadow-sm {
     box-shadow: none !important;
   }
+}
+
+
+@keyframes scan {
+  0%, 100% { top: 5%; }
+  50% { top: 95%; }
+}
+.animate-scan {
+  animation: scan 3s ease-in-out infinite;
 }

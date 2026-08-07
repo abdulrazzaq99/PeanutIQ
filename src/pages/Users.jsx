@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Mail, Phone, MapPin, Edit3, Target } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Edit3, Target, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ export default function Users() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     location: user?.location || '',
@@ -37,14 +38,14 @@ export default function Users() {
           {isEditing ? (
             <button 
               onClick={handleSave}
-              className="px-4 py-2 bg-green-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-green-700 flex items-center cursor-pointer transition-colors"
+              className="px-4 py-2 bg-forest border border-transparent rounded-lg text-sm font-medium text-white hover:bg-forest hover:opacity-90 flex items-center cursor-pointer transition-colors"
             >
               {t('profile.saveChanges')}
             </button>
           ) : (
             <button 
               onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center cursor-pointer transition-colors"
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-forest/10 hover:text-forest hover:border-transparent flex items-center cursor-pointer transition-colors"
             >
               <Edit3 className="w-4 h-4 mr-2" />
               {t('profile.editProfile')}
@@ -54,23 +55,23 @@ export default function Users() {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/20">
+      <div className="flat-card">
         <div className="p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-8">
+          <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 space-x-0 sm:space-x-8 rtl:space-x-reverse">
             <div className="flex-shrink-0">
               <img 
-                className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg" 
-                src={`https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=16a34a&color=fff&size=128`} 
+                className="h-24 w-24 sm:h-32 sm:w-32 rounded-full object-cover border-4 border-white shadow-lg" 
+                src={`https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=2D5A27&color=fff&size=128`} 
                 alt="Profile" 
               />
             </div>
-            <div className="flex-1 text-center sm:text-left w-full">
+            <div className="flex-1 text-start w-full">
               {isEditing ? (
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="text-2xl font-bold text-gray-900 border-b border-gray-300 focus:border-green-500 focus:outline-none bg-transparent w-full max-w-xs"
+                  className="text-2xl font-bold text-gray-900 border-b border-gray-300 focus:border-forest focus:outline-none bg-transparent w-full max-w-xs"
                 />
               ) : (
                 <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
@@ -78,14 +79,14 @@ export default function Users() {
               <p className="text-sm text-gray-500 font-medium mt-1 capitalize">{user.role}</p>
               
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center justify-center sm:justify-start text-sm text-gray-600">
-                  <Mail className="w-5 h-5 mr-3 text-gray-400" />
+                <div className="flex items-center justify-start text-sm text-gray-600">
+                  <Mail className="w-5 h-5 me-3 text-gray-400" />
                   {isEditing ? (
                     <input
                       type="text"
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="border-b border-gray-300 focus:border-green-500 focus:outline-none bg-transparent w-full"
+                      className="border-b border-gray-300 focus:border-forest focus:outline-none bg-transparent w-full"
                       placeholder={t('profile.placeholder.phoneOrEmail')}
                     />
                   ) : (
@@ -94,14 +95,14 @@ export default function Users() {
                 </div>
                 
                 {user.role === 'farmer' && (
-                  <div className="flex items-center justify-center sm:justify-start text-sm text-gray-600">
-                    <MapPin className="w-5 h-5 mr-3 text-gray-400" />
+                  <div className="flex items-center justify-start text-sm text-gray-600">
+                    <MapPin className="w-5 h-5 me-3 text-gray-400" />
                     {isEditing ? (
                       <input
                         type="text"
                         value={formData.location}
                         onChange={(e) => setFormData({...formData, location: e.target.value})}
-                        className="border-b border-gray-300 focus:border-green-500 focus:outline-none bg-transparent w-full"
+                        className="border-b border-gray-300 focus:border-forest focus:outline-none bg-transparent w-full"
                         placeholder={t('profile.placeholder.location')}
                       />
                     ) : (
@@ -111,14 +112,14 @@ export default function Users() {
                 )}
                 
                 {user.role === 'farmer' && (
-                  <div className="flex items-center justify-center sm:justify-start text-sm text-gray-600">
-                    <Target className="w-5 h-5 mr-3 text-gray-400" />
+                  <div className="flex items-center justify-start text-sm text-gray-600">
+                    <Target className="w-5 h-5 me-3 text-gray-400" />
                     {isEditing ? (
                       <input
                         type="text"
                         value={formData.cropType}
                         onChange={(e) => setFormData({...formData, cropType: e.target.value})}
-                        className="border-b border-gray-300 focus:border-green-500 focus:outline-none bg-transparent w-full"
+                        className="border-b border-gray-300 focus:border-forest focus:outline-none bg-transparent w-full"
                         placeholder={t('profile.placeholder.cropType')}
                       />
                     ) : (
@@ -127,8 +128,8 @@ export default function Users() {
                   </div>
                 )}
                 
-                <div className="flex items-center justify-center sm:justify-start text-sm text-gray-600">
-                  <User className="w-5 h-5 mr-3 text-gray-400" />
+                <div className="flex items-center justify-start text-sm text-gray-600">
+                  <User className="w-5 h-5 me-3 text-gray-400" />
                   ID: {user.id}
                 </div>
               </div>
@@ -136,23 +137,44 @@ export default function Users() {
           </div>
         </div>
         
-        <div className="bg-slate-50 px-6 sm:px-8 py-6 border-t border-slate-200">
+        <div className="bg-sand px-6 sm:px-8 py-6 border-t border-slate-200 rounded-b-2xl">
           <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">{t('profile.accountPreferences')}</h3>
           <div className="space-y-4 max-w-2xl">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-2 sm:gap-0">
               <div>
                 <p className="text-sm font-medium text-gray-900">{t('profile.languagePreference')}</p>
                 <p className="text-xs text-gray-500">{t('profile.languageDescription')}</p>
               </div>
-              <select 
-                disabled={!isEditing}
-                value={isEditing ? formData.language : user.language}
-                onChange={(e) => setFormData({...formData, language: e.target.value})}
-                className="mt-1 block w-32 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md shadow-sm border bg-white disabled:opacity-75"
-              >
-                <option value="English">{t('profile.english')}</option>
-                <option value="Urdu">{t('profile.urdu')}</option>
-              </select>
+              <div className="relative mt-2 sm:mt-0">
+                <button
+                  type="button"
+                  disabled={!isEditing}
+                  onClick={() => setShowLangMenu(!showLangMenu)}
+                  className={`flex items-center justify-between w-full sm:w-32 px-3 py-2 text-sm border-slate-200 focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest rounded-xl shadow-sm border cursor-pointer transition-colors ${!isEditing ? 'bg-sand opacity-75 cursor-not-allowed' : 'bg-white hover:bg-forest/10 hover:text-forest hover:border-transparent'}`}
+                >
+                  <span className="font-medium">{isEditing ? formData.language : user.language}</span>
+                  <ChevronDown className="h-4 w-4 text-slate-500 ms-2" />
+                </button>
+
+                {showLangMenu && isEditing && (
+                  <div className="absolute top-full mt-2 w-full rounded-xl shadow-lg py-1 bg-white border border-slate-200 overflow-hidden z-50">
+                    <button
+                      type="button"
+                      onClick={() => { setFormData({...formData, language: 'English'}); setShowLangMenu(false); }}
+                      className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                    >
+                      {t('profile.english')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setFormData({...formData, language: 'Urdu'}); setShowLangMenu(false); }}
+                      className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                    >
+                      {t('profile.urdu')}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

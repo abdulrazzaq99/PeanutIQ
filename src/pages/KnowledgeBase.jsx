@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { 
   Search, BookOpen, ChevronRight, FileText, 
-  Download, Sparkles, X, ArrowLeft, Loader2, Info, Pencil, Trash2, Plus
+  Download, Sparkles, X, ArrowLeft, Loader2, Info, Pencil, Trash2, Plus, Check
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useKnowledge } from '../context/KnowledgeContext';
+import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
 
 export default function KnowledgeBase() {
@@ -13,7 +14,7 @@ export default function KnowledgeBase() {
   const tArticles = t('kb.articles', { returnObjects: true });
   const categories = Array.isArray(tCategories) ? tCategories : [];
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin' || user?.role === 'researcher';
+  const isResearcher = user?.role === 'researcher';
   
   const { publishedArticles, submitArticle, updateArticle, deleteArticle } = useKnowledge();
   const articles = publishedArticles || [];
@@ -23,16 +24,19 @@ export default function KnowledgeBase() {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [editingArticleId, setEditingArticleId] = useState(null);
   const [isCreatingArticle, setIsCreatingArticle] = useState(false);
+  const { showToast } = useToast();
   
   // AI State
   const [isAiMode, setIsAiMode] = useState(false);
   const [aiState, setAiState] = useState('idle'); // idle, thinking, complete
   const [aiResponse, setAiResponse] = useState('');
 
-  // Scroll to top when an article is selected for reading or editing
+  // Scroll to top when view changes (opening or closing an article/editor)
   useEffect(() => {
-    if (selectedArticle || editingArticleId || isCreatingArticle) {
-      window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
+    const scrollContainer = document.querySelector('main .flex-1.overflow-y-auto');
+    if (scrollContainer) {
+      scrollContainer.scrollTo(0, 0);
     }
   }, [selectedArticle, editingArticleId, isCreatingArticle]);
 
@@ -81,12 +85,12 @@ export default function KnowledgeBase() {
     };
 
     return (
-      <div className="max-w-2xl mx-auto space-y-6 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 my-8">
+      <div className="max-w-2xl mx-auto space-y-6 flat-card p-8 my-8">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">{t('kb.editArticle')}</h2>
           <button 
             onClick={() => setEditingArticleId(null)}
-            className="p-2 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-lg cursor-pointer"
+            className="p-2 text-gray-400 hover:text-gray-600 bg-sand rounded-lg cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -94,25 +98,25 @@ export default function KnowledgeBase() {
         <form onSubmit={handleSave} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editTitle')}</label>
-            <input name="title" defaultValue={articleToEdit.title} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" required />
+            <input name="title" defaultValue={articleToEdit.title} className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm" required />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editCategory')}</label>
-            <select name="category" defaultValue={articleToEdit.category} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+            <select name="category" defaultValue={articleToEdit.category} className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm">
               {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editExcerpt')}</label>
-            <textarea name="excerpt" defaultValue={articleToEdit.excerpt} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" required />
+            <textarea name="excerpt" defaultValue={articleToEdit.excerpt} rows={3} className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm" required />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editContent')}</label>
-            <textarea name="content" defaultValue={articleToEdit.content} rows={10} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" required />
+            <textarea name="content" defaultValue={articleToEdit.content} rows={10} className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm" required />
           </div>
           <div className="flex justify-end space-x-3 pt-4">
-            <button type="button" onClick={() => setEditingArticleId(null)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium cursor-pointer">{t('kb.cancel')}</button>
-            <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium cursor-pointer">{t('kb.saveChanges')}</button>
+            <button type="button" onClick={() => setEditingArticleId(null)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent font-medium cursor-pointer">{t('kb.cancel')}</button>
+            <button type="submit" className="px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest hover:opacity-90 font-medium cursor-pointer">{t('kb.saveChanges')}</button>
           </div>
         </form>
       </div>
@@ -133,16 +137,16 @@ export default function KnowledgeBase() {
       
       submitArticle(newArticle);
       setIsCreatingArticle(false);
-      alert(t('kb.articleSubmitted'));
+      showToast(t('kb.articleSubmitted'), 'It is now pending admin approval.', 'success');
     };
 
     return (
-      <div className="max-w-2xl mx-auto space-y-6 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 my-8">
+      <div className="max-w-2xl mx-auto space-y-6 flat-card p-8 my-8">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">{t('kb.createNewArticle')}</h2>
           <button 
             onClick={() => setIsCreatingArticle(false)}
-            className="p-2 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-lg cursor-pointer"
+            className="p-2 text-gray-400 hover:text-gray-600 bg-sand rounded-lg cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -150,25 +154,25 @@ export default function KnowledgeBase() {
         <form onSubmit={handleCreateSave} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editTitle')}</label>
-            <input name="title" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" required />
+            <input name="title" className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm" required />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editCategory')}</label>
-            <select name="category" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+            <select name="category" className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm">
               {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editExcerpt')}</label>
-            <textarea name="excerpt" rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" required />
+            <textarea name="excerpt" rows={3} className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm" required />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('kb.editContent')}</label>
-            <textarea name="content" rows={10} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" required />
+            <textarea name="content" rows={10} className="w-full px-4 py-2 border border-earth bg-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest text-charcoal transition-colors shadow-sm" required />
           </div>
           <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4">
-            <button type="button" onClick={() => setIsCreatingArticle(false)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium cursor-pointer">{t('kb.cancel')}</button>
-            <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium cursor-pointer">{t('kb.submitForApproval')}</button>
+            <button type="button" onClick={() => setIsCreatingArticle(false)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent font-medium cursor-pointer">{t('kb.cancel')}</button>
+            <button type="submit" className="px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest hover:opacity-90 font-medium cursor-pointer">{t('kb.submitForApproval')}</button>
           </div>
         </form>
       </div>
@@ -177,21 +181,21 @@ export default function KnowledgeBase() {
 
   if (selectedArticle) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 min-h-screen">
+      <div className="max-w-4xl mx-auto space-y-6 flat-card p-8">
         <button 
           onClick={() => setSelectedArticle(null)}
-          className="flex items-center text-sm font-medium text-gray-500 hover:text-green-600 transition-colors cursor-pointer"
+          className="flex items-center text-sm font-medium text-gray-500 hover:text-forest transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 me-2 rtl:rotate-180" /> {t('kb.back')}
         </button>
         
         <div className="space-y-4 pt-4">
-          <div className="flex items-center space-x-3 text-sm text-gray-500">
-            <span className="bg-green-50 text-green-700 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider">{selectedArticle.category}</span>
-            <span>•</span>
-            <span className="flex items-center"><BookOpen className="w-4 h-4 me-1"/> {selectedArticle.author}</span>
-            <span>•</span>
-            <span>{selectedArticle.date}</span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-gray-500">
+            <span className="bg-forest text-white px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider whitespace-nowrap shadow-sm">{selectedArticle.category}</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="flex items-center whitespace-nowrap"><BookOpen className="w-4 h-4 me-1"/> {selectedArticle.author}</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="whitespace-nowrap">{selectedArticle.date}</span>
           </div>
           
           <h1 className="text-3xl font-black text-gray-900">{selectedArticle.title}</h1>
@@ -208,16 +212,16 @@ export default function KnowledgeBase() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">{t('kb.title')}</h1>
           <p className="mt-2 text-sm font-medium text-slate-600">{t('kb.subtitle')}</p>
         </div>
-        {isAdmin && (
+        {isResearcher && (
           <button 
             onClick={() => setIsCreatingArticle(true)}
-            className="mt-4 sm:mt-0 flex items-center px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl shadow-sm hover:bg-emerald-700 transition-colors cursor-pointer"
+            className="mt-4 sm:mt-0 w-full sm:w-auto flex justify-center items-center px-4 py-2.5 sm:py-2 bg-forest text-white font-bold rounded-xl shadow-sm hover:bg-forest hover:opacity-90 transition-colors cursor-pointer"
           >
             <Plus className="w-5 h-5 rtl:ml-2 ltr:mr-2" /> {t('kb.createArticle')}
           </button>
@@ -225,30 +229,32 @@ export default function KnowledgeBase() {
       </div>
 
       {/* Search Bar & AI Toggle */}
-      <div className="bg-white p-2 rounded-2xl border border-gray-200 shadow-sm">
-        <form onSubmit={handleSearch} className="relative flex items-center">
-          <div className="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
-            {isAiMode ? <Sparkles className="h-5 w-5 text-indigo-500" /> : <Search className="h-5 w-5 text-slate-400" />}
+      <div className="flat-card p-2">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row relative">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
+              {isAiMode ? <Sparkles className="h-5 w-5 text-forest" /> : <Search className="h-5 w-5 text-slate-400" />}
+            </div>
+            <input 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="block w-full ps-12 pe-4 sm:pe-44 py-3 sm:py-4 rounded-xl leading-5 bg-transparent placeholder-slate-500 focus:outline-none text-base text-slate-900 font-medium" 
+              placeholder={isAiMode ? t('kb.searchAiPlaceholder') : t('kb.searchPlaceholder')} 
+              type="search" 
+            />
           </div>
-          <input 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full ps-12 pe-44 py-4 rounded-xl leading-5 bg-transparent placeholder-slate-500 focus:outline-none text-base text-slate-900 font-medium" 
-            placeholder={isAiMode ? t('kb.searchAiPlaceholder') : t('kb.searchPlaceholder')} 
-            type="search" 
-          />
-          <div className="absolute end-2 flex items-center bg-slate-50 p-1 rounded-lg border border-slate-200 shadow-sm">
+          <div className="flex sm:absolute sm:end-2 sm:top-1/2 sm:-translate-y-1/2 items-center bg-sand p-1 rounded-lg border border-slate-200 shadow-sm mt-1 sm:mt-0 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => setIsAiMode(false)}
-              className={`px-4 py-1.5 text-sm font-bold rounded-md transition-all duration-300 ${!isAiMode ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`flex-1 sm:flex-none justify-center px-4 py-2 sm:py-1.5 text-sm font-bold rounded-md transition-all duration-300 flex items-center ${!isAiMode ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900'}`}
             >
               {t('kb.searchBtn')}
             </button>
             <button
               type="button"
               onClick={() => setIsAiMode(true)}
-              className={`px-4 py-1.5 text-sm font-bold rounded-md transition-all duration-300 flex items-center ${isAiMode ? 'bg-indigo-500 shadow-sm text-white' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`flex-1 sm:flex-none justify-center px-4 py-2 sm:py-1.5 text-sm font-bold rounded-md transition-all duration-300 flex items-center ${isAiMode ? 'bg-forest shadow-sm text-white' : 'text-slate-600 hover:text-slate-900'}`}
             >
               <Sparkles className="w-4 h-4 me-1" /> {t('kb.askAiBtn')}
             </button>
@@ -281,17 +287,17 @@ export default function KnowledgeBase() {
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-8 mt-8 items-start">
+      <div className="flex flex-col lg:flex-row gap-6 mt-6 items-start">
         {/* Sidebar Categories */}
-        <div className="w-full lg:w-64 flex-shrink-0 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm sticky top-28">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">{t('kb.categoriesTitle')}</h3>
-          <ul className="space-y-2">
+        <div className="w-full lg:w-64 flex-shrink-0 lg:flat-card lg:p-5 relative lg:sticky lg:top-28 z-20 bg-sand lg:bg-transparent -mx-4 px-4 lg:mx-0 lg:px-5 pb-2 lg:pb-0">
+          <h3 className="hidden lg:block text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">{t('kb.categoriesTitle')}</h3>
+          <ul className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible space-x-3 rtl:space-x-reverse lg:space-x-0 lg:space-y-2 pb-2 lg:pb-0 no-scrollbar">
             <li 
               onClick={() => setActiveCategory(t('kb.allArticles'))}
-              className={`${activeCategory === t('kb.allArticles') ? 'bg-emerald-500/10 text-emerald-700' : 'text-slate-600 hover:bg-slate-500/5'} rounded-xl px-3 py-2 flex items-center justify-between text-sm font-bold cursor-pointer transition-all duration-300`}
+              className={`${activeCategory === t('kb.allArticles') ? 'bg-forest text-white shadow-md' : 'text-charcoal bg-white lg:bg-transparent border border-earth lg:border-transparent hover:bg-forest/10 hover:text-forest'} rounded-xl px-4 lg:px-3 py-2 flex-shrink-0 flex items-center justify-between gap-3 text-sm font-bold cursor-pointer transition-all duration-300`}
             >
               <span>{t('kb.allArticles')}</span>
-              <span className={`${activeCategory === t('kb.allArticles') ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200/50 text-slate-600'} text-xs py-0.5 px-2 rounded-full font-semibold`}>
+              <span className={`${activeCategory === t('kb.allArticles') ? 'bg-white text-forest shadow-sm ring-1 ring-black/5' : 'bg-earth text-forest'} text-xs py-0.5 px-2 rounded-full font-semibold`}>
                 {articles.length}
               </span>
             </li>
@@ -299,10 +305,10 @@ export default function KnowledgeBase() {
               <li 
                 key={category.id} 
                 onClick={() => setActiveCategory(category.name)}
-                className={`${activeCategory === category.name ? 'bg-emerald-500/10 text-emerald-700' : 'text-slate-600 hover:bg-slate-500/5'} rounded-xl px-3 py-2 flex items-center justify-between text-sm font-bold cursor-pointer transition-all duration-300`}
+                className={`${activeCategory === category.name ? 'bg-forest text-white shadow-md' : 'text-charcoal bg-white lg:bg-transparent border border-earth lg:border-transparent hover:bg-forest/10 hover:text-forest'} rounded-xl px-4 lg:px-3 py-2 flex-shrink-0 flex items-center justify-between gap-3 text-sm font-bold cursor-pointer transition-all duration-300`}
               >
                 <span>{category.name}</span>
-                <span className={`${activeCategory === category.name ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200/50 text-slate-600'} text-xs py-0.5 px-2 rounded-full font-semibold`}>
+                <span className={`${activeCategory === category.name ? 'bg-white text-forest shadow-sm ring-1 ring-black/5' : 'bg-earth text-forest'} text-xs py-0.5 px-2 rounded-full font-semibold`}>
                   {articles.filter(a => a.category === category.name).length}
                 </span>
               </li>
@@ -313,7 +319,7 @@ export default function KnowledgeBase() {
         {/* Article List */}
         <div className="flex-1 space-y-4">
           {filteredArticles.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 shadow-sm">
+            <div className="text-center py-16 flat-card">
               <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-slate-900">{t('kb.noArticles')}</h3>
               <p className="text-slate-500 font-medium mt-1">{t('kb.tryAdjusting')}</p>
@@ -323,37 +329,46 @@ export default function KnowledgeBase() {
               <div 
                 key={article.id} 
                 onClick={() => setSelectedArticle(article)}
-                className="bg-white border border-gray-200 rounded-2xl p-6 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 cursor-pointer shadow-sm group"
+                className="relative bg-white border border-earth rounded-2xl p-6 cursor-pointer group shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300 flex flex-col overflow-hidden"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 text-sm text-slate-500 mb-3">
-                      <span className="bg-slate-50 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-md text-xs font-bold uppercase">{article.category}</span>
-                      <span>•</span>
-                      <span className="flex items-center font-medium"><BookOpen className="w-3.5 h-3.5 me-1.5"/> {article.author}</span>
-                      <span>•</span>
-                      <span className="font-medium">{article.date}</span>
-                    </div>
-                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors pe-8 leading-tight">{article.title}</h3>
-                    <p className="mt-3 text-sm font-medium text-slate-600 leading-relaxed line-clamp-2">
-                      {article.excerpt}
-                    </p>
+                {/* Decorative Accent */}
+                <div className="absolute top-0 right-0 rtl:left-0 rtl:right-auto w-32 h-32 bg-forest/5 rounded-bl-full rtl:rounded-bl-none rtl:rounded-br-full z-0"></div>
+
+                <div className="flex flex-wrap items-center justify-between gap-y-3 mb-5 z-10 relative">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="inline-flex items-center text-white bg-forest px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm">
+                      {article.category}
+                    </span>
+                    <span className="flex items-center text-xs font-bold text-slate-500">
+                      <BookOpen className="w-4 h-4 me-1.5 text-forest/70"/> {article.author}
+                    </span>
                   </div>
-                  {(user?.role === 'admin' || article.author === user?.name) ? (
-                    <div className="flex mt-4 space-x-2 rtl:space-x-reverse">
-                      <button onClick={(e) => { e.stopPropagation(); setEditingArticleId(article.id); }} className="p-2 text-gray-400 hover:text-indigo-600 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer" title={t('kb.editArticle')}>
+                  <span className="text-xs font-bold text-slate-400 bg-sand px-2.5 py-1.5 rounded-md border border-slate-100">{article.date}</span>
+                </div>
+                
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 group-hover:text-forest transition-colors leading-snug mb-3 z-10 relative">{article.title}</h3>
+                <p className="text-sm font-medium text-slate-600 leading-relaxed line-clamp-2 mb-6 z-10 relative">
+                  {article.excerpt}
+                </p>
+                
+                <div className="mt-auto pt-5 border-t border-earth/60 flex items-center justify-between z-10 relative">
+                  <span className="inline-flex items-center text-sm font-bold text-forest group-hover:text-[#254736] transition-colors">
+                    Read Article 
+                    <span className="ml-2 rtl:mr-2 rtl:ml-0 w-8 h-8 rounded-full bg-forest/10 flex items-center justify-center group-hover:bg-forest group-hover:text-white transition-all duration-300">
+                      <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
+                    </span>
+                  </span>
+                  {(user?.role === 'admin' || article.author === user?.name) && (
+                    <div className="flex space-x-2 rtl:space-x-reverse">
+                      <button onClick={(e) => { e.stopPropagation(); setEditingArticleId(article.id); }} className="p-2 text-slate-600 hover:text-forest bg-slate-100 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent border border-transparent hover:border-earth transition-colors cursor-pointer" title={t('kb.editArticle')}>
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button onClick={(e) => { 
                         e.stopPropagation(); 
                         if(window.confirm(t('kb.deleteConfirm'))) deleteArticle(article.id);
-                      }} className="p-2 text-gray-400 hover:text-red-600 bg-gray-50 rounded-lg hover:bg-red-50 transition-colors cursor-pointer" title={t('kb.deleteArticle')}>
+                      }} className="p-2 text-slate-600 hover:text-red-600 bg-slate-100 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-100 transition-colors cursor-pointer" title={t('kb.deleteArticle')}>
                         <Trash2 className="w-4 h-4" />
                       </button>
-                    </div>
-                  ) : (
-                    <div className="ms-4 flex-shrink-0 pt-2 bg-slate-50 rounded-full p-2 group-hover:bg-emerald-50 transition-colors shadow-sm border border-slate-200">
-                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-emerald-600 transition-colors rtl:rotate-180" />
                     </div>
                   )}
                 </div>

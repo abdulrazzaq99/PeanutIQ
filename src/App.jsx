@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { KnowledgeProvider } from './context/KnowledgeContext';
+import { ToastProvider } from './context/ToastContext';
 import ScrollToTop from './components/ScrollToTop';
 import AuthGuard from './components/AuthGuard';
 import AuthLayout from './layouts/AuthLayout';
@@ -13,7 +14,6 @@ import AdminProfile from './pages/AdminProfile';
 import Users from './pages/Users';
 import SeedIntelligence from './pages/SeedIntelligence';
 import DiseaseIntelligence from './pages/DiseaseIntelligence';
-import AiCompanion from './pages/AiCompanion';
 import HistoryReports from './pages/HistoryReports';
 import Login from './pages/auth/Login';
 import VerifyOTP from './pages/auth/VerifyOTP';
@@ -25,7 +25,8 @@ function App() {
   return (
     <AuthProvider>
       <KnowledgeProvider>
-        <BrowserRouter>
+        <ToastProvider>
+          <BrowserRouter>
           <ScrollToTop />
         <Routes>
           <Route path="/" element={<Navigate to="/user" replace />} />
@@ -44,7 +45,6 @@ function App() {
               <Route index element={<UserDashboard />} />
               <Route path="seed" element={<SeedIntelligence />} />
               <Route path="disease" element={<DiseaseIntelligence />} />
-              <Route path="ai-companion" element={<AiCompanion />} />
               <Route path="history" element={<HistoryReports />} />
               <Route path="knowledge-base" element={<KnowledgeBase />} />
               <Route path="profile" element={<Users />} />
@@ -64,6 +64,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+        </ToastProvider>
       </KnowledgeProvider>
     </AuthProvider>
   );

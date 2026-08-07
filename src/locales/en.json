@@ -18,6 +18,19 @@
     }
   },
   "dashboard": {
+    "weatherData": {
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "wed": "Wed",
+      "sunny": "Sunny",
+      "rainExpected": "Rain Expected",
+      "breezy": "Breezy"
+    },
+    "advisory": {
+      "heavyRainTitle": "Heavy Rain Warning",
+      "heavyRainDesc": "Meteorological data suggests heavy rainfall in your region over the next 48 hours. Ensure proper drainage in your peanut fields to prevent waterlogging and root rot.",
+      "timeAgo": "2 hours ago"
+    },
     "recentActivity": "Recent Activity",
     "viewAllHistory": "View All History & Reports",
     "welcome": "Welcome back, {{name}}!",
@@ -32,7 +45,32 @@
     "knowledgeBase": "Knowledge Base",
     "kbDesc": "Access verified agricultural research and talk to our Agentic AI.",
     "highPriority": "High Priority",
-    "readMore": "Read more details"
+    "readMore": "Read more details",
+    "activities": {
+      "irrigation": "Irrigation completed",
+      "field1": "in Field 1",
+      "fungicide": "Fungicide sprayed",
+      "field2": "in Field 2",
+      "advisoryRead": "Advisory read",
+      "heavyRainWarning": "(Heavy Rain Warning)",
+      "soilSample": "Soil sample collected",
+      "field3": "in Field 3",
+      "field4Activity": "Field 4 activity added",
+      "timeToday830": "Today, 8:30 AM",
+      "timeToday615": "Today, 6:15 AM",
+      "timeYesterday445": "Yesterday, 4:45 PM",
+      "timeYesterday1120": "Yesterday, 11:20 AM",
+      "timeMay19": "May 19, 2026"
+    },
+    "viewAllActivity": "View All Activity",
+    "cropHealthTitle": "Crop Health Overview",
+    "good": "Good",
+    "average": "Average",
+    "poor": "Poor",
+    "viewFullReport": "View full report",
+    "viewFullForecast": "View full forecast",
+    "timeAgo": "2 hours ago",
+    "defaultLocation": "Attock, Punjab"
   },
   "layout": {
     "nav": {
@@ -52,7 +90,8 @@
       "notifications": "Notifications",
       "markAllRead": "Mark all as read",
       "viewProfile": "View Profile",
-      "logout": "Logout"
+      "logout": "Logout",
+      "search": "Search anything..."
     },
     "notifications": {
       "heavyRainTitle": "Heavy Rain Warning",
@@ -142,7 +181,8 @@
       "dayMinus3": "Day -3",
       "today": "Today",
       "dayPlus3": "Day +3",
-      "dayPlus7": "Day +7"
+      "dayPlus7": "Day +7",
+      "severity": "Severity"
     }
   },
   "kb": {
@@ -431,7 +471,63 @@
         "usman": "Usman Tariq",
         "zainab": "Zainab Bibi"
       },
-      "yield": "Yield"
+      "yield": "Yield",
+      "regionalIntelligenceTitle": "Regional Intelligence",
+      "regionalIntelligenceSubtitle": "Live monitoring of Pothwar districts",
+      "liveFeed": "Live Feed",
+      "activeFarmersLabel": "Active Farmers",
+      "diseaseHotspotsLabel": "Disease Hotspots",
+      "criticalAreaLabel": "Critical Area",
+      "riskIncrease": "+15% Risk",
+      "attockDistrict": "Attock District",
+      "collarRotOutbreakMsg": "Collar Rot outbreak detected in 3 zones.",
+      "highEngagementLabel": "High Engagement",
+      "newFarmers": "+240 New",
+      "farmersOnboardedMsg": "Farmers onboarded this week.",
+      "aiAgentUsageTitle": "AI Agent Usage",
+      "interactionsViaCopilot": "Interactions via Copilot",
+      "tenKPlus": "10k+",
+      "queriesLabel": "Queries",
+      "topTrendingQueries": "Top Trending Queries",
+      "voiceLabel": "Voice (Urdu/Punjabi)",
+      "textInteractionsLabel": "Text Interactions",
+      "knowledgeBaseTitle": "Knowledge Base",
+      "mostReadByResearchers": "Most read by researchers",
+      "past30Days": "Past 30 Days",
+      "viewsLabel": "Views",
+      "exploreAllResources": "Explore All Resources",
+      "systemHealthTitle": "System Health & Infrastructure",
+      "serverUptime": "Server Uptime",
+      "globalNodes": "GLOBAL NODES",
+      "aiApiUsage": "AI API Usage",
+      "monthlyQuota": "MONTHLY QUOTA",
+      "databaseStorage": "Database Storage",
+      "clusterAlpha": "CLUSTER ALPHA",
+      "healthy": "Healthy",
+      "approaching": "Approaching",
+      "optimal": "Optimal",
+      "trendingQuery1": "How to identify Early Leaf Spot?",
+      "trendingQuery2": "What fertilizer is best during flowering?",
+      "trendingQuery3": "Rain expected in Chakwal next week?",
+      "article1Title": "NARC Recommended Groundnut Varieties for Pothwar",
+      "article2Title": "Managing Collar Rot in Rainfed Areas",
+      "article3Title": "Optimal Harvesting Time and Techniques",
+      "article4Title": "Soil Moisture Conservation Best Practices",
+      "catCultivation": "CULTIVATION PRACTICES",
+      "catDisease": "DISEASE MANAGEMENT",
+      "catHarvesting": "HARVESTING",
+      "catSoil": "SOIL HEALTH",
+      "authorFaisal": "Dr. Faisal (Researcher)",
+      "authorAhmed": "Dr. Ahmed (Pathologist)",
+      "authorAli": "Ali Raza (Agri Expert)",
+      "article1Summary": "Detailed guide on high-yielding peanut varieties suited for rainfed conditions of the Pothwar region including BARI-2016.",
+      "article2Summary": "Essential preventative and responsive measures for combating Aspergillus niger infections in peanut crops.",
+      "article3Summary": "A comprehensive guide on determining the right time to harvest to maximize both yield and oil content.",
+      "article4Summary": "Techniques for retaining soil moisture during dry spells in the rainfed Pothwar region.",
+      "article1Content": "The Pothwar region accounts for the majority of groundnut production in Pakistan. The National Agricultural Research Centre (NARC) highly recommends the BARI-2016 variety due to its high yield potential and resistance to drought conditions. Farmers are advised to maintain a seed rate of 25-30 kg per acre and ensure sowing between April and May. Proper land preparation, including deep ploughing and planking, is crucial for moisture conservation.",
+      "article2Content": "Collar rot, caused by Aspergillus niger, remains a significant threat in the Chakwal and Attock districts. Symptoms appear as sudden wilting of branches followed by plant death. Preventative measures include treating seeds with recommended fungicides before sowing and avoiding deep planting. Maintaining proper field drainage during the monsoon is critical.",
+      "article3Content": "Determining the correct harvest time is crucial for maximizing yield and oil content. Harvest when 70-80% of the pods show dark maturity inside the shell. Delaying harvest can lead to pod shedding in the soil, while early harvesting reduces quality. After digging, allow the plants to dry in the field for 2-3 days before threshing to reduce moisture to a safe 8-10% level.",
+      "article4Content": "In the rainfed Pothwar region, conserving soil moisture is the key to a successful peanut crop. Deep summer ploughing helps harvest rainwater. Following the first monsoon showers, immediate sowing is recommended. Regular weeding during the first 45 days reduces competition for moisture. Applying a mulch layer can further prevent evaporation during dry spells."
     },
     "management": {
       "title": "System Management",
@@ -603,5 +699,11 @@
       "passwordUpdated": "Password updated securely!",
       "languageNote": "Note: The admin panel defaults to English. Changing this updates your global preference."
     }
+  },
+  "robot": {
+    "title": "PeanutIQ Assistant",
+    "greeting": "Welcome back, {{name}}! I'm your PeanutIQ AI Assistant. How can I help you today?",
+    "placeholder": "Type a message...",
+    "defaultReply": "I am a frontend demonstration robot. I can't answer complex queries yet, but I'm happy to say hello!"
   }
 }

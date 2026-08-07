@@ -1,28 +1,41 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { LayoutDashboard, Leaf, User, BookOpen, Sprout, Activity, Bell, LogOut, ChevronLeft, ChevronRight, Bot, History, Globe } from 'lucide-react';
+import { LayoutDashboard, Leaf, User, BookOpen, Bean, ScanSearch, Bell, LogOut, ChevronLeft, ChevronRight, ChevronDown, MessageSquare, History, Globe, Search, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import FloatingAgent from '../components/FloatingAgent';
+import Logo from '../components/Logo';
 
 const navItems = [
   { to: '/user', icon: LayoutDashboard, labelKey: 'layout.nav.dashboard', end: true },
-  { to: '/user/ai-companion', icon: Bot, labelKey: 'layout.nav.aiCompanion' },
-  { to: '/user/seed', icon: Sprout, labelKey: 'layout.nav.seedIntelligence' },
-  { to: '/user/disease', icon: Activity, labelKey: 'layout.nav.diseaseIntelligence' },
+  { to: '/user/seed', icon: Bean, labelKey: 'layout.nav.seedIntelligence' },
+  { to: '/user/disease', icon: ScanSearch, labelKey: 'layout.nav.diseaseIntelligence' },
   { to: '/user/history', icon: History, labelKey: 'layout.nav.history' },
   { to: '/user/knowledge-base', icon: BookOpen, labelKey: 'layout.nav.knowledgeBase' },
   { to: '/user/profile', icon: User, labelKey: 'layout.nav.profile' },
 ];
 
 export default function UserLayout() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const notificationRef = useRef(null);
   const profileRef = useRef(null);
+  const languageRef = useRef(null);
+  const mainContentRef = useRef(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo(0, 0);
+    }
+    setIsMobileMenuOpen(false); // Close mobile menu on route change
+  }, [location.pathname]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -31,6 +44,9 @@ export default function UserLayout() {
       }
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setShowProfileMenu(false);
+      }
+      if (languageRef.current && !languageRef.current.contains(event.target)) {
+        setShowLanguageMenu(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -44,19 +60,36 @@ export default function UserLayout() {
     navigate('/login');
   };
 
-  const toggleLanguage = () => {
-    const newLang = i18n.language === 'en' ? 'ur' : 'en';
+  const handleLanguageChange = (newLang) => {
     i18n.changeLanguage(newLang);
     document.documentElement.dir = newLang === 'ur' ? 'rtl' : 'ltr';
+    localStorage.setItem('preferredLanguage', newLang);
+    setShowLanguageMenu(false);
   };
 
   return (
-    <div className="min-h-screen bg-mesh">
+    <div className="h-screen bg-sand text-charcoal overflow-hidden relative">
+      {/* Mobile Menu Backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity" 
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 start-0 bg-white/80 backdrop-blur-2xl border-e border-slate-200 shadow-glass-heavy hidden md:flex md:flex-col z-20 print:hidden transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-20' : 'w-56'}`}>
-        <div className={`h-16 flex items-center border-b border-slate-200 flex-shrink-0 ${isSidebarCollapsed ? 'justify-center' : 'px-6'}`}>
-          <Leaf className={`w-6 h-6 text-emerald-600 ${isSidebarCollapsed ? '' : 'me-2'}`} />
-          {!isSidebarCollapsed && <span className="text-xl font-black text-slate-900 tracking-tight">PeanutIQ</span>}
+      <aside className={`fixed inset-y-0 start-0 bg-white border-e border-earth shadow-none flex flex-col z-50 print:hidden transition-all duration-300 overflow-hidden 
+        ${isMobileMenuOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'} 
+        md:ltr:translate-x-0 md:rtl:translate-x-0 
+        ${isSidebarCollapsed ? 'md:w-20' : 'md:w-56'} w-64`}
+      >
+        <div className={`h-16 flex items-center border-b border-earth flex-shrink-0 ${isSidebarCollapsed ? 'justify-center' : 'px-6'}`}>
+          <Logo className={`w-7 h-7 flex-shrink-0 ${isSidebarCollapsed ? '' : 'me-2'}`} iconColor="#07571C" sparkleColor="#07571C" />
+          {!isSidebarCollapsed && (
+            <span className="text-xl font-bold font-serif tracking-tight" dir="ltr">
+              <span className="text-[#1D2B15]">Peanut</span><span className="text-[#07571C]">IQ</span>
+            </span>
+          )}
         </div>
         <nav className="flex-1 py-6 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
@@ -65,19 +98,19 @@ export default function UserLayout() {
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `flex items-center py-4 text-sm font-bold transition-all duration-300 ${
+                `flex items-center whitespace-nowrap py-4 text-sm font-bold transition-all duration-300 group ${
                   isActive
-                    ? 'bg-emerald-500/10 text-emerald-700 border-e-4 border-emerald-500 shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-500/5 hover:text-slate-900 border-e-4 border-transparent'
-                } ${isSidebarCollapsed ? 'justify-center px-0' : 'ps-8 pe-4'}`
+                    ? 'bg-forest text-white border-r-4 rtl:border-l-4 rtl:border-r-0 border-forest shadow-md'
+                    : 'text-charcoal opacity-80 hover:bg-forest/10 hover:text-forest hover:opacity-100 border-r-4 rtl:border-l-4 rtl:border-r-0 border-transparent'
+                } ${isSidebarCollapsed ? 'justify-center px-0' : 'pl-8 pr-4 rtl:pr-8 rtl:pl-4'}`
               }
               title={isSidebarCollapsed ? t(item.labelKey) : ''}
             >
               {({ isActive }) => (
                 <>
                   <item.icon
-                    className={`w-5 h-5 ${isSidebarCollapsed ? '' : 'me-3'} ${
-                      isActive ? 'text-green-600' : 'text-gray-400'
+                    className={`w-5 h-5 flex-shrink-0 ${isSidebarCollapsed ? '' : 'mx-3'} ${
+                      isActive ? 'text-white stroke-2' : 'text-charcoal opacity-70 stroke-2 group-hover:text-forest group-hover:opacity-100'
                     }`}
                   />
                   {!isSidebarCollapsed && t(item.labelKey)}
@@ -86,10 +119,10 @@ export default function UserLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-gray-200 space-y-2">
+        <div className="p-4 border-t border-earth space-y-2 hidden md:block">
           <button 
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className={`flex items-center w-full px-2 py-2.5 text-sm font-medium rounded-lg text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none ${isSidebarCollapsed ? 'justify-center' : ''}`}
+            className={`flex items-center w-full px-2 py-2.5 text-sm font-bold rounded-lg text-charcoal opacity-70 hover:bg-forest/10 hover:opacity-100 transition-colors focus:outline-none ${isSidebarCollapsed ? 'justify-center' : ''}`}
             title={isSidebarCollapsed ? t('layout.sidebar.expand') : t('layout.sidebar.collapse')}
           >
             {isSidebarCollapsed ? <ChevronRight className="w-5 h-5 rtl:rotate-180" /> : <><ChevronLeft className="w-5 h-5 me-3 rtl:rotate-180" /> {t('layout.sidebar.collapse')}</>}
@@ -98,40 +131,86 @@ export default function UserLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className={`flex flex-col min-h-screen print:ps-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:ps-20' : 'md:ps-56'}`}>
+      <main className={`flex flex-col h-screen print:ps-0 transition-all duration-300 md:ps-0 ${isSidebarCollapsed ? 'md:ltr:pl-20 md:rtl:pr-20' : 'md:ltr:pl-56 md:rtl:pr-56'}`}>
         {/* Header */}
-        <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-end px-6 sticky top-0 z-10 print:hidden transition-all duration-300">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={toggleLanguage}
-              className="p-2 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors focus:outline-none cursor-pointer"
-              title="Change Language"
+        <header className="h-16 flex-shrink-0 bg-white border-b border-earth flex items-center justify-between px-4 md:px-6 z-30 print:hidden transition-all duration-300 shadow-none">
+          
+          <div className="flex items-center gap-2 md:hidden">
+            <button 
+              className="p-2 -ml-2 text-charcoal hover:bg-forest/10 rounded-lg cursor-pointer rtl:-mr-2 rtl:ml-0"
+              onClick={() => setIsMobileMenuOpen(true)}
             >
-              <Globe className="h-5 w-5" />
+              <Menu className="w-6 h-6" />
             </button>
+            <Logo className="w-6 h-6 flex-shrink-0" iconColor="#07571C" sparkleColor="#07571C" />
+          </div>
+
+          {/* Search Bar */}
+          <div className="flex-1 max-w-md hidden sm:block md:ml-0 ml-4">
+            <div className="relative">
+              <div className="absolute inset-y-0 start-0 pl-3 rtl:pl-0 rtl:pr-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder={t('layout.header.search', 'Search anything...')}
+                className="block w-full pl-10 rtl:pl-3 rtl:pr-10 pr-3 py-2 border border-earth rounded-xl leading-5 bg-sand placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest sm:text-sm text-charcoal transition-colors shadow-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-4 ms-auto">
+            <div className="relative" ref={languageRef}>
+              <button
+                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                className={`flex items-center space-x-1.5 rtl:space-x-reverse p-2 rounded-full transition-colors focus:outline-none cursor-pointer ${showLanguageMenu ? "bg-green-50 text-forest opacity-100" : "text-charcoal opacity-70 hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
+                title="Change Language"
+              >
+                <Globe className="h-5 w-5" />
+                <span className="text-sm font-medium">{i18n.language === 'ur' ? 'Urdu' : 'English'}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+
+              {showLanguageMenu && (
+                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-32 rounded-xl shadow-none py-1 bg-white border-2 border-earth overflow-hidden z-50">
+                  <button
+                    onClick={() => handleLanguageChange('en')}
+                    className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => handleLanguageChange('ur')}
+                    className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                  >
+                    Urdu
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="relative" ref={notificationRef}>
-              <button onClick={() => setShowNotifications(!showNotifications)} className="p-2 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors focus:outline-none relative cursor-pointer">
+              <button onClick={() => setShowNotifications(!showNotifications)} className={`p-2 rounded-full transition-colors focus:outline-none relative cursor-pointer ${showNotifications ? "bg-green-50 text-forest opacity-100" : "text-charcoal opacity-70 hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}>
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-1.5 end-1.5 block h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
+                <span className="absolute top-0 end-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
               </button>
 
               {showNotifications && (
-                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-80 rounded-xl shadow-xl bg-white border border-gray-100 overflow-hidden z-50">
+                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-80 rounded-xl shadow-none bg-white border-2 border-earth overflow-hidden z-50">
                   <div className="py-1">
-                    <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
-                      <p className="text-sm font-bold text-gray-900">{t('layout.header.notifications')}</p>
-                      <span className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer">{t('layout.header.markAllRead')}</span>
+                    <div className="px-4 py-2 border-b border-earth flex justify-between items-center bg-sand">
+                      <p className="text-sm font-bold text-charcoal">{t('layout.header.notifications')}</p>
+                      <span className="text-xs font-bold text-forest hover:text-terracotta cursor-pointer">{t('layout.header.markAllRead')}</span>
                     </div>
                     <div className="max-h-80 overflow-y-auto">
-                      <div className="px-4 py-3 border-b border-gray-50 bg-red-50 hover:bg-red-100 cursor-pointer transition-colors">
-                        <p className="text-sm font-bold text-red-800">{t('layout.notifications.heavyRainTitle', 'Heavy Rain Warning')}</p>
-                        <p className="text-xs text-red-600 mt-1">{t('layout.notifications.heavyRainDesc', 'Meteorological data suggests heavy rainfall in your region over the next 48 hours.')}</p>
-                        <p className="text-xs text-red-400 mt-2 font-medium">{t('layout.notifications.hoursAgo2', '2 hours ago')}</p>
+                      <div className="px-4 py-3 border-b border-earth bg-sand hover:bg-forest/10 cursor-pointer transition-colors">
+                        <p className="text-sm font-bold text-terracotta">{t('layout.notifications.heavyRainTitle', 'Heavy Rain Warning')}</p>
+                        <p className="text-xs text-charcoal opacity-70 mt-1">{t('layout.notifications.heavyRainDesc', 'Meteorological data suggests heavy rainfall in your region over the next 48 hours.')}</p>
+                        <p className="text-xs text-terracotta opacity-70 mt-2 font-bold">{t('layout.notifications.hoursAgo2', '2 hours ago')}</p>
                       </div>
-                      <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50">
-                        <p className="text-sm font-medium text-gray-900">{t('layout.notifications.seedAnalysisTitle', 'Seed Analysis Complete')}</p>
-                        <p className="text-xs text-gray-500 mt-1">{t('layout.notifications.seedAnalysisDesc', 'Your recent BARI-2016 seed scan shows 92% viability.')}</p>
-                        <p className="text-xs text-gray-400 mt-2 font-medium">{t('layout.notifications.yesterday', 'Yesterday')}</p>
+                      <div className="px-4 py-3 hover:bg-forest/10 cursor-pointer transition-colors border-b border-earth">
+                        <p className="text-sm font-bold text-charcoal">{t('layout.notifications.seedAnalysisTitle', 'Seed Analysis Complete')}</p>
+                        <p className="text-xs text-charcoal opacity-70 mt-1">{t('layout.notifications.seedAnalysisDesc', 'Your recent BARI-2016 seed scan shows 92% viability.')}</p>
+                        <p className="text-xs text-charcoal opacity-50 mt-2 font-bold">{t('layout.notifications.yesterday', 'Yesterday')}</p>
                       </div>
                     </div>
                   </div>
@@ -141,27 +220,28 @@ export default function UserLayout() {
             <div className="relative" ref={profileRef}>
               <button 
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors cursor-pointer"
+                className={`flex items-center space-x-1.5 rtl:space-x-reverse p-1 rounded-full text-sm focus:outline-none transition-colors cursor-pointer ${showProfileMenu ? "bg-green-50 opacity-100" : "opacity-90 hover:opacity-100 hover:bg-forest/10"}`}
               >
                 <img
-                  className="h-8 w-8 rounded-full object-cover border border-gray-200"
-                  src="https://ui-avatars.com/api/?name=Farmer+User&background=16a34a&color=fff"
+                  className="h-8 w-8 rounded-full object-cover"
+                  src={`https://ui-avatars.com/api/?name=${(user?.name || 'Farmer User').replace(/\(.*?\)/g, '').replace(/[^a-zA-Z ]/g, '').trim().replace(/ +/g, '+')}&background=2D5A27&color=fff`}
                   alt="User avatar"
                 />
+                <ChevronDown className="h-4 w-4 text-charcoal opacity-70" />
               </button>
 
               {showProfileMenu && (
-                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-48 rounded-xl shadow-xl py-1 bg-white border border-gray-100 overflow-hidden z-50">
+                <div className="origin-top-right rtl:origin-top-left absolute end-0 mt-2 w-48 rounded-xl shadow-none py-1 bg-white border-2 border-earth overflow-hidden z-50">
                   <NavLink
                     to="/user/profile"
                     onClick={() => setShowProfileMenu(false)}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center cursor-pointer"
+                    className="px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer transition-colors"
                   >
                     <User className="w-4 h-4 me-2" /> {t('layout.header.viewProfile')}
                   </NavLink>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center cursor-pointer"
+                    className="w-full text-left px-4 py-2 text-sm font-bold text-terracotta hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer transition-colors"
                   >
                     <LogOut className="w-4 h-4 me-2" /> {t('layout.header.logout')}
                   </button>
@@ -172,10 +252,11 @@ export default function UserLayout() {
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 p-8 pt-4">
+        <div ref={mainContentRef} className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-8 md:pt-4">
           <Outlet />
         </div>
       </main>
+      <FloatingAgent />
     </div>
   );
 }

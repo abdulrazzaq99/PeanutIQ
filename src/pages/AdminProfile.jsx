@@ -29,9 +29,11 @@ export default function AdminProfile() {
     if (language === 'ur') {
       i18n.changeLanguage('ur');
       document.documentElement.dir = 'rtl';
+      localStorage.setItem('preferredLanguage', 'ur');
     } else {
       i18n.changeLanguage('en');
       document.documentElement.dir = 'ltr';
+      localStorage.setItem('preferredLanguage', 'en');
     }
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
@@ -94,7 +96,7 @@ export default function AdminProfile() {
       </div>
 
       {/* Header Section */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+      <div className="flat-card overflow-hidden relative">
         <div 
           className={`h-48 relative group ${isAdjusting ? 'cursor-move' : ''}`}
           style={coverUrl ? { backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover', backgroundPosition: `center ${coverPos}%` } : {}}
@@ -109,16 +111,16 @@ export default function AdminProfile() {
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-3">
               {isAdjusting ? (
                 <>
-                  <button onClick={() => setIsAdjusting(false)} className="px-3 py-1.5 bg-white/90 backdrop-blur text-sm font-medium text-gray-700 rounded-lg hover:bg-white cursor-pointer">{t('admin.profile.cancel')}</button>
-                  <button onClick={() => { setIsAdjusting(false); setHasUnsavedPhotoChanges(true); }} className="px-3 py-1.5 bg-green-600 text-sm font-medium text-white rounded-lg hover:bg-green-700 cursor-pointer">{t('admin.profile.savePosition')}</button>
+                  <button onClick={() => setIsAdjusting(false)} className="px-3 py-1.5 bg-white/90 backdrop-blur text-sm font-medium text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent cursor-pointer">{t('admin.profile.cancel')}</button>
+                  <button onClick={() => { setIsAdjusting(false); setHasUnsavedPhotoChanges(true); }} className="px-3 py-1.5 bg-forest text-sm font-medium text-white rounded-lg hover:bg-forest hover:opacity-90 cursor-pointer">{t('admin.profile.savePosition')}</button>
                 </>
               ) : (
                 <>
-                  <button onClick={() => coverInputRef.current?.click()} className="px-3 py-1.5 bg-white/90 backdrop-blur text-sm font-medium text-gray-700 rounded-lg hover:bg-white flex items-center cursor-pointer">
+                  <button onClick={() => coverInputRef.current?.click()} className="px-3 py-1.5 bg-white/90 backdrop-blur text-sm font-medium text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent flex items-center cursor-pointer">
                     <Camera className="w-4 h-4 rtl:ml-2 ltr:mr-2" /> {t('admin.profile.changeCover')}
                   </button>
                   {coverUrl && (
-                    <button onClick={() => setIsAdjusting(true)} className="px-3 py-1.5 bg-white/90 backdrop-blur text-sm font-medium text-gray-700 rounded-lg hover:bg-white flex items-center cursor-pointer">
+                    <button onClick={() => setIsAdjusting(true)} className="px-3 py-1.5 bg-white/90 backdrop-blur text-sm font-medium text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent flex items-center cursor-pointer">
                       <Move className="w-4 h-4 rtl:ml-2 ltr:mr-2" /> {t('admin.profile.reposition')}
                     </button>
                   )}
@@ -135,7 +137,7 @@ export default function AdminProfile() {
         <div className="px-8 pb-8">
           <div className="relative flex justify-between items-end -mt-16 mb-6">
             <div className="relative group">
-              <div className="w-24 h-24 rounded-full border-4 border-white bg-emerald-100 flex items-center justify-center text-3xl font-bold text-emerald-700 shadow-md overflow-hidden relative">
+              <div className="w-24 h-24 rounded-full border-4 border-white bg-emerald-100 flex items-center justify-center text-3xl font-bold text-forest shadow-md overflow-hidden relative">
                 {profileUrl ? (
                   <img src={profileUrl} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
@@ -174,14 +176,14 @@ export default function AdminProfile() {
                 </div>
               </div>
               <div className="mt-4 sm:mt-0 flex items-center space-x-3 rtl:space-x-reverse">
-                <div className="px-4 py-1.5 bg-emerald-50 text-emerald-700 text-sm font-semibold rounded-full border border-emerald-100 flex items-center shadow-sm">
+                <div className="px-4 py-1.5 bg-emerald-50 text-forest text-sm font-semibold rounded-full border border-emerald-100 flex items-center shadow-sm">
                   <Shield className="w-4 h-4 rtl:ml-1.5 ltr:mr-1.5" />
-                  <span className="capitalize">{user?.role === 'admin' ? t('admin.profile.role') : t('admin.profile.researcherRole')}</span>
+                  <span className="capitalize whitespace-nowrap">{user?.role === 'admin' ? t('admin.profile.role') : t('admin.profile.researcherRole')}</span>
                 </div>
                 {(hasUnsavedPhotoChanges || isAdjusting) && (
                   <button 
                     onClick={() => { setHasUnsavedPhotoChanges(false); setIsAdjusting(false); setIsDragging(false); setPhotoSaved(true); setTimeout(() => setPhotoSaved(false), 3000); }}
-                    className="px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg shadow-sm flex items-center hover:bg-emerald-700 transition-colors cursor-pointer"
+                    className="px-4 py-2 bg-forest text-white font-medium rounded-lg shadow-sm flex items-center hover:bg-forest hover:opacity-90 transition-colors cursor-pointer"
                   >
                     {photoSaved ? <><CheckCircle className="w-4 h-4 rtl:ml-2 ltr:mr-2" /> {t('admin.profile.photoSaved')}</> : t('admin.profile.savePhoto')}
                   </button>
@@ -194,9 +196,9 @@ export default function AdminProfile() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Settings Form */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div className="flat-card p-8">
           <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-            <User className="w-5 h-5 rtl:ml-2 ltr:mr-2 text-emerald-600" /> {t('admin.profile.personalInfo')}
+            <User className="w-5 h-5 rtl:ml-2 ltr:mr-2 text-forest" /> {t('admin.profile.personalInfo')}
           </h3>
           <form onSubmit={handleSaveProfile} className="space-y-5">
             <div>
@@ -209,7 +211,7 @@ export default function AdminProfile() {
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm"
                 />
               </div>
             </div>
@@ -223,7 +225,7 @@ export default function AdminProfile() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="block w-full px-10 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
+                  className="block w-full px-10 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm bg-white"
                 >
                   <option value="en">{t('admin.profile.english')}</option>
                   <option value="ur">{t('admin.profile.urdu')}</option>
@@ -235,7 +237,7 @@ export default function AdminProfile() {
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors cursor-pointer"
+                className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-forest hover:bg-forest hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forest transition-colors cursor-pointer"
               >
                 {isSaved ? <><CheckCircle className="w-4 h-4 rtl:ml-2 ltr:mr-2" /> {t('admin.profile.profileSaved')}</> : t('admin.profile.saveProfile')}
               </button>
@@ -244,9 +246,9 @@ export default function AdminProfile() {
         </div>
 
         {/* Security Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div className="flat-card p-8">
           <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-            <Key className="w-5 h-5 rtl:ml-2 ltr:mr-2 text-emerald-600" /> {t('admin.profile.securitySettings')}
+            <Key className="w-5 h-5 rtl:ml-2 ltr:mr-2 text-forest" /> {t('admin.profile.securitySettings')}
           </h3>
           <form onSubmit={handleUpdatePassword} className="space-y-5">
             <div>
@@ -254,7 +256,7 @@ export default function AdminProfile() {
               <input
                 type="password"
                 required
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm"
               />
             </div>
 
@@ -264,7 +266,7 @@ export default function AdminProfile() {
                 type="password"
                 required
                 minLength="8"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm"
               />
             </div>
 
@@ -274,16 +276,16 @@ export default function AdminProfile() {
                 type="password"
                 required
                 minLength="8"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm"
               />
             </div>
 
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors cursor-pointer"
+                className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-forest/10 hover:text-forest hover:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forest transition-colors cursor-pointer"
               >
-                 {passwordSaved ? <><CheckCircle className="w-4 h-4 rtl:ml-2 ltr:mr-2 text-green-600" /> {t('admin.profile.passwordUpdated')}</> : t('admin.profile.updatePassword')}
+                 {passwordSaved ? <><CheckCircle className="w-4 h-4 rtl:ml-2 ltr:mr-2 text-forest" /> {t('admin.profile.passwordUpdated')}</> : t('admin.profile.updatePassword')}
               </button>
             </div>
           </form>

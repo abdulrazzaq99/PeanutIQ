@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { 
-  Upload, Camera, AlertTriangle, CheckCircle, 
-  Download, RefreshCcw, Activity, FileText, Sprout,
+  UploadCloud, Camera, AlertTriangle, CheckCircle, 
+  Download, RefreshCcw, Activity, FileText, Bean,
   XCircle, ChevronRight
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -62,21 +62,21 @@ export default function SeedIntelligence() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('seed.title')}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t('seed.subtitle')}</p>
+          <h1 className="text-2xl font-bold text-charcoal">{t('seed.title')}</h1>
+          <p className="mt-1 text-sm text-charcoal opacity-70">{t('seed.subtitle')}</p>
         </div>
         {status === 'complete' && (
           <div className="mt-4 sm:mt-0 flex gap-3 print:hidden">
             <button 
               onClick={handleReset}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center transition-colors"
+              className="px-4 py-2 bg-sand border-2 border-earth rounded-lg text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest hover:border-transparent flex items-center transition-colors"
             >
               <RefreshCcw className="w-4 h-4 mr-2" />
               {t('seed.newAnalysis')}
             </button>
             <button 
               onClick={handleDownloadReport}
-              className="px-4 py-2 bg-green-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-green-700 flex items-center transition-colors shadow-sm"
+              className="btn-primary px-4 py-2 text-sm flex items-center"
             >
               <Download className="w-4 h-4 mr-2" />
               {t('seed.downloadReport')}
@@ -87,7 +87,7 @@ export default function SeedIntelligence() {
 
       {status === 'idle' && (
         <div 
-          className="mt-8 border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center hover:border-green-500 hover:bg-green-50 transition-all cursor-pointer bg-white"
+          className="mt-8 border-2 border-dashed border-earth rounded-2xl p-12 text-center hover:border-forest hover:bg-forest/10 hover:text-forest hover:border-transparent transition-all cursor-pointer bg-white"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
@@ -100,43 +100,50 @@ export default function SeedIntelligence() {
             ref={fileInputRef}
             onChange={handleImageUpload}
           />
-          <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-            <Upload className="w-10 h-10 text-green-600" />
+          <div className="mx-auto w-20 h-20 bg-sand border border-forest rounded-full flex items-center justify-center mb-6">
+            <i className="fa-solid fa-cloud-arrow-up text-4xl text-forest"></i>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{t('seed.uploadTitle')}</h3>
-          <p className="text-gray-500 max-w-md mx-auto mb-6">
+          <h3 className="text-xl font-bold text-charcoal mb-2">{t('seed.uploadTitle')}</h3>
+          <p className="text-charcoal opacity-70 max-w-md mx-auto mb-6">
             {t('seed.uploadDesc')}
           </p>
-          <button className="px-6 py-2.5 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors inline-flex items-center">
-            <Camera className="w-5 h-5 mr-2" />
+          <button className="btn-primary px-6 py-2.5 inline-flex items-center">
+            <i className="fa-solid fa-camera mr-2 text-lg"></i>
             {t('seed.captureBtn')}
           </button>
         </div>
       )}
 
       {status === 'analyzing' && (
-        <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm mt-8">
-          <div className="relative w-32 h-32 mx-auto mb-8">
-            <div className="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-green-500 rounded-full border-t-transparent animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Activity className="w-10 h-10 text-green-500 animate-pulse" />
+        <div className="flat-panel py-4 px-6 text-center mt-4 relative overflow-hidden flex flex-col items-center justify-center">
+          <div className="relative w-full max-w-2xl mx-auto rounded-3xl overflow-hidden bg-forest/90 shadow-2xl h-48 sm:h-56 lg:h-64">
+            {/* The uploaded image with a slight dark tint */}
+            {image && <img src={image} alt="Analyzing" className="w-full h-full object-cover opacity-50 mix-blend-overlay" />}
+            {!image && <div className="w-full h-full bg-[#1e3a29]"></div>}
+            
+
+
+            {/* Corner Brackets */}
+            <div className="absolute top-6 left-6 w-12 h-12 border-t-4 border-l-4 border-white/80 rounded-tl-2xl z-10"></div>
+            <div className="absolute top-6 right-6 w-12 h-12 border-t-4 border-r-4 border-white/80 rounded-tr-2xl z-10"></div>
+            <div className="absolute bottom-6 left-6 w-12 h-12 border-b-4 border-l-4 border-white/80 rounded-bl-2xl z-10"></div>
+            <div className="absolute bottom-6 right-6 w-12 h-12 border-b-4 border-r-4 border-white/80 rounded-br-2xl z-10"></div>
+
+            {/* Floating particles/dots */}
+            <div className="absolute top-[30%] left-[30%] w-3 h-5 rounded-full bg-white/80 animate-pulse z-10"></div>
+            <div className="absolute top-[40%] left-[60%] w-3 h-5 rounded-full bg-white/60 animate-pulse z-10" style={{ animationDelay: '0.1s' }}></div>
+            <div className="absolute top-[60%] left-[45%] w-3 h-5 rounded-full bg-white/90 animate-pulse z-10" style={{ animationDelay: '0.3s' }}></div>
+            <div className="absolute top-[50%] left-[75%] w-3 h-5 rounded-full bg-white/70 animate-pulse z-10" style={{ animationDelay: '0.2s' }}></div>
+
+            {/* The scanning line */}
+            <div className="absolute left-0 right-0 h-0.5 bg-[#f0c169] shadow-[0_0_20px_#f0c169] z-20 animate-scan">
+              <div className="absolute -top-16 left-0 right-0 h-16 bg-gradient-to-t from-[#f0c169]/30 to-transparent"></div>
+              <div className="absolute top-0.5 left-0 right-0 h-16 bg-gradient-to-b from-[#f0c169]/30 to-transparent"></div>
             </div>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{t('seed.analyzing')}</h3>
-          <p className="text-gray-500">{t('seed.analyzingDesc')}</p>
           
-          <div className="max-w-md mx-auto mt-8 space-y-3 text-left">
-            <div className="flex items-center text-sm text-gray-600">
-              <CheckCircle className="w-4 h-4 text-green-500 mr-3" /> {t('seed.step1')}
-            </div>
-            <div className="flex items-center text-sm text-gray-900 font-medium">
-              <RefreshCcw className="w-4 h-4 text-blue-500 mr-3 animate-spin" /> {t('seed.step2')}
-            </div>
-            <div className="flex items-center text-sm text-gray-400">
-              <div className="w-4 h-4 rounded-full border-2 border-gray-200 mr-3"></div> {t('seed.step3')}
-            </div>
-          </div>
+          <h3 className="text-xl font-bold text-charcoal mt-4 mb-1">{t('seed.analyzing')}</h3>
+          <p className="text-charcoal opacity-70 mb-2">{t('seed.analyzingDesc')}</p>
         </div>
       )}
 
@@ -144,62 +151,62 @@ export default function SeedIntelligence() {
         <div className="space-y-6">
           {/* Top Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
-              <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                <span className="text-4xl font-black text-green-600">A</span>
+            <div className="flat-card p-6 flex flex-col items-center justify-start text-center">
+              <div className="w-20 h-20 rounded-full bg-sand border border-forest flex items-center justify-center mb-4">
+                <span className="text-4xl font-black text-forest">A</span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900">{t('seed.overallGrade')}</h3>
-              <p className="text-sm text-gray-500 mt-1">{t('seed.overallDesc')}</p>
+              <h3 className="text-lg font-bold text-charcoal">{t('seed.overallGrade')}</h3>
+              <p className="text-sm text-charcoal opacity-70 mt-1">{t('seed.overallDesc')}</p>
             </div>
             
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+            <div className="flat-card p-6 flex flex-col items-center justify-start text-center">
               <div className="w-20 h-20 flex items-center justify-center mb-4">
-                <span className="text-5xl font-black text-gray-900">89<span className="text-2xl text-gray-400">%</span></span>
+                <span className="text-5xl font-black text-charcoal" dir="ltr">89<span className="text-2xl text-charcoal opacity-40">%</span></span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900">{t('seed.germination')}</h3>
-              <p className="text-sm text-gray-500 mt-1">{t('seed.germinationDesc')}</p>
+              <h3 className="text-lg font-bold text-charcoal">{t('seed.germination')}</h3>
+              <p className="text-sm text-charcoal opacity-70 mt-1">{t('seed.germinationDesc')}</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+            <div className="flat-card p-6 flex flex-col items-center justify-start text-center">
               <div className="w-20 h-20 flex items-center justify-center mb-4">
-                <span className="text-5xl font-black text-gray-900">342</span>
+                <span className="text-5xl font-black text-charcoal">342</span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900">{t('seed.totalAnalyzed')}</h3>
-              <p className="text-sm text-gray-500 mt-1">{t('seed.totalDesc')}</p>
+              <h3 className="text-lg font-bold text-charcoal">{t('seed.totalAnalyzed')}</h3>
+              <p className="text-sm text-charcoal opacity-70 mt-1">{t('seed.totalDesc')}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 print:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-6">
             {/* Image Preview & Uniformity */}
             <div className="lg:col-span-1 print:col-span-1 space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">{t('seed.batchImage')}</h3>
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 relative">
+              <div className="flat-card p-6">
+                <h3 className="text-sm font-bold text-forest uppercase tracking-wider mb-6">{t('seed.batchImage')}</h3>
+                <div className="h-64 rounded-xl overflow-hidden bg-sand relative border-2 border-earth">
                   <img src={image} alt="Seed Batch" className="w-full h-full object-cover" />
                   {/* Fake overlay to look like AI bounding boxes */}
-                  <div className="absolute inset-0 bg-green-500/10 border-2 border-green-500/30 rounded-xl"></div>
+                  <div className="absolute inset-0 bg-forest/10 border-2 border-forest/30 rounded-xl"></div>
                 </div>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">{t('seed.uniformity')}</h3>
+              <div className="flat-card p-5">
+                <h3 className="text-sm font-bold text-forest uppercase tracking-wider mb-4">{t('seed.uniformity')}</h3>
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">{t('seed.sizeVar')}</span>
-                      <span className="font-medium text-gray-900">{t('seed.sizeVarVal')}</span>
+                      <span className="text-charcoal opacity-70">{t('seed.sizeVar')}</span>
+                      <span className="font-bold text-charcoal">{t('seed.sizeVarVal')}</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+                    <div className="w-full bg-sand border border-earth rounded-full h-2">
+                      <div className="bg-forest h-2 rounded-full" style={{ width: '85%' }}></div>
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">{t('seed.colorCon')}</span>
-                      <span className="font-medium text-gray-900">{t('seed.colorConVal')}</span>
+                      <span className="text-charcoal opacity-70">{t('seed.colorCon')}</span>
+                      <span className="font-bold text-charcoal">{t('seed.colorConVal')}</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '92%' }}></div>
+                    <div className="w-full bg-sand border border-earth rounded-full h-2">
+                      <div className="bg-forest h-2 rounded-full" style={{ width: '92%' }}></div>
                     </div>
                   </div>
                 </div>
@@ -207,12 +214,16 @@ export default function SeedIntelligence() {
             </div>
 
             {/* Classification & Actions */}
-            <div className="lg:col-span-2 print:col-span-2 space-y-6">
-              <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">{t('seed.breakdown')}</h3>
+            <div className="lg:col-span-1 print:col-span-1 space-y-6">
+              <div className="flat-card p-6">
+                <h3 className="text-sm font-bold text-forest uppercase tracking-wider mb-6">{t('seed.breakdown')}</h3>
                 <div className="flex flex-col sm:flex-row print:flex-row items-center">
-                  <div className="w-full sm:w-1/2 print:w-1/2 h-64">
-                    <ResponsiveContainer width="100%" height="100%">
+                  <div className="w-full sm:w-1/2 print:w-1/2 h-64 relative flex items-center justify-center">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
+                       <span className="text-[28px] font-black text-charcoal leading-none" dir="ltr">75%</span>
+                       <span className="text-[12px] font-bold text-[#07571C] mt-1 uppercase tracking-wider">{t('seed.data.healthy')}</span>
+                    </div>
+                    <ResponsiveContainer width="100%" height="100%" className="z-10 relative">
                       <PieChart>
                         <Pie
                           data={mockData}
@@ -227,7 +238,10 @@ export default function SeedIntelligence() {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip 
+                          contentStyle={{ borderRadius: '12px', border: '2px solid #E5E7EB', background: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                          itemStyle={{ color: '#3D4035', fontWeight: 'bold' }}
+                        />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -236,32 +250,32 @@ export default function SeedIntelligence() {
                       <div key={index} className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: item.color }}></div>
-                          <span className="text-sm font-medium text-gray-700">{item.name}</span>
+                          <span className="text-sm font-bold text-charcoal opacity-70">{item.name}</span>
                         </div>
-                        <span className="text-sm font-bold text-gray-900">{item.value}%</span>
+                        <span className="text-sm font-bold text-charcoal" dir="ltr">{item.value}%</span>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
-                  <Sprout className="w-5 h-5 text-green-600 mr-2" />
+              <div className="flat-card p-6">
+                <h3 className="text-sm font-bold text-forest uppercase tracking-wider mb-4 flex items-center">
+                  <Bean className="w-5 h-5 mr-2" />
                   {t('seed.actions')}
                 </h3>
                 <ul className="space-y-3">
-                  <li className="flex items-start bg-green-50 p-3 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-green-900"><strong>{t('seed.proceedTitle')}</strong> {t('seed.proceedDesc')}</p>
+                  <li className="flex items-start bg-green-50 border border-green-200 p-3 rounded-lg">
+                    <CheckCircle className="w-5 h-5 text-forest mr-3 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-charcoal"><strong>{t('seed.proceedTitle')}</strong> {t('seed.proceedDesc')}</p>
                   </li>
-                  <li className="flex items-start bg-orange-50 p-3 rounded-lg">
-                    <AlertTriangle className="w-5 h-5 text-orange-500 mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-orange-900"><strong>{t('seed.manualTitle')}</strong> {t('seed.manualDesc')}</p>
+                  <li className="flex items-start bg-red-50 border border-red-500 p-3 rounded-lg">
+                    <AlertTriangle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-charcoal"><strong>{t('seed.manualTitle')}</strong> {t('seed.manualDesc')}</p>
                   </li>
-                  <li className="flex items-start bg-blue-50 p-3 rounded-lg">
-                    <FileText className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-blue-900"><strong>{t('seed.saveTitle')}</strong> {t('seed.saveDesc')}</p>
+                  <li className="flex items-start bg-sand border border-gray-200 p-3 rounded-lg">
+                    <FileText className="w-5 h-5 text-charcoal mr-3 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-charcoal"><strong>{t('seed.saveTitle')}</strong> {t('seed.saveDesc')}</p>
                   </li>
                 </ul>
               </div>

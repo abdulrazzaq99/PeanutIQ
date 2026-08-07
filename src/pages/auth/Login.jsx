@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Phone, ArrowRight } from 'lucide-react';
+import { User, Lock, Eye } from 'lucide-react';
+import Logo from '../../components/Logo';
 import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [method, setMethod] = useState('phone'); // 'phone' or 'email'
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,103 +26,65 @@ export default function Login() {
   };
 
   return (
-    <div>
-      <div className="mb-8">
-        <h3 className="text-2xl font-bold text-slate-900 text-center tracking-tight">{t('auth.login.title')}</h3>
-        <p className="text-sm text-slate-500 text-center mt-2">{t('auth.login.subtitle')}</p>
+    <div className="w-full max-w-[360px] mx-auto">
+      <div className="text-center mb-8">
+        <h3 className="text-2xl font-extrabold text-[#324329] tracking-tight">{t('auth.mockup.welcome', 'Welcome Back!')}</h3>
+        <p className="text-sm text-gray-500 mt-2 font-medium">{t('auth.mockup.loginDesc', 'Login to continue your journey')}</p>
       </div>
 
-      <div className="flex bg-slate-100 p-1 rounded-xl mb-8">
-        <button
-          onClick={() => { setMethod('phone'); setIdentifier(''); }}
-          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${
-            method === 'phone' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          {t('auth.login.phoneTab')}
-        </button>
-        <button
-          onClick={() => { setMethod('email'); setIdentifier(''); }}
-          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${
-            method === 'email' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          {t('auth.login.emailTab')}
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Email or Phone Number Input */}
         <div>
-          <label htmlFor="identifier" className="block text-sm font-semibold text-slate-700">
-            {method === 'phone' ? t('auth.login.phoneLabel') : t('auth.login.emailLabel')}
-          </label>
-          <div className="mt-2 relative rounded-xl shadow-sm" dir="ltr">
+          <div className="relative rounded-xl shadow-sm" dir="ltr">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              {method === 'phone' ? (
-                <Phone className="h-5 w-5 text-slate-400" />
-              ) : (
-                <Mail className="h-5 w-5 text-slate-400" />
-              )}
+              <User className="h-5 w-5 text-gray-400" />
             </div>
             <input
               id="identifier"
-              type={method === 'phone' ? 'tel' : 'email'}
+              type="text"
               required
-              className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-11 sm:text-sm border-slate-200 rounded-xl py-3 transition-colors bg-white/50 text-left"
-              placeholder={method === 'phone' ? t('auth.login.phonePlaceholder') : t('auth.login.emailPlaceholder')}
+              className="focus:ring-1 focus:ring-[#07571C] focus:border-[#07571C] block w-full pl-11 sm:text-sm border border-gray-200 rounded-xl py-3.5 transition-colors bg-white text-left text-charcoal outline-none"
+              placeholder={t('auth.mockup.identifierPlaceholder', 'Email or Phone Number')}
               value={identifier}
-              onChange={(e) => {
-                if (method === 'phone') {
-                  // Allow only numbers, plus sign, space, and dash
-                  setIdentifier(e.target.value.replace(/[^\d\+\s\-]/g, ''));
-                } else {
-                  // For email, allow only valid email characters
-                  setIdentifier(e.target.value.replace(/[^a-zA-Z0-9@._\-+]/g, ''));
-                }
-              }}
+              onChange={(e) => setIdentifier(e.target.value)}
             />
           </div>
         </div>
 
+
+
+        {/* Submit Button */}
         <div className="pt-2">
           <button
             type="submit"
             disabled={isLoading || !identifier.trim()}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 hover:shadow-lg"
+            className="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#324329] hover:bg-[#1a2315] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#324329] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             ) : (
-              <span className="flex items-center">
-                {t('auth.login.submitBtn')} <ArrowRight className="ms-2 w-4 h-4 rtl:rotate-180" />
-              </span>
+              <>
+                {t('auth.login.sendOtp', 'Send OTP')}
+                <Logo className="ml-2 w-4 h-4 opacity-80" sparkleColor="currentColor" />
+              </>
             )}
           </button>
         </div>
       </form>
-      
-      <div className="mt-8 text-center space-y-4">
-        <p className="text-sm text-slate-600">
-          {t('auth.login.noAccount')}{' '}
-          <Link to="/signup" className="text-emerald-600 font-bold hover:text-emerald-500 transition-colors">
-            {t('auth.login.signupLink')}
+
+      <div className="mt-6 text-center">
+        <p className="text-[13px] text-gray-500 font-medium">
+          {t('auth.login.noAccount', "Don't have an account?")}{' '}
+          <Link to="/signup" className="font-bold text-[#07571C] hover:text-[#324329] transition-colors">
+            {t('auth.login.signupLink', 'Sign up')}
           </Link>
         </p>
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-2 flex-wrap">
-          <p className="text-xs text-slate-400 bg-slate-50 inline-block px-3 py-1.5 rounded-lg border border-slate-100">
-            {t('auth.login.adminHint')} <span className="font-bold text-slate-600">admin@peanutiq.pk</span> {t('auth.login.adminOtp')}
-          </p>
-          <p className="text-xs text-slate-400 bg-slate-50 inline-block px-3 py-1.5 rounded-lg border border-slate-100">
-            Researcher: <span className="font-bold text-slate-600">researcher@peanutiq.pk</span>
-          </p>
-          <p className="text-xs text-slate-400 bg-slate-50 inline-block px-3 py-1.5 rounded-lg border border-slate-100">
-            Farmer: <span className="font-bold text-slate-600">farmer@peanutiq.pk</span>
-          </p>
-        </div>
       </div>
+      
+
     </div>
   );
 }

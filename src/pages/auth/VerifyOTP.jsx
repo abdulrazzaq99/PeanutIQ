@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock } from 'lucide-react';
+import Logo from '../../components/Logo';
 import { useTranslation } from 'react-i18next';
 
 export default function VerifyOTP() {
@@ -59,10 +60,8 @@ export default function VerifyOTP() {
     if (res.success) {
       setIsLoading(false);
       if (!isLoginIntent || res.isNewUser) {
-        // They came from the Signup page OR they are logging in but don't exist
         navigate('/profile-setup', { state: { identifier } });
       } else {
-        // Based on role, redirect
         if (res.user.role === 'admin' || res.user.role === 'researcher') {
           navigate('/admin');
         } else {
@@ -76,22 +75,17 @@ export default function VerifyOTP() {
   };
 
   return (
-    <div>
-      <div className="mb-8 text-center">
-        <div className="flex justify-center mb-4">
-          <div className="p-3 bg-green-50 rounded-full text-green-600">
-            <ShieldCheck className="w-8 h-8" />
-          </div>
-        </div>
-        <h3 className="text-xl font-bold text-gray-900">{t('auth.otp.title')}</h3>
-        <p className="text-sm text-gray-500 mt-2">
-          {t('auth.otp.subtitle')} <span className="font-semibold text-gray-800 dir-ltr inline-block">{identifier}</span>
+    <div className="w-full max-w-[360px] mx-auto">
+      <div className="text-center mb-8">
+        <h3 className="text-2xl font-extrabold text-[#324329] tracking-tight">{t('auth.otp.title', 'Verification Code')}</h3>
+        <p className="text-sm text-gray-500 mt-2 font-medium">
+          {t('auth.otp.subtitle', 'We sent a code to')} <span className="font-bold text-charcoal dir-ltr inline-block">{identifier}</span>
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <div className="flex justify-center gap-2 sm:gap-4" dir="ltr">
+          <div className="flex justify-between gap-2 sm:gap-3" dir="ltr">
             {otp.map((digit, idx) => (
               <input
                 key={idx}
@@ -102,41 +96,42 @@ export default function VerifyOTP() {
                 value={digit}
                 onChange={(e) => handleChange(e, idx)}
                 onKeyDown={(e) => handleKeyDown(e, idx)}
-                className="w-10 h-12 sm:w-12 sm:h-14 border border-gray-300 rounded-lg text-center text-xl font-semibold text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                className="w-[45px] h-[52px] sm:w-[50px] sm:h-[56px] border border-gray-200 rounded-xl text-center text-xl font-bold text-charcoal bg-white focus:ring-1 focus:ring-[#07571C] focus:border-[#07571C] transition-colors outline-none"
               />
             ))}
           </div>
-          {error && <p className="mt-3 text-sm text-red-600 text-center font-medium">{error}</p>}
+          {error && <p className="mt-3 text-[13px] text-red-500 text-center font-bold">{error}</p>}
         </div>
 
-        <div>
+        <div className="pt-2">
           <button
             type="submit"
             disabled={isLoading || otp.join('').length !== 6}
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#324329] hover:bg-[#1a2315] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#324329] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             ) : (
-              <span className="flex items-center">
-                {t('auth.otp.submitBtn')} <ArrowRight className="ms-2 w-4 h-4 rtl:rotate-180" />
-              </span>
+              <>
+                {t('auth.otp.submitBtn', 'Verify Code')}
+                <Logo className="ml-2 w-4 h-4 opacity-80" sparkleColor="currentColor" />
+              </>
             )}
           </button>
         </div>
       </form>
       
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-500">
-          {t('auth.otp.notReceived')}{' '}
-          <button className="text-green-600 font-medium hover:text-green-500">{t('auth.otp.resendBtn')}</button>
+      <div className="mt-6 text-center space-y-4">
+        <p className="text-[13px] text-gray-500 font-medium">
+          {t('auth.otp.notReceived', "Didn't receive it?")}{' '}
+          <button className="text-[#07571C] font-bold hover:text-[#324329] transition-colors">{t('auth.otp.resendBtn', 'Resend OTP')}</button>
         </p>
-        <div className="mt-4">
-          <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-            {t('auth.otp.changeContact')}
+        <div>
+          <Link to="/login" className="text-[13px] font-bold text-gray-400 hover:text-[#324329] transition-colors">
+            {t('auth.otp.changeContact', 'Change phone number or email')}
           </Link>
         </div>
       </div>
