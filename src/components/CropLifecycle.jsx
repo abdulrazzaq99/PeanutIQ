@@ -21,9 +21,10 @@ export default function CropLifecycle() {
         {isUrdu ? 'فصل کی نشوونما کا مرحلہ' : 'Crop Lifecycle Stage'}
       </h3>
       
-      <div className="relative flex justify-between items-center w-full max-w-4xl mx-auto px-4">
-        {/* Background Line */}
-        <div className="absolute left-[10%] right-[10%] rtl:right-[10%] rtl:left-[10%] top-6 -translate-y-1/2 h-1.5 bg-earth rounded-full z-0"></div>
+      <div className="overflow-x-auto no-scrollbar pb-2 -mx-2 px-2">
+        <div className="relative flex justify-between items-center w-full min-w-[480px] max-w-4xl mx-auto">
+          {/* Background Line */}
+          <div className="absolute left-[10%] right-[10%] rtl:right-[10%] rtl:left-[10%] top-6 -translate-y-1/2 h-1.5 bg-earth rounded-full z-0"></div>
         
         {/* Active Progress Line */}
         <div className="absolute left-[10%] rtl:right-[10%] rtl:left-auto top-6 -translate-y-1/2 h-1.5 bg-[#07571C] rounded-full z-0 transition-all duration-1000 w-[50%]"></div>
@@ -58,6 +59,7 @@ export default function CropLifecycle() {
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );

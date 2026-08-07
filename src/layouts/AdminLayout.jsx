@@ -181,12 +181,12 @@ export default function AdminLayout() {
             <div className="relative" ref={languageRef}>
               <button
                 onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                className={`flex items-center gap- bg-white p-2 rounded-full transition-colors focus:outline-none cursor-pointer border-2 shadow-none ${showLanguageMenu ? "bg-green-50 text-forest opacity-100 border-green-50" : "text-charcoal opacity-70 border-earth hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
+                className={`flex items-center gap-1.5 bg-white p-2 rounded-full transition-colors focus:outline-none cursor-pointer border-2 shadow-none ${showLanguageMenu ? "bg-green-50 text-forest opacity-100 border-green-50" : "text-charcoal opacity-70 border-earth hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
                 title="Change Language"
               >
                 <Globe className="h-5 w-5" />
-                <span className="text-sm font-medium">{i18n.language === 'ur' ? 'Urdu' : 'English'}</span>
-                <ChevronDown className="h-4 w-4" />
+                <span className="text-sm font-medium hidden sm:block">{i18n.language === 'ur' ? 'Urdu' : 'English'}</span>
+                <ChevronDown className="h-4 w-4 hidden sm:block" />
               </button>
 
               {showLanguageMenu && (
@@ -216,7 +216,7 @@ export default function AdminLayout() {
               </button>
 
               {showNotifications && (
-                <div className="origin-top-right absolute right-0 rtl:left-0 rtl:right-auto mt-2 w-72 rounded-xl shadow-xl py-1 bg-white border border-gray-100 overflow-hidden z-50">
+                <div className="origin-top-right absolute right-0 rtl:left-0 rtl:right-auto mt-2 w-[90vw] sm:w-72 rounded-xl shadow-xl py-1 bg-white border border-gray-100 overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-gray-100 bg-sand flex justify-between items-center">
                     <h3 className="text-sm font-bold text-gray-900">{t('admin.layout.notifications')}</h3>
                   </div>
