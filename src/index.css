@@ -78,6 +78,15 @@
     cursor: not-allowed !important;
   }
 
+  /* Force all inputs to have a green border and ring on focus */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):focus,
+  textarea:focus,
+  select:focus {
+    outline: none !important;
+    border-color: var(--color-forest) !important;
+    box-shadow: 0 0 0 1.5px var(--color-forest) !important;
+  }
+
   /* Custom Select Arrow Styling */
   select {
     appearance: none;

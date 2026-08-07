@@ -107,6 +107,13 @@ export default function AdminProfile() {
         >
           {!coverUrl && <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-500"></div>}
           
+          {/* Persistent Camera Button for Mobile */}
+          <div className="absolute top-4 right-4 md:hidden z-10">
+            <button onClick={(e) => { e.stopPropagation(); coverInputRef.current?.click(); }} className="p-2.5 bg-white/90 backdrop-blur rounded-full shadow-lg text-forest cursor-pointer border border-white/50">
+              <Camera className="w-5 h-5" />
+            </button>
+          </div>
+          
           {/* Overlay actions */}
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-3">
               {isAdjusting ? (
@@ -143,7 +150,7 @@ export default function AdminProfile() {
                 ) : (
                   initials || 'AU'
                 )}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+                <div className="absolute inset-0 bg-black/40 opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2 hidden md:flex">
                   <div className="cursor-pointer p-1.5 hover:bg-white/20 rounded-full" onClick={() => profileInputRef.current?.click()}>
                     <Camera className="w-5 h-5 text-white" />
                   </div>
@@ -154,6 +161,15 @@ export default function AdminProfile() {
                   )}
                 </div>
               </div>
+              
+              {/* Persistent Camera Badge (Mobile & Desktop) */}
+              <div 
+                className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md border border-gray-100 cursor-pointer hover:bg-gray-50 z-10 md:hidden"
+                onClick={() => profileInputRef.current?.click()}
+              >
+                <Camera className="w-4 h-4 text-forest" />
+              </div>
+
               <input type="file" accept="image/*" className="hidden" ref={profileInputRef} onChange={handleProfileUpload} />
             </div>
           </div>
@@ -175,15 +191,15 @@ export default function AdminProfile() {
                   )}
                 </div>
               </div>
-              <div className="mt-4 sm:mt-0 flex items-center gap-">
-                <div className="px-4 py-1.5 bg-emerald-50 text-forest text-sm font-semibold rounded-full border border-emerald-100 flex items-center shadow-sm">
+              <div className="mt-4 sm:mt-0 flex flex-wrap items-center gap-3">
+                <div className="px-4 py-2 bg-emerald-50 text-forest text-sm font-bold rounded-full border border-emerald-100 flex items-center shadow-sm">
                   <Shield className="w-4 h-4 rtl:ml-1.5 ltr:mr-1.5" />
                   <span className="capitalize whitespace-nowrap">{user?.role === 'admin' ? t('admin.profile.role') : t('admin.profile.researcherRole')}</span>
                 </div>
                 {(hasUnsavedPhotoChanges || isAdjusting) && (
                   <button 
                     onClick={() => { setHasUnsavedPhotoChanges(false); setIsAdjusting(false); setIsDragging(false); setPhotoSaved(true); setTimeout(() => setPhotoSaved(false), 3000); }}
-                    className="px-4 py-2 bg-forest text-white font-medium rounded-lg shadow-sm flex items-center hover:bg-forest hover:opacity-90 transition-colors cursor-pointer"
+                    className="px-4 py-2 bg-forest text-white text-sm font-bold rounded-lg shadow-sm flex items-center hover:bg-forest hover:opacity-90 transition-colors cursor-pointer h-full"
                   >
                     {photoSaved ? <><CheckCircle className="w-4 h-4 rtl:ml-2 ltr:mr-2" /> {t('admin.profile.photoSaved')}</> : t('admin.profile.savePhoto')}
                   </button>
@@ -196,11 +212,11 @@ export default function AdminProfile() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Settings Form */}
-        <div className="flat-card p-8">
+        <div className="flat-card p-8 flex flex-col">
           <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
             <User className="w-5 h-5 rtl:ml-2 ltr:mr-2 text-forest" /> {t('admin.profile.personalInfo')}
           </h3>
-          <form onSubmit={handleSaveProfile} className="space-y-5">
+          <form onSubmit={handleSaveProfile} className="space-y-5 flex flex-col flex-1">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.profile.phoneNumber')}</label>
               <div className="relative">
@@ -234,7 +250,7 @@ export default function AdminProfile() {
               <p className="mt-1 text-xs text-gray-500">{t('admin.profile.languageNote', 'Note: The admin panel defaults to English. Changing this updates your global preference.')}</p>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 mt-auto">
               <button
                 type="submit"
                 className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-forest hover:bg-forest hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forest transition-colors cursor-pointer"
@@ -246,11 +262,11 @@ export default function AdminProfile() {
         </div>
 
         {/* Security Section */}
-        <div className="flat-card p-8">
+        <div className="flat-card p-8 flex flex-col">
           <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
             <Key className="w-5 h-5 rtl:ml-2 ltr:mr-2 text-forest" /> {t('admin.profile.securitySettings')}
           </h3>
-          <form onSubmit={handleUpdatePassword} className="space-y-5">
+          <form onSubmit={handleUpdatePassword} className="space-y-5 flex flex-col flex-1">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.profile.currentPassword')}</label>
               <input
@@ -280,7 +296,7 @@ export default function AdminProfile() {
               />
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 mt-auto">
               <button
                 type="submit"
                 className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-forest/10 hover:text-forest hover:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forest transition-colors cursor-pointer"
