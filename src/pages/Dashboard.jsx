@@ -193,7 +193,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="relative z-10 flex gap-">
+        <div className="relative z-10 flex gap-3">
           <button 
             onClick={handleExport}
             disabled={isExporting}
