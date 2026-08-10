@@ -174,7 +174,7 @@ export default function UserDashboard() {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {quickActions.map((action, idx) => (
-            <Link key={idx} to={action.link} className="bg-white border border-earth/70 rounded-2xl p-5 transition-all block cursor-pointer flex flex-col text-center items-center justify-center hover:bg-forest/5 hover:border-forest/40">
+            <Link key={idx} to={action.link} className="bg-white border border-earth/70 rounded-2xl p-5 transition-all block cursor-pointer flex flex-col text-center items-center justify-center hover:bg-forest/10 hover:border-forest/40">
               <div className={`w-12 h-12 ${action.bg} ${action.text} rounded-2xl flex items-center justify-center mb-4 shadow-sm`}>
                 <action.icon className="w-6 h-6" strokeWidth={2} />
               </div>
@@ -210,7 +210,7 @@ export default function UserDashboard() {
               </thead>
               <tbody className="divide-y divide-earth/40 bg-white">
                 {recentActivities.slice(0, 5).map((activity, idx) => (
-                  <tr key={idx} className="hover:bg-forest/5 transition-colors">
+                  <tr key={idx} className="hover:bg-forest/10 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-[14px] font-bold text-charcoal">
                       {t(activity.titleKey)}
                     </td>

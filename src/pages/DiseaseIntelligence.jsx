@@ -85,7 +85,7 @@ export default function DiseaseIntelligence() {
 
       {status === 'idle' && (
         <div 
-          className="mt-8 border-2 border-dashed border-terracotta/50 rounded-2xl p-12 text-center hover:border-terracotta hover:bg-terracotta/5 hover:text-terracotta transition-all cursor-pointer bg-white"
+          className="mt-8 border-2 border-dashed border-terracotta/50 rounded-2xl p-12 text-center hover:border-forest/30 hover:bg-forest/10 hover:text-forest transition-all cursor-pointer bg-white"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}

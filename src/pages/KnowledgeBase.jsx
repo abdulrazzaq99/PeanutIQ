@@ -95,7 +95,7 @@ export default function KnowledgeBase() {
           <h2 className="text-2xl font-bold text-gray-900">{t('kb.editArticle')}</h2>
           <button 
             onClick={() => setEditingArticleId(null)}
-            className="p-2 text-gray-400 hover:text-gray-600 bg-sand rounded-lg cursor-pointer"
+            className="p-2 text-gray-400 hover:text-forest bg-sand rounded-lg cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -151,7 +151,7 @@ export default function KnowledgeBase() {
           <h2 className="text-2xl font-bold text-gray-900">{t('kb.createNewArticle')}</h2>
           <button 
             onClick={() => setIsCreatingArticle(false)}
-            className="p-2 text-gray-400 hover:text-gray-600 bg-sand rounded-lg cursor-pointer"
+            className="p-2 text-gray-400 hover:text-forest bg-sand rounded-lg cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -252,14 +252,14 @@ export default function KnowledgeBase() {
             <button
               type="button"
               onClick={() => setIsAiMode(false)}
-              className={`flex-1 sm:flex-none justify-center px-4 py-2 sm:py-1.5 text-sm font-bold rounded-md transition-all duration-300 flex items-center ${!isAiMode ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`flex-1 sm:flex-none justify-center px-4 py-2 sm:py-1.5 text-sm font-bold rounded-md transition-all duration-300 flex items-center ${!isAiMode ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-forest'}`}
             >
               {t('kb.searchBtn')}
             </button>
             <button
               type="button"
               onClick={() => setIsAiMode(true)}
-              className={`flex-1 sm:flex-none justify-center px-4 py-2 sm:py-1.5 text-sm font-bold rounded-md transition-all duration-300 flex items-center ${isAiMode ? 'bg-forest shadow-sm text-white' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`flex-1 sm:flex-none justify-center px-4 py-2 sm:py-1.5 text-sm font-bold rounded-md transition-all duration-300 flex items-center ${isAiMode ? 'bg-forest shadow-sm text-white' : 'text-slate-600 hover:text-forest'}`}
             >
               <Sparkles className="w-4 h-4 me-1" /> {t('kb.askAiBtn')}
             </button>

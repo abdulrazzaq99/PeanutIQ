@@ -82,10 +82,10 @@ const getTopArticles = (t) => [
 
 const getTheme = (color) => {
   switch (color) {
-    case 'blue': return { bg: 'bg-blue-50/40 hover:bg-blue-50/80', border: 'border-blue-100 hover:border-blue-200', iconBg: 'bg-blue-100/30 text-blue-500' };
-    case 'green': return { bg: 'bg-emerald-50/40 hover:bg-forest/10/80', border: 'border-emerald-100 hover:border-emerald-200', iconBg: 'bg-emerald-100/30 text-forest' };
-    case 'amber': return { bg: 'bg-amber-50/40 hover:bg-amber-50/80', border: 'border-amber-100 hover:border-amber-200', iconBg: 'bg-amber-100/30 text-amber-500' };
-    case 'red': return { bg: 'bg-rose-50/40 hover:bg-rose-50/80', border: 'border-rose-100 hover:border-rose-200', iconBg: 'bg-rose-100/30 text-rose-500' };
+    case 'blue': return { bg: 'bg-blue-50/40 hover:bg-forest/10', border: 'border-blue-100 hover:border-forest/30', iconBg: 'bg-blue-100/30 text-blue-500' };
+    case 'green': return { bg: 'bg-emerald-50/40 hover:bg-forest/10', border: 'border-emerald-100 hover:border-forest/30', iconBg: 'bg-emerald-100/30 text-forest' };
+    case 'amber': return { bg: 'bg-amber-50/40 hover:bg-forest/10', border: 'border-amber-100 hover:border-forest/30', iconBg: 'bg-amber-100/30 text-amber-500' };
+    case 'red': return { bg: 'bg-rose-50/40 hover:bg-forest/10', border: 'border-rose-100 hover:border-forest/30', iconBg: 'bg-rose-100/30 text-rose-500' };
     default: return { bg: 'bg-sand hover:bg-forest/10 hover:text-forest hover:border-transparent', border: 'border-gray-200 hover:border-gray-300', iconBg: 'bg-white text-gray-500' };
   }
 }
@@ -409,9 +409,9 @@ export default function Dashboard() {
             <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-4">{t('admin.dashboard.topTrendingQueries')}</p>
             <div className="flex flex-wrap gap-2">
               {getTrendingQueries(t).map((query, idx) => (
-                <div key={idx} className="bg-indigo-50 text-indigo-700 px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center shadow-sm">
-                  <MessageSquare className="w-4 h-4 rtl:ml-2 ltr:mr-2 opacity-70" />
-                  "{query}"
+                <div key={idx} className="bg-sand border border-earth text-charcoal px-4 py-2.5 rounded-xl text-sm font-bold flex items-center shadow-sm hover:bg-forest/10 hover:text-forest hover:border-forest/30 transition-colors cursor-default">
+                  <TrendingUp className="w-4 h-4 rtl:ml-2 ltr:mr-2 opacity-70 text-forest" />
+                  {query}
                 </div>
               ))}
             </div>
@@ -438,13 +438,13 @@ export default function Dashboard() {
               <div 
                 key={idx} 
                 onClick={() => setSelectedArticle(article)}
-                className="group p-4 rounded-2xl bg-sand/50 hover:bg-teal-50 hover:shadow-sm transition-all flex justify-between items-center cursor-pointer border border-transparent hover:border-teal-200"
+                className="group p-4 rounded-2xl bg-sand/50 hover:bg-forest/10 hover:shadow-sm transition-all flex justify-between items-center cursor-pointer border border-transparent hover:border-forest/30"
               >
                 <div className="flex items-center gap- overflow-hidden">
-                  <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center font-black text-slate-400 group-hover:text-teal-600 transition-colors flex-shrink-0 text-lg">
+                  <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center font-black text-slate-400 group-hover:text-forest transition-colors flex-shrink-0 text-lg">
                     {idx + 1}
                   </div>
-                  <span className="text-[15px] font-bold text-slate-800 group-hover:text-teal-900 truncate">{article.title}</span>
+                  <span className="text-[15px] font-bold text-slate-800 group-hover:text-forest truncate">{article.title}</span>
                 </div>
                 <div className="flex flex-col items-end flex-shrink-0 ltr:ml-4 rtl:mr-4">
                   <span className="text-sm font-black text-slate-800">{article.views}</span>
@@ -525,7 +525,7 @@ export default function Dashboard() {
                 { name: t('admin.dashboard.names.usman'), region: t('admin.dashboard.rawalpindi'), type: t('admin.dashboard.activityTypes.voiceAdvisory'), status: t('admin.dashboard.statuses.completed'), statusColor: 'bg-green-100 text-[#07571C]', time: t('admin.dashboard.times.hour1') },
                 { name: t('admin.dashboard.names.zainab'), region: t('admin.dashboard.talagang'), type: t('admin.dashboard.activityTypes.profileUpdate'), status: t('admin.dashboard.statuses.pending'), statusColor: 'bg-amber-100 text-amber-700', time: t('admin.dashboard.times.hour2') },
               ].map((person, personIdx) => (
-                <tr key={personIdx} className="hover:bg-forest/5 transition-colors">
+                <tr key={personIdx} className="hover:bg-forest/10 transition-colors">
                   <td className="px-4 py-4 whitespace-nowrap text-[14px] font-bold text-charcoal">{person.name}</td>
                   <td className="px-4 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">{person.region}</td>
                   <td className="px-4 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">{person.type}</td>
