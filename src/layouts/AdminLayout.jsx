@@ -136,13 +136,20 @@ export default function AdminLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-earth space-y-2 hidden md:block">
+        <div className="border-t border-earth hidden md:block">
           <button 
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className={`flex items-center w-full px-2 py-2.5 text-sm font-bold rounded-lg text-charcoal opacity-70 hover:bg-forest/10 hover:opacity-100 transition-colors focus:outline-none ${isSidebarCollapsed ? 'justify-center' : ''}`}
+            className={`flex items-center w-full py-4 text-sm font-bold transition-all duration-300 group text-charcoal opacity-80 hover:bg-forest/10 hover:text-forest hover:opacity-100 border-e-4 border-transparent focus:outline-none ${isSidebarCollapsed ? 'justify-center px-0' : 'ps-8 pe-4'}`}
             title={isSidebarCollapsed ? t('layout.sidebar.expand') : t('layout.sidebar.collapse')}
           >
-            {isSidebarCollapsed ? <ChevronRight className="w-5 h-5 rtl:rotate-180" /> : <><ChevronLeft className="w-5 h-5 me-3 rtl:rotate-180" /> {t('layout.sidebar.collapse')}</>}
+            {isSidebarCollapsed ? (
+              <ChevronRight className="w-5 h-5 flex-shrink-0 opacity-70 stroke-2 group-hover:opacity-100 rtl:rotate-180" />
+            ) : (
+              <>
+                <ChevronLeft className="w-5 h-5 flex-shrink-0 mx-3 opacity-70 stroke-2 group-hover:opacity-100 rtl:rotate-180" />
+                {t('layout.sidebar.collapse')}
+              </>
+            )}
           </button>
         </div>
       </aside>
@@ -258,7 +265,7 @@ export default function AdminLayout() {
                   <div className="py-1">
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm font-bold text-red-600 hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer transition-colors"
+                      className="w-full text-left px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 hover:text-red-700 flex items-center cursor-pointer transition-colors"
                     >
                       <LogOut className="w-4 h-4 mx-2" /> {t('admin.layout.logout')}
                     </button>
