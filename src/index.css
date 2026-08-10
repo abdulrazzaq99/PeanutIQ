@@ -30,6 +30,13 @@
   }
 }
 
+/* Keep the dot on an "i" distinct when it follows an "f" (for example, in
+   "Notifications") instead of allowing the font's `fi` ligature to merge it. */
+@utility no-common-ligatures {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0;
+}
+
 @layer base {
   * {
     scrollbar-width: none; /* Firefox */

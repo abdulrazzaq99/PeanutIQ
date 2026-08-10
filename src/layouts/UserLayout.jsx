@@ -205,7 +205,7 @@ export default function UserLayout() {
                 <div className="origin-top-right rtl:origin-top-left fixed left-4 right-4 top-16 sm:absolute sm:top-auto sm:left-auto sm:right-0 rtl:sm:left-0 rtl:sm:right-auto mt-2 w-auto sm:w-80 rounded-xl shadow-none bg-white border-2 border-earth overflow-hidden z-50">
                   <div className="py-1">
                     <div className="px-4 py-2 border-b border-earth flex justify-between items-center bg-sand">
-                      <p className="text-sm font-bold text-charcoal">{t('layout.header.notifications')}</p>
+                      <p className="text-sm font-bold text-charcoal no-common-ligatures">{t('layout.header.notifications')}</p>
                       <span className="text-xs font-bold text-forest hover:text-terracotta cursor-pointer">{t('layout.header.markAllRead')}</span>
                     </div>
                     <div className="max-h-80 overflow-y-auto">

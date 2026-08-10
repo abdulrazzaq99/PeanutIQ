@@ -224,7 +224,7 @@ export default function AdminLayout() {
               {showNotifications && (
                 <div className="origin-top-right fixed left-4 right-4 top-16 sm:absolute sm:top-auto sm:left-auto sm:right-0 rtl:sm:left-0 rtl:sm:right-auto mt-2 w-auto sm:w-72 rounded-xl shadow-xl py-1 bg-white border border-gray-100 overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-gray-100 bg-sand flex justify-between items-center">
-                    <h3 className="text-sm font-bold text-gray-900">{t('admin.layout.notifications')}</h3>
+                    <h3 className="text-sm font-bold text-gray-900 no-common-ligatures">{t('admin.layout.notifications')}</h3>
                   </div>
                   <div className="p-6 text-center">
                     <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
