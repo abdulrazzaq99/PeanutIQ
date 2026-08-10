@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   Users as UsersIcon, ShieldCheck, Activity, Database, CheckCircle, 
   XCircle, FileText, AlertTriangle, Settings, Check, X, Clock, Server, Brain,
-  Bean, ScanSearch, Edit2
+  Bean, ScanSearch, Edit2, MoreVertical
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useKnowledge } from '../context/KnowledgeContext';
@@ -56,6 +56,7 @@ export default function AdminPanel() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
   const [reviewingContentId, setReviewingContentId] = useState(null);
+  const [activeDropdownId, setActiveDropdownId] = useState(null);
 
   const handleAddSubmit = (e) => {
     e.preventDefault();
@@ -207,7 +208,7 @@ export default function AdminPanel() {
             </div>
           </div>
 
-          <div className="bg-white border border-earth rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:border-forest/30 transition-colors overflow-hidden">
+          <div className="bg-white border border-earth rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:border-forest/30 transition-colors">
             <div className="pb-5 border-b border-earth/60 mb-2">
               <h3 className="text-[17px] font-bold text-charcoal">{t('admin.management.pendingApprovals')} ({pendingArticles.length})</h3>
             </div>
@@ -227,10 +228,32 @@ export default function AdminPanel() {
                         <h4 className="text-[16px] font-bold text-charcoal">{item.titleKey ? t(`admin.management.contentData.${item.titleKey}`) : item.title}</h4>
                         <p className="text-[13px] font-medium text-charcoal/70 mt-1">{t('admin.management.contentData.by', 'By')} {item.authorKey ? t(`admin.management.names.${item.authorKey}`) : item.author}</p>
                       </div>
-                      <div className="flex gap-2">
-                        <button onClick={() => setReviewingContentId(item.id)} className="px-4 py-2 border border-earth/70 bg-white rounded-lg text-[13px] font-bold text-charcoal/80 hover:bg-forest/5 hover:text-charcoal cursor-pointer transition-colors shadow-sm">{t('admin.management.reviewDocument')}</button>
-                        <button onClick={() => handleContentAction(item.id, 'reject')} className="p-2 border border-red-200 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors shadow-sm"><X className="w-5 h-5"/></button>
-                        <button onClick={() => handleContentAction(item.id, 'approve')} className="p-2 border border-green-200 bg-green-50 text-forest rounded-lg hover:bg-green-100 transition-colors shadow-sm"><Check className="w-5 h-5"/></button>
+                      <div className="flex gap-2 items-center relative">
+                        <button onClick={() => setReviewingContentId(item.id)} className="px-4 py-2 border border-earth/70 bg-white rounded-lg text-[13px] font-bold text-charcoal/80 hover:bg-forest/10 hover:text-charcoal cursor-pointer transition-colors shadow-sm">{t('admin.management.reviewDocument')}</button>
+                        <button 
+                          onClick={() => setActiveDropdownId(activeDropdownId === item.id ? null : item.id)} 
+                          onBlur={() => setTimeout(() => setActiveDropdownId(null), 200)}
+                          className="p-2 text-charcoal/70 hover:bg-forest/10 hover:text-forest rounded-lg transition-colors cursor-pointer"
+                        >
+                          <MoreVertical className="w-5 h-5" />
+                        </button>
+                        
+                        {activeDropdownId === item.id && (
+                          <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-lg shadow-lg border border-earth/70 overflow-hidden z-10">
+                            <button 
+                              onMouseDown={(e) => { e.preventDefault(); handleContentAction(item.id, 'approve'); setActiveDropdownId(null); }} 
+                              className="w-full text-left px-4 py-2 text-sm font-bold text-forest hover:bg-green-50 flex items-center transition-colors cursor-pointer"
+                            >
+                              <Check className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t('admin.management.approve', 'Approve')}
+                            </button>
+                            <button 
+                              onMouseDown={(e) => { e.preventDefault(); handleContentAction(item.id, 'reject'); setActiveDropdownId(null); }} 
+                              className="w-full text-left px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center transition-colors border-t border-earth/50 cursor-pointer"
+                            >
+                              <X className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" /> {t('admin.management.reject', 'Reject')}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </li>
