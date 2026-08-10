@@ -364,7 +364,7 @@ export default function KnowledgeBase() {
                     </span>
                   </span>
                   {(user?.role === 'admin' || article.author === user?.name) && (
-                    <div className="flex gap-">
+                    <div className="flex gap-2">
                       <button onClick={(e) => { e.stopPropagation(); setEditingArticleId(article.id); }} className="p-2 text-slate-600 hover:text-forest bg-slate-100 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent border border-transparent hover:border-earth transition-colors cursor-pointer" title={t('kb.editArticle')}>
                         <Pencil className="w-4 h-4" />
                       </button>
