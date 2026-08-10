@@ -498,7 +498,7 @@ export default function FloatingAgent() {
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
                     placeholder={language === 'ur' ? 'یہاں لکھیں...' : 'Type your message...'}
-                    className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm py-2 w-full"
+                    className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:border-transparent text-white placeholder:text-white/40 text-sm py-2 w-full"
                   />
                   <div className={`transition-all duration-300 ${textInput.trim() ? 'opacity-100 scale-100 w-10' : 'opacity-0 scale-50 w-0'} overflow-hidden flex-shrink-0`}>
                     {textInput.trim() && (
