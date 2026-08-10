@@ -578,10 +578,10 @@ export default function FloatingAgent() {
                   </div>
                   
                   {/* Middle Text/Waveform */}
-                  <div className="flex-1 flex flex-col items-center justify-center text-center z-10 overflow-hidden">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className="flex-1 flex flex-col items-center justify-center text-center z-10 min-w-0">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-2">
                       <span className={`w-2 h-2 rounded-full ${recordState === 'recording' ? 'bg-[#f0c169] animate-pulse' : 'bg-white/10'}`}></span>
-                      <span className={`text-[10px] sm:text-xs font-bold tracking-[0.1em] uppercase whitespace-nowrap ${recordState === 'recording' ? 'text-[#f0c169]' : 'text-earth'}`}>
+                      <span className={`text-[9px] sm:text-xs font-bold tracking-normal sm:tracking-[0.1em] uppercase whitespace-nowrap ${recordState === 'recording' ? 'text-[#f0c169]' : 'text-earth'}`}>
                         {currT.liveListening}
                       </span>
                     </div>
