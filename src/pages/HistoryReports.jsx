@@ -75,7 +75,7 @@ export default function HistoryReports() {
           <h1 className="text-2xl font-bold text-slate-900">{t('history.title')}</h1>
           <p className="text-sm text-slate-500 mt-1">{t('history.subtitle')}</p>
         </div>
-        <div className="flex gap-">
+        <div className="flex gap-2">
           {['All', 'Seed Intelligence', 'Disease Intelligence'].map(tab => (
             <button
               key={tab}

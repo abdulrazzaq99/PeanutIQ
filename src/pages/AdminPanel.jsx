@@ -171,7 +171,7 @@ export default function AdminPanel() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">{user.loginKey ? t(`admin.management.times.${user.loginKey}`) : user.login}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right rtl:text-left text-[13px] font-bold">
-                        <div className="flex justify-end rtl:justify-start items-center gap-">
+                        <div className="flex justify-end rtl:justify-start items-center gap-2">
                           <button onClick={() => setEditingUserId(user.id)} title={t('admin.management.editRole')} aria-label={t('admin.management.editRole')} className="p-2 text-gray-400 hover:text-[#07571C] hover:bg-forest/10 rounded-lg cursor-pointer transition-colors">
                             <Edit2 className="w-4 h-4"/>
                           </button>
@@ -406,7 +406,7 @@ export default function AdminPanel() {
                 <option value="Admin">{t('admin.management.roles.admin', 'Admin')}</option>
               </select>
             </div>
-            <div className="flex justify-end gap- pt-4 border-t border-gray-100">
+            <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
               <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent font-medium cursor-pointer">{t('admin.management.cancel', 'Cancel')}</button>
               <button type="submit" className="px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest hover:opacity-90 font-medium cursor-pointer">{t('admin.management.addUser', 'Add User')}</button>
             </div>
@@ -435,7 +435,7 @@ export default function AdminPanel() {
                 <option value="Admin">{t('admin.management.roles.admin', 'Admin')}</option>
               </select>
             </div>
-            <div className="flex justify-end gap- pt-4 border-t border-gray-100">
+            <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
               <button type="button" onClick={() => setEditingUserId(null)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-forest/10 hover:text-forest hover:border-transparent font-medium cursor-pointer">{t('admin.management.modals.cancel', 'Cancel')}</button>
               <button type="submit" className="px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest hover:opacity-90 font-medium cursor-pointer">{t('admin.management.modals.saveChanges', 'Save Changes')}</button>
             </div>
