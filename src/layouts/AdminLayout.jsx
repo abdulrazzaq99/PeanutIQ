@@ -4,7 +4,6 @@ import { LayoutDashboard, BookOpen, Settings, Bell, Search, Leaf, LogOut, Bean, 
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../context/ToastContext';
-import FloatingAgent from '../components/FloatingAgent';
 import Logo from '../components/Logo';
 
 const ALL_NAV_ITEMS = [
@@ -281,7 +280,6 @@ export default function AdminLayout() {
           <Outlet />
         </div>
       </main>
-      <FloatingAgent />
     </div>
   );
 }

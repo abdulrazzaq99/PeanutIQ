@@ -31,7 +31,7 @@ export default function FloatingAgent() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const audioRef = useRef(new Audio());
-  const [language, setLanguage] = useState('ur');
+  const [language, setLanguage] = useState('en');
   const [sessionTime, setSessionTime] = useState(0);
   const [chatHistory, setChatHistory] = useState([
     { id: 1, sender: 'ai', isGreeting: true }
@@ -65,6 +65,7 @@ export default function FloatingAgent() {
 
   useEffect(() => {
     setIsOpen(false);
+    setLanguage('en');
   }, [location.pathname]);
 
   useEffect(() => {
