@@ -332,7 +332,7 @@ export default function FloatingAgent() {
     <div ref={containerRef} className="fixed bottom-6 right-6 rtl:right-auto rtl:left-6 z-[9999] flex flex-col items-end rtl:items-start pointer-events-none">
       {isOpen ? (
         <div 
-          className="bg-forest rounded-[2rem] border border-white/20 w-[90vw] sm:w-[420px] h-[85vh] max-h-[850px] flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom-5 fade-in duration-300 pointer-events-auto relative overflow-hidden origin-bottom-right rtl:origin-bottom-left"
+          className="bg-forest rounded-[2rem] border border-white/20 w-[90vw] sm:w-[420px] h-[75vh] sm:h-[85vh] max-h-[600px] sm:max-h-[850px] flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom-5 fade-in duration-300 pointer-events-auto relative overflow-hidden origin-bottom-right rtl:origin-bottom-left"
         >
 
           {/* Camera UI Modal */}
@@ -498,7 +498,7 @@ export default function FloatingAgent() {
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
                     placeholder={language === 'ur' ? 'یہاں لکھیں...' : 'Type your message...'}
-                    className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:border-transparent text-white placeholder:text-white/40 text-sm py-2 w-full"
+                    className="no-global-focus flex-1 bg-transparent !border-0 !outline-none !ring-0 !shadow-none text-white placeholder:text-white/40 text-sm py-2 w-full"
                   />
                   <div className={`transition-all duration-300 ${textInput.trim() ? 'opacity-100 scale-100 w-10' : 'opacity-0 scale-50 w-0'} overflow-hidden flex-shrink-0`}>
                     {textInput.trim() && (
@@ -553,25 +553,25 @@ export default function FloatingAgent() {
               ) : (
                 <div className="bg-black/20 rounded-[2.5rem] border border-white/20 p-2 flex flex-row items-center justify-between gap-3 relative overflow-hidden">
                   {/* Action Icons Group */}
-                  <div className="flex items-center gap-2 z-10">
+                  <div className="flex items-center gap-1.5 sm:gap-2 z-10">
                     <button 
                       onClick={toggleListen} 
-                      className={`flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${recordState === 'recording' ? 'bg-[#f0c169] text-forest animate-pulse shadow-[0_0_20px_rgba(240,193,105,0.4)]' : 'bg-sand text-forest'}`}
+                      className={`flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${recordState === 'recording' ? 'bg-[#f0c169] text-forest animate-pulse shadow-[0_0_20px_rgba(240,193,105,0.4)]' : 'bg-sand text-forest'}`}
                     >
-                      {recordState === 'recording' ? <Square className="w-6 h-6 fill-current" /> : <Mic className="w-6 h-6" />}
+                      {recordState === 'recording' ? <Square className="w-5 h-5 sm:w-6 sm:h-6 fill-current" /> : <Mic className="w-5 h-5 sm:w-6 sm:h-6" />}
                     </button>
                     
                     {recordState !== 'recording' && (
                       <>
                         <button 
                           onClick={startCamera}
-                          className="flex-shrink-0 w-12 h-12 rounded-full bg-black/20 border border-white/20 flex items-center justify-center text-earth hover:bg-white/10 transition-colors shadow-lg cursor-pointer"
+                          className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/20 border border-white/20 flex items-center justify-center text-earth hover:bg-white/10 transition-colors shadow-lg cursor-pointer"
                         >
-                          <Camera className="w-5 h-5" />
+                          <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
-                        <label className="flex-shrink-0 w-12 h-12 rounded-full bg-black/20 border border-white/20 flex items-center justify-center text-earth hover:bg-white/10 transition-colors shadow-lg cursor-pointer">
+                        <label className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/20 border border-white/20 flex items-center justify-center text-earth hover:bg-white/10 transition-colors shadow-lg cursor-pointer">
                           <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-                          <ImageIcon className="w-5 h-5" />
+                          <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </label>
                       </>
                     )}
@@ -581,7 +581,7 @@ export default function FloatingAgent() {
                   <div className="flex-1 flex flex-col items-center justify-center text-center z-10 overflow-hidden">
                     <div className="flex items-center gap-2 mb-2">
                       <span className={`w-2 h-2 rounded-full ${recordState === 'recording' ? 'bg-[#f0c169] animate-pulse' : 'bg-white/10'}`}></span>
-                      <span className={`text-xs font-bold tracking-[0.1em] uppercase ${recordState === 'recording' ? 'text-[#f0c169]' : 'text-earth'}`}>
+                      <span className={`text-[10px] sm:text-xs font-bold tracking-[0.1em] uppercase whitespace-nowrap ${recordState === 'recording' ? 'text-[#f0c169]' : 'text-earth'}`}>
                         {currT.liveListening}
                       </span>
                     </div>
@@ -615,8 +615,8 @@ export default function FloatingAgent() {
           onClick={() => setIsOpen(true)}
           className="animate-float relative group cursor-pointer pointer-events-auto"
         >
-          <div className="w-16 h-16 rounded-full bg-forest border-2 border-white/20 flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative z-10 overflow-hidden">
-            <RobotFace className="w-14 h-14 scale-110" />
+          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-forest border-2 border-white/20 flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative z-10 overflow-hidden">
+            <RobotFace className="w-10 h-10 sm:w-14 sm:h-14 scale-110" />
           </div>
           <div className="absolute inset-0 rounded-full bg-earth opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-300"></div>
         </button>

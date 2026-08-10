@@ -79,9 +79,9 @@
   }
 
   /* Force all inputs to have a green border and ring on focus */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):focus,
-  textarea:focus,
-  select:focus {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not(.no-global-focus):focus,
+  textarea:not(.no-global-focus):focus,
+  select:not(.no-global-focus):focus {
     outline: none !important;
     border-color: var(--color-forest) !important;
     box-shadow: 0 0 0 1.5px var(--color-forest) !important;
