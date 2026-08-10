@@ -84,7 +84,7 @@
   select:not(.no-global-focus):focus {
     outline: none !important;
     border-color: var(--color-forest) !important;
-    box-shadow: 0 0 0 1.5px var(--color-forest) !important;
+    box-shadow: none !important;
   }
 
   /* Custom Select Arrow Styling */
