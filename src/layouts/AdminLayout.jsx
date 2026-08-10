@@ -155,7 +155,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main ref={mainContentRef} className={`flex flex-col h-screen transition-all duration-300 ${isSidebarCollapsed ? 'md:ps-20' : 'md:ltr:pl-64 md:rtl:pr-64'}`}>
+      <main className={`flex flex-col h-screen transition-all duration-300 ${isSidebarCollapsed ? 'md:ps-20' : 'md:ltr:pl-64 md:rtl:pr-64'}`}>
         {/* Header */}
         <header className="h-16 flex-shrink-0 bg-white border-b border-earth flex items-center justify-between px-4 md:px-6 z-30 transition-all duration-300 shadow-none">
           
@@ -277,7 +277,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 md:pt-4">
+        <div ref={mainContentRef} className="flex-1 overflow-y-auto p-4 md:p-8 md:pt-4">
           <Outlet />
         </div>
       </main>

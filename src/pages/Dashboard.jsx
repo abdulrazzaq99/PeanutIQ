@@ -82,10 +82,10 @@ const getTopArticles = (t) => [
 
 const getTheme = (color) => {
   switch (color) {
-    case 'blue': return { bg: 'bg-blue-50/40 hover:bg-forest/10', border: 'border-blue-100 hover:border-forest/30', iconBg: 'bg-blue-100/30 text-blue-500' };
-    case 'green': return { bg: 'bg-emerald-50/40 hover:bg-forest/10', border: 'border-emerald-100 hover:border-forest/30', iconBg: 'bg-emerald-100/30 text-forest' };
-    case 'amber': return { bg: 'bg-amber-50/40 hover:bg-forest/10', border: 'border-amber-100 hover:border-forest/30', iconBg: 'bg-amber-100/30 text-amber-500' };
-    case 'red': return { bg: 'bg-rose-50/40 hover:bg-forest/10', border: 'border-rose-100 hover:border-forest/30', iconBg: 'bg-rose-100/30 text-rose-500' };
+    case 'blue': return { bg: 'bg-blue-50/40 hover:bg-blue-50/80', border: 'border-blue-100 hover:border-blue-200', iconBg: 'bg-blue-100/30 text-blue-500' };
+    case 'green': return { bg: 'bg-emerald-50/40 hover:bg-emerald-50/80', border: 'border-emerald-100 hover:border-emerald-200', iconBg: 'bg-emerald-100/30 text-forest' };
+    case 'amber': return { bg: 'bg-amber-50/40 hover:bg-amber-50/80', border: 'border-amber-100 hover:border-amber-200', iconBg: 'bg-amber-100/30 text-amber-500' };
+    case 'red': return { bg: 'bg-rose-50/40 hover:bg-rose-50/80', border: 'border-rose-100 hover:border-rose-200', iconBg: 'bg-rose-100/30 text-rose-500' };
     default: return { bg: 'bg-sand hover:bg-forest/10 hover:text-forest hover:border-transparent', border: 'border-gray-200 hover:border-gray-300', iconBg: 'bg-white text-gray-500' };
   }
 }
