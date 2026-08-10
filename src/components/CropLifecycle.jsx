@@ -22,7 +22,7 @@ export default function CropLifecycle() {
       </h3>
       
       <div className="overflow-x-auto no-scrollbar pb-2 -mx-2 px-2">
-        <div className="relative flex justify-between items-center w-full min-w-[480px] max-w-4xl mx-auto">
+        <div className="relative flex justify-between items-center w-full min-w-[480px] max-w-4xl mx-auto mt-2">
           {/* Background Line */}
           <div className="absolute left-[10%] right-[10%] rtl:right-[10%] rtl:left-[10%] top-6 -translate-y-1/2 h-1.5 bg-earth rounded-full z-0"></div>
         
