@@ -12,8 +12,10 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import farmBannerBg from '../assets/farm-banner-bg.png';
 import Logo from '../components/Logo';
+import { FARM_REGIONS } from '../utils/constants';
 import { fetchApi } from '../config/api';
-
+import { useAuth } from '../context/AuthContext';
+import { formatDate } from '../utils/date';
 const getTheme = (color) => {
   switch (color) {
     case 'blue': return { bg: 'bg-blue-50/40 hover:bg-blue-50/80', border: 'border-blue-100 hover:border-blue-200', iconBg: 'bg-blue-100/30 text-blue-500' };
@@ -88,6 +90,7 @@ export default function Dashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { user } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
   const [isAdvisoryModalOpen, setIsAdvisoryModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
@@ -197,7 +200,8 @@ export default function Dashboard() {
           title: title,
           message: message,
           type: 'alert',
-          severity: 'high'
+          severity: 'high',
+          target_region: targetRegion
         })
       });
       if (res.ok) {
@@ -569,7 +573,7 @@ export default function Dashboard() {
                     </span>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-[13px] text-charcoal/70 font-medium">
-                    {new Date(activity.timestamp).toLocaleString()}
+                    {formatDate(activity.timestamp, user?.timezone)}
                   </td>
                 </tr>
               )) : (
@@ -677,10 +681,9 @@ export default function Dashboard() {
                 className="w-full px-3 py-2 border-2 border-earth bg-sand rounded-lg focus:outline-none focus:border-forest text-charcoal"
               >
                 <option value="All">{t('admin.dashboard.allRegions')}</option>
-                <option value="Attock">{t('admin.dashboard.attock')}</option>
-                <option value="Chakwal">{t('admin.dashboard.chakwal')}</option>
-                <option value="Rawalpindi">{t('admin.dashboard.rawalpindi')}</option>
-                <option value="{t('admin.dashboard.talagang')}">{t('admin.dashboard.talagang')}</option>
+                {FARM_REGIONS.map(region => (
+                  <option key={region} value={region}>{region}</option>
+                ))}
               </select>
             </div>
             <div>

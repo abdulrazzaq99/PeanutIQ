@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Clock, Leaf, Search, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { fetchApi } from '../config/api';
+import { useAuth } from '../context/AuthContext';
+import { formatDate } from '../utils/date';
 
 export default function Advisories() {
   const { t } = useTranslation();
   const [advisories, setAdvisories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchAdvisories = async () => {
@@ -61,7 +64,7 @@ export default function Advisories() {
                 </div>
                 <span className="text-xs font-bold text-slate-500 flex items-center whitespace-nowrap bg-slate-100 px-2 py-1 rounded-full">
                   <Clock className="w-3.5 h-3.5 me-1" />
-                  {new Date(advisory.created_at).toLocaleDateString()}
+                  {formatDate(advisory.created_at, user?.timezone)}
                 </span>
               </div>
               <div className="mb-3">

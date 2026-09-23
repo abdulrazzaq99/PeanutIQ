@@ -31,6 +31,7 @@ class Advisory(Base):
     message = Column(Text, nullable=False)
     type = Column(Enum(AdvisoryType), nullable=False, default=AdvisoryType.tip)
     severity = Column(Enum(AdvisorySeverity), nullable=False, default=AdvisorySeverity.low)
+    target_region = Column(String, nullable=False, default="All", server_default="All")
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class ActionItem(Base):

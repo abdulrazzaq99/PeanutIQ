@@ -1,14 +1,16 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Shield, Building2, Phone, Globe, Key, CheckCircle, Camera, Move, Check, X, Trash2 } from 'lucide-react';
+import { User, Mail, Shield, Building2, Phone, Globe, Key, CheckCircle, Camera, Move, Check, X, Trash2, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { fetchApi } from '../config/api';
 
 export default function AdminProfile() {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const { t, i18n } = useTranslation();
   
   const [phone, setPhone] = useState('+92 300 1234567');
   const [language, setLanguage] = useState(i18n.language === 'ur' ? 'ur' : 'en');
+  const [timezone, setTimezone] = useState(user?.timezone || 'UTC');
   const [isSaved, setIsSaved] = useState(false);
   const [passwordSaved, setPasswordSaved] = useState(false);
   
@@ -24,7 +26,7 @@ export default function AdminProfile() {
   const coverInputRef = useRef(null);
   const profileInputRef = useRef(null);
 
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e.preventDefault();
     if (language === 'ur') {
       i18n.changeLanguage('ur');
@@ -35,6 +37,16 @@ export default function AdminProfile() {
       document.documentElement.dir = 'ltr';
       localStorage.setItem('preferredLanguage', 'en');
     }
+    
+    try {
+      await updateProfile({
+        language_preference: language === 'ur' ? 'urdu' : 'english',
+        timezone: timezone 
+      });
+    } catch (e) {
+      console.error('Failed to update profile settings', e);
+    }
+
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
   };
@@ -260,6 +272,27 @@ export default function AdminProfile() {
                   </select>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">{t('admin.profile.languageNote', 'Note: The admin panel defaults to English. Changing this updates your global preference.')}</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Time Zone</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Clock className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <select
+                    value={timezone}
+                    onChange={(e) => setTimezone(e.target.value)}
+                    className="block w-full px-10 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm bg-white"
+                  >
+                    <option value="UTC">UTC (Default)</option>
+                    <option value="Asia/Karachi">Pakistan Standard Time (PKT)</option>
+                    <option value="Asia/Riyadh">Arabia Standard Time (AST)</option>
+                    <option value="Europe/London">Greenwich Mean Time (GMT)</option>
+                    <option value="America/New_York">Eastern Standard Time (EST)</option>
+                  </select>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">Sets how dates and times are displayed to you.</p>
               </div>
             </div>
 

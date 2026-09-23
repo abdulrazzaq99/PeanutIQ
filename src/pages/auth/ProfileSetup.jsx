@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { User, MapPin, Languages } from 'lucide-react';
 import Logo from '../../components/Logo';
 import { useTranslation } from 'react-i18next';
+import { FARM_REGIONS } from '../../utils/constants';
 
 export default function ProfileSetup() {
   const location = useLocation();
@@ -101,15 +102,18 @@ export default function ProfileSetup() {
               <div className="absolute inset-y-0 left-0 rtl:left-auto rtl:right-0 ps-4 flex items-center pointer-events-none">
                 <MapPin className="h-5 w-5 text-gray-400" />
               </div>
-              <input
+              <select
                 name="location"
-                type="text"
                 required={formData.role === 'farmer'}
                 value={formData.location}
                 onChange={handleChange}
-                className="focus:ring-1 focus:ring-[#07571C] focus:border-[#07571C] block w-full ps-11 sm:text-sm border border-gray-200 rounded-xl py-2.5 transition-colors bg-white text-left text-charcoal outline-none"
-                placeholder={t('auth.profileSetup.locationPlaceholder')}
-              />
+                className="focus:ring-1 focus:ring-[#07571C] focus:border-[#07571C] block w-full ps-11 sm:text-sm border border-gray-200 rounded-xl py-2.5 transition-colors bg-white text-left text-charcoal outline-none appearance-none"
+              >
+                <option value="" disabled>{t('auth.profileSetup.locationPlaceholder')}</option>
+                {FARM_REGIONS.map(region => (
+                  <option key={region} value={region}>{region}</option>
+                ))}
+              </select>
             </div>
           </div>
         )}

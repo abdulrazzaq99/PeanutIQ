@@ -3,6 +3,7 @@ import { User, Mail, Phone, MapPin, Edit3, Target, ChevronDown } from 'lucide-re
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FARM_REGIONS } from '../utils/constants';
 
 export default function Users() {
   const { user, logout, updateProfile } = useAuth();
@@ -10,23 +11,36 @@ export default function Users() {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
+  const [showTimezoneMenu, setShowTimezoneMenu] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     location: user?.farm_location || user?.location || '',
     language: user?.language_preference || user?.language || 'English',
+    timezone: user?.timezone || 'UTC',
     cropType: user?.cropType || 'Peanut',
     email: user?.email || user?.identifier || ''
   });
 
 
 
-  const handleSave = () => {
-    updateProfile({
-      name: formData.name,
-      farm_location: formData.location,
-      language_preference: formData.language.toLowerCase()
-    });
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      const res = await updateProfile({
+        name: formData.name,
+        farm_location: formData.location,
+        language_preference: formData.language.toLowerCase(),
+        timezone: formData.timezone
+      });
+      if (res.success) {
+        setIsEditing(false);
+      } else {
+        console.error("Update failed:", res.error);
+        alert("Failed to update profile: " + res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating profile");
+    }
   };
 
   if (!user) return null;
@@ -102,13 +116,16 @@ export default function Users() {
                   <div className="flex items-center justify-start text-sm text-gray-600">
                     <MapPin className="w-5 h-5 me-3 text-gray-400" />
                     {isEditing ? (
-                      <input
-                        type="text"
+                      <select
                         value={formData.location}
                         onChange={(e) => setFormData({...formData, location: e.target.value})}
-                        className="border-b border-gray-300 focus:border-forest focus:outline-none bg-transparent w-full"
-                        placeholder={t('profile.placeholder.location')}
-                      />
+                        className="border-b border-gray-300 focus:border-forest focus:outline-none bg-transparent w-full text-sm appearance-none"
+                      >
+                        <option value="" disabled>{t('profile.placeholder.location')}</option>
+                        {FARM_REGIONS.map(region => (
+                          <option key={region} value={region}>{region}</option>
+                        ))}
+                      </select>
                     ) : (
                       <>{user.farm_location || user.location || t('profile.unknownLocation')}</>
                     )}
@@ -175,6 +192,65 @@ export default function Users() {
                       className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
                     >
                       {t('profile.urdu')}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="border-t border-slate-200 my-4"></div>
+            
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-2 sm:gap-0">
+              <div>
+                <p className="text-sm font-medium text-gray-900">Time Zone</p>
+                <p className="text-xs text-gray-500">Sets how dates and times are displayed to you on your dashboard.</p>
+              </div>
+              <div className="relative mt-2 sm:mt-0">
+                <button
+                  type="button"
+                  disabled={!isEditing}
+                  onClick={() => setShowTimezoneMenu(!showTimezoneMenu)}
+                  className={`flex items-center justify-between w-full sm:w-48 px-3 py-2 text-sm border-slate-200 focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest rounded-xl shadow-sm border cursor-pointer transition-colors ${!isEditing ? 'bg-sand opacity-75 cursor-not-allowed' : 'bg-white hover:bg-forest/10 hover:text-forest hover:border-transparent'}`}
+                >
+                  <span className="font-medium truncate mr-2">{isEditing ? formData.timezone : (user.timezone || 'UTC')}</span>
+                  <ChevronDown className="h-4 w-4 text-slate-500 flex-shrink-0" />
+                </button>
+
+                {showTimezoneMenu && isEditing && (
+                  <div className="absolute top-full mt-2 w-full rounded-xl shadow-lg py-1 bg-white border border-slate-200 overflow-hidden z-50">
+                    <button
+                      type="button"
+                      onClick={() => { setFormData({...formData, timezone: 'UTC'}); setShowTimezoneMenu(false); }}
+                      className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                    >
+                      UTC (Default)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setFormData({...formData, timezone: 'Asia/Karachi'}); setShowTimezoneMenu(false); }}
+                      className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                    >
+                      Pakistan (PKT)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setFormData({...formData, timezone: 'Asia/Riyadh'}); setShowTimezoneMenu(false); }}
+                      className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                    >
+                      Arabia (AST)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setFormData({...formData, timezone: 'Europe/London'}); setShowTimezoneMenu(false); }}
+                      className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                    >
+                      Greenwich (GMT)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setFormData({...formData, timezone: 'America/New_York'}); setShowTimezoneMenu(false); }}
+                      className="w-full text-start px-4 py-2 text-sm font-bold text-charcoal hover:bg-forest/10 hover:text-forest flex items-center cursor-pointer"
+                    >
+                      Eastern (EST)
                     </button>
                   </div>
                 )}

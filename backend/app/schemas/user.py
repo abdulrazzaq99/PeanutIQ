@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     role: UserRole = UserRole.farmer
     farm_location: str | None = None
     language_preference: LanguagePreference = LanguagePreference.english
+    timezone: str = "UTC"
 
 class UserCreate(UserBase):
     pass
@@ -17,6 +18,7 @@ class UserUpdate(BaseModel):
     name: str | None = None
     farm_location: str | None = None
     language_preference: LanguagePreference | None = None
+    timezone: str | None = None
 
 class UserResponse(UserBase):
     id: UUID

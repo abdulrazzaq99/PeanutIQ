@@ -9,6 +9,7 @@ class AdvisoryBase(BaseModel):
     message: str
     type: AdvisoryType
     severity: AdvisorySeverity
+    target_region: str = "All"
 
 class AdvisoryCreate(AdvisoryBase):
     pass

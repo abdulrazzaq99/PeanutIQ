@@ -11,6 +11,7 @@ import CropLifecycle from '../components/CropLifecycle';
 import DailyAITip from '../components/DailyAITip';
 import UpcomingActions from '../components/UpcomingActions';
 import { fetchApi } from '../config/api';
+import { formatDate } from '../utils/date';
 
 const weatherForecast = [
   { dayKey: 'dashboard.weatherData.today', temp: '32°C', icon: Thermometer, conditionKey: 'dashboard.weatherData.sunny', color: 'text-amber-500' },
@@ -26,7 +27,13 @@ const quickActions = [
 
 const getTimeAgo = (dateString) => {
   if (!dateString) return '';
-  const date = new Date(dateString);
+  
+  let dtString = dateString;
+  if (typeof dtString === 'string' && !dtString.endsWith('Z')) {
+    dtString += 'Z';
+  }
+  
+  const date = new Date(dtString);
   const now = new Date();
   const diffInSeconds = Math.floor((now - date) / 1000);
   
@@ -146,14 +153,14 @@ export default function UserDashboard() {
 
         {/* Latest Advisory Card */}
         <div className="bg-white border border-earth rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] flex flex-col h-full hover:border-forest/30 transition-colors">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-[17px] font-bold text-charcoal flex items-center">
-              <AlertTriangle className="w-5 h-5 me-2 text-red-500" strokeWidth={2} /> 
-              {t('dashboard.latestAdvisory', 'Latest Advisory')}
+          <div className="flex justify-between items-start mb-4 gap-2">
+            <h3 className="text-[17px] font-bold text-charcoal flex items-start">
+              <AlertTriangle className="w-5 h-5 me-2 text-red-500 flex-shrink-0 mt-0.5" strokeWidth={2} /> 
+              <span>{t('dashboard.latestAdvisory', 'Latest Advisory')}</span>
             </h3>
             {advisory && (advisory.created_at || advisory.date) && (
-              <span className="text-[12px] font-bold text-red-500 flex items-center bg-red-50 px-2.5 py-1 rounded-full">
-                <Clock className="w-3.5 h-3.5 me-1" /> {getTimeAgo(advisory.created_at || advisory.date)}
+              <span className="text-[12px] font-bold text-red-500 flex items-center bg-red-50 px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 mt-0.5">
+                <Clock className="w-3 h-3 me-1 flex-shrink-0" /> {getTimeAgo(advisory.created_at || advisory.date)}
               </span>
             )}
           </div>
@@ -276,7 +283,7 @@ export default function UserDashboard() {
                       {activity.details ? activity.details : <span className="opacity-50">-</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-[13px] text-charcoal/70 font-medium">
-                      {new Date(activity.timestamp).toLocaleString()}
+                      {formatDate(activity.timestamp, user?.timezone)}
                     </td>
                   </tr>
                 ))}

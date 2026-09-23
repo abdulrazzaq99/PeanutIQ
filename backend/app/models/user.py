@@ -23,5 +23,6 @@ class User(Base):
     role = Column(Enum(UserRole), default=UserRole.farmer, nullable=False)
     farm_location = Column(String, nullable=True)
     language_preference = Column(Enum(LanguagePreference), default=LanguagePreference.english, nullable=False)
+    timezone = Column(String, default="UTC", nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)

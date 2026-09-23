@@ -6,6 +6,7 @@ import uuid
 import shutil
 
 from app.db.session import get_db
+from app.models.dashboard import ActivityLog
 from app.models.scan import ScanReport
 from app.schemas.scan import ScanReportResponse, ScanReportCreate
 from app.api.dependencies import get_current_user
@@ -50,6 +51,16 @@ async def create_scan_report(
         image_url=image_url
     )
     db.add(db_scan)
+    
+    # Log the activity
+    action_type = "Disease Analysis" if type == "disease" else "Seed Quality Scan"
+    db_activity = ActivityLog(
+        user_id=current_user.id,
+        action=action_type,
+        details=scan_status
+    )
+    db.add(db_activity)
+    
     db.commit()
     db.refresh(db_scan)
     return db_scan

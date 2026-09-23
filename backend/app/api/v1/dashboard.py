@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from typing import List
 from uuid import UUID
 
@@ -44,6 +45,16 @@ def get_advisories(
     query = db.query(Advisory)
     if type:
         query = query.filter(Advisory.type == type)
+    
+    if current_user.role == 'farmer':
+        # Farmers only see advisories targeted to "All" or their specific farm_location
+        user_region = current_user.farm_location or "Unknown"
+        query = query.filter(
+            or_(
+                Advisory.target_region == 'All',
+                Advisory.target_region == user_region
+            )
+        )
     
     return query.order_by(Advisory.created_at.desc()).limit(limit).all()
 

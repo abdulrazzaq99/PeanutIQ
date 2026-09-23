@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Mic, Zap, Camera, Image as ImageIcon, Clock, Play, Pause, Trash2, Send, Square, X, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { fetchApi } from '../config/api';
 import './FloatingAgent.css';
 
 import RobotFace from './RobotFace';
@@ -182,7 +183,19 @@ export default function FloatingAgent() {
     audioRef.current.currentTime = 0;
     setAudioBlobUrl(null);
     
+    const logActivity = async (action, details) => {
+      try {
+        await fetchApi('/dashboard/activities', {
+          method: 'POST',
+          body: JSON.stringify({ action, details })
+        });
+      } catch (e) {
+        console.error('Failed to log activity', e);
+      }
+    };
+
     if (previewImage) {
+      logActivity('Query Copilot', 'Sent an image for analysis');
       setChatHistory(prev => [...prev, {
         id: Date.now(),
         sender: 'user',
@@ -202,6 +215,7 @@ export default function FloatingAgent() {
       setPreviewImage(null);
     } else if (textInput.trim()) {
       const msgText = textInput.trim();
+      logActivity('Text Interactions', msgText.length > 30 ? msgText.substring(0, 30) + '...' : msgText);
       setChatHistory(prev => [...prev, {
         id: Date.now(),
         sender: 'user',
@@ -220,6 +234,7 @@ export default function FloatingAgent() {
         }]);
       }, 1500);
     } else if (audioBlobUrl) {
+      logActivity('Voice Advisory', 'Completed');
       // Add user message
       setChatHistory(prev => [...prev, {
         id: Date.now(),
