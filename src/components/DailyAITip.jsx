@@ -1,13 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mic } from 'lucide-react';
 import RobotFace from './RobotFace';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import { fetchApi } from '../config/api';
 
 export default function DailyAITip() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
   const isUrdu = i18n.language === 'ur';
+  const [tip, setTip] = useState(null);
+
+  useEffect(() => {
+    const getTip = async () => {
+      const token = localStorage.getItem('peanutiq_token');
+      if (!token) return;
+      try {
+        const res = await fetchApi('/dashboard/advisories?type=tip&limit=1', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.length > 0) setTip(data[0].message);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    getTip();
+  }, []);
 
   const firstName = user?.name ? user.name.split(' ')[0] : (isUrdu ? 'Kisan Bhai' : 'Farmer');
 
@@ -31,8 +52,8 @@ export default function DailyAITip() {
         </div>
         <p className="text-[13px] text-charcoal/90 font-bold leading-tight" dir={isUrdu ? 'rtl' : 'ltr'}>
           {isUrdu 
-            ? `${firstName}! موسم کی پیشگوئی کے مطابق آج بارش کا امکان ہے۔ فصل کی نکاسی کا خیال رکھیں۔`
-            : `${firstName}! According to the weather forecast, rain is expected today. Ensure proper field drainage.`}
+            ? `${firstName}! ${tip || 'موسم کی پیشگوئی کے مطابق آج بارش کا امکان ہے۔ فصل کی نکاسی کا خیال رکھیں۔'}`
+            : `${firstName}! ${tip || 'According to the weather forecast, rain is expected today. Ensure proper field drainage.'}`}
         </p>
       </div>
 

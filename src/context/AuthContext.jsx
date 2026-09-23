@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import i18n from '../i18n';
+import { fetchApi } from '../config/api';
 
 const setGlobalLanguage = (userLangStr, isExplicitUpdate = false) => {
   const localPref = localStorage.getItem('preferredLanguage');
@@ -24,127 +25,121 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Mock checking local storage for session
   useEffect(() => {
-    const storedUser = localStorage.getItem('peanutiq_user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      if (parsedUser.language) {
-        setGlobalLanguage(parsedUser.language);
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem('peanutiq_token');
+      const storedUser = localStorage.getItem('peanutiq_user');
+      
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        if (parsedUser.language) {
+          setGlobalLanguage(parsedUser.language);
+        }
       }
-    }
-    setLoading(false);
+      
+      if (storedToken) {
+        try {
+          const res = await fetchApi('/users/me', {
+            headers: { Authorization: `Bearer ${storedToken}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setUser(data);
+            localStorage.setItem('peanutiq_user', JSON.stringify(data));
+            if (data.language_preference) {
+              setGlobalLanguage(data.language_preference, true);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch fresh user data", err);
+        }
+      }
+      setLoading(false);
+    };
+    initAuth();
   }, []);
 
   const login = async (identifier) => {
-    // In a real app, this sends OTP to phone/email
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true, identifier });
-      }, 1000);
-    });
+    try {
+      const response = await fetchApi('/auth/request-otp', {
+        method: 'POST',
+        body: JSON.stringify({ identifier }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to request OTP');
+      }
+      return { success: true, identifier };
+    } catch (error) {
+      console.error(error);
+      return { success: false, error: error.message };
+    }
   };
 
   const verifyOtp = async (identifier, otp, isLoginIntent = true) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Mock verification logic
-        if (otp.length === 6) {
-          // Check if user exists (mock logic based on identifier)
-          if (identifier === 'admin@peanutiq.pk' || identifier === '923000000000') {
-            const adminUser = {
-              id: 1,
-              name: 'System Admin',
-              email: identifier,
-              role: 'admin',
-              language: 'English',
-              token: 'mock-jwt-token-admin'
-            };
-            setUser(adminUser);
-            localStorage.setItem('peanutiq_user', JSON.stringify(adminUser));
-            
-            // Enforce user's language preference
-            setGlobalLanguage(adminUser.language);
-            
-            resolve({ success: true, isNewUser: false, user: adminUser });
-          } else if (identifier === 'researcher@peanutiq.pk' || identifier === '923000000001') {
-            const researcherUser = {
-              id: 2,
-              name: 'Dr. Faisal (Researcher)',
-              email: identifier,
-              role: 'researcher',
-              language: 'English',
-              token: 'mock-jwt-token-researcher'
-            };
-            setUser(researcherUser);
-            localStorage.setItem('peanutiq_user', JSON.stringify(researcherUser));
-            
-            // Enforce user's language preference
-            setGlobalLanguage(researcherUser.language);
-            
-            resolve({ success: true, isNewUser: false, user: researcherUser });
-          } else if (isLoginIntent) {
-            // Mock returning user since they clicked "Sign In"
-            const returningUser = {
-              id: Date.now(),
-              name: 'Returning Farmer',
-              email: identifier.includes('@') ? identifier : '',
-              location: 'Attock, Punjab',
-              cropType: 'Peanut',
-              language: 'Urdu', // Changed to Urdu for demonstration purposes
-              role: 'farmer',
-              token: 'mock-jwt-token-user'
-            };
-            setUser(returningUser);
-            localStorage.setItem('peanutiq_user', JSON.stringify(returningUser));
-            
-            // Enforce user's language preference
-            setGlobalLanguage(returningUser.language);
-            
-            resolve({ success: true, isNewUser: false, user: returningUser });
-          } else {
-            // New user scenario since they clicked "Sign Up"
-            resolve({ success: true, isNewUser: true });
-          }
-        } else {
-          resolve({ success: false, error: 'Invalid OTP' });
-        }
-      }, 1000);
-    });
+    try {
+      const response = await fetchApi('/auth/verify-otp', {
+        method: 'POST',
+        body: JSON.stringify({ identifier, otp }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        return { success: false, error: data.detail || 'Invalid OTP' };
+      }
+
+      // data contains { access_token, token_type, user }
+      const loggedInUser = data.user;
+      
+      setUser(loggedInUser);
+      localStorage.setItem('peanutiq_user', JSON.stringify(loggedInUser));
+      localStorage.setItem('peanutiq_token', data.access_token);
+      
+      setGlobalLanguage(loggedInUser.language_preference);
+      
+      // Determine if new user based on active status or missing profile fields
+      // For now we assume if they don't have a farm_location, they might need setup
+      const isNewUser = !loggedInUser.farm_location && loggedInUser.role === 'farmer';
+      
+      return { success: true, isNewUser, user: loggedInUser };
+    } catch (error) {
+      console.error(error);
+      return { success: false, error: 'Network error occurred' };
+    }
   };
 
   const signup = async (profileData) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newUser = {
-          id: Date.now(),
-          ...profileData,
-          token: 'mock-jwt-token-user'
-        };
-        setUser(newUser);
-        localStorage.setItem('peanutiq_user', JSON.stringify(newUser));
-        
-        // Enforce user's language preference upon signup completion
-        setGlobalLanguage(newUser.language);
-        
-        resolve({ success: true, user: newUser });
-      }, 1000);
-    });
+    // Signup flow routes to request-otp as our backend creates the user if they don't exist
+    return login(profileData.identifier || profileData.email || profileData.phone);
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('peanutiq_user');
+    localStorage.removeItem('peanutiq_token');
   };
 
-  const updateProfile = (updates) => {
-    const updatedUser = { ...user, ...updates };
-    setUser(updatedUser);
-    localStorage.setItem('peanutiq_user', JSON.stringify(updatedUser));
-    
-    if (updates.language) {
-      setGlobalLanguage(updates.language, true);
+  const updateProfile = async (updates) => {
+    try {
+      const response = await fetchApi('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify(updates)
+      });
+      if (response.ok) {
+        const updatedData = await response.json();
+        const updatedUser = { ...user, ...updatedData };
+        setUser(updatedUser);
+        localStorage.setItem('peanutiq_user', JSON.stringify(updatedUser));
+        
+        if (updatedUser.language_preference) {
+          setGlobalLanguage(updatedUser.language_preference, true);
+        }
+        return { success: true };
+      }
+      return { success: false, error: 'Failed to update profile' };
+    } catch (e) {
+      return { success: false, error: 'Network error' };
     }
   };
 

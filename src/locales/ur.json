@@ -9,8 +9,13 @@
     "accountPreferences": "اکاؤنٹ کی ترجیحات",
     "languagePreference": "زبان کی ترجیح",
     "languageDescription": "ڈیش بورڈ کے لیے اپنی پسندیدہ زبان منتخب کریں۔",
-    "english": "English",
-    "urdu": "Urdu",
+    "english": "انگریزی",
+    "urdu": "اردو",
+    "roles": {
+      "farmer": "کسان",
+      "admin": "ایڈمن",
+      "researcher": "محقق"
+    },
     "placeholder": {
       "phoneOrEmail": "فون یا ای میل",
       "location": "مقام",
@@ -50,6 +55,7 @@
       "action": "کارروائی",
       "details": "تفصیلات",
       "time": "وقت",
+      "noActivity": "کوئی حالیہ سرگرمی نہیں ہے۔",
       "irrigation": "آبپاشی مکمل",
       "field1": "کھیت 1 میں",
       "fungicide": "پھپھوندی کش سپرے",
@@ -80,6 +86,7 @@
       "aiCompanion": "اے آئی ساتھی",
       "history": "ہسٹری اور رپورٹس",
       "dashboard": "ڈیش بورڈ",
+      "advisories": "انتباہات",
       "seedIntelligence": "بیج کی ذہانت",
       "diseaseIntelligence": "بیماری کی ذہانت",
       "knowledgeBase": "نالج بیس",
@@ -691,8 +698,13 @@
       "newPassword": "نیا پاس ورڈ",
       "confirmPassword": "پاس ورڈ کی تصدیق کریں",
       "updateSecurity": "سیکیورٹی ترتیبات اپ ڈیٹ کریں",
-      "english": "English",
+      "english": "انگریزی",
       "urdu": "اردو",
+      "roles": {
+        "farmer": "کسان",
+        "admin": "ایڈمن",
+        "researcher": "محقق"
+      },
       "reposition": "پوزیشن تبدیل کریں",
       "savePosition": "پوزیشن محفوظ کریں",
       "cancel": "منسوخ کریں",
@@ -715,6 +727,12 @@
       "passwordUpdated": "پاس ورڈ کامیابی سے اپ ڈیٹ ہو گیا!",
       "languageNote": "نوٹ: ایڈمن پینل پہلے سے انگریزی میں ہے۔ اسے تبدیل کرنے سے آپ کی عالمی ترجیح اپڈیٹ ہو جائے گی۔"
     }
+  },
+  "advisories": {
+    "title": "انتباہات اور الرٹس",
+    "subtitle": "اپنی فصلوں اور موسم کے بارے میں اہم اطلاعات سے باخبر رہیں۔",
+    "emptyTitle": "کوئی فعال انتباہ نہیں",
+    "emptyDesc": "اس وقت آپ کے علاقے کے لیے کوئی فعال الرٹ یا انتباہ نہیں ہے۔"
   },
   "robot": {
     "title": "PeanutIQ اسسٹنٹ",

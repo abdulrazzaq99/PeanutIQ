@@ -12,8 +12,8 @@ export default function Users() {
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
-    location: user?.location || '',
-    language: user?.language || 'English',
+    location: user?.farm_location || user?.location || '',
+    language: user?.language_preference || user?.language || 'English',
     cropType: user?.cropType || 'Peanut',
     email: user?.email || user?.identifier || ''
   });
@@ -21,7 +21,11 @@ export default function Users() {
 
 
   const handleSave = () => {
-    updateProfile(formData);
+    updateProfile({
+      name: formData.name,
+      farm_location: formData.location,
+      language_preference: formData.language.toLowerCase()
+    });
     setIsEditing(false);
   };
 
@@ -61,7 +65,7 @@ export default function Users() {
             <div className="flex-shrink-0">
               <img 
                 className="h-24 w-24 sm:h-32 sm:w-32 rounded-full object-cover border-4 border-white shadow-lg" 
-                src={`https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=2D5A27&color=fff&size=128`} 
+                src={`https://ui-avatars.com/api/?name=${user?.name ? user.name.replace(' ', '+') : 'User'}&background=2D5A27&color=fff&size=128`} 
                 alt="Profile" 
               />
             </div>
@@ -76,7 +80,7 @@ export default function Users() {
               ) : (
                 <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
               )}
-              <p className="text-sm text-gray-500 font-medium mt-1 capitalize">{user.role}</p>
+              <p className="text-sm text-gray-500 font-medium mt-1 capitalize">{t(`profile.roles.${user.role}`, user.role)}</p>
               
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center justify-start text-sm text-gray-600">
@@ -106,7 +110,7 @@ export default function Users() {
                         placeholder={t('profile.placeholder.location')}
                       />
                     ) : (
-                      <>{user.location || t('profile.unknownLocation')}</>
+                      <>{user.farm_location || user.location || t('profile.unknownLocation')}</>
                     )}
                   </div>
                 )}
@@ -152,7 +156,7 @@ export default function Users() {
                   onClick={() => setShowLangMenu(!showLangMenu)}
                   className={`flex items-center justify-between w-full sm:w-32 px-3 py-2 text-sm border-slate-200 focus:outline-none focus:ring-1 focus:ring-forest focus:border-forest rounded-xl shadow-sm border cursor-pointer transition-colors ${!isEditing ? 'bg-sand opacity-75 cursor-not-allowed' : 'bg-white hover:bg-forest/10 hover:text-forest hover:border-transparent'}`}
                 >
-                  <span className="font-medium">{isEditing ? formData.language : user.language}</span>
+                  <span className="font-medium capitalize">{isEditing ? formData.language : (user.language_preference || user.language)}</span>
                   <ChevronDown className="h-4 w-4 text-slate-500 ms-2" />
                 </button>
 

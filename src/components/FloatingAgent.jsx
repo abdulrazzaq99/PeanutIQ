@@ -329,7 +329,7 @@ export default function FloatingAgent() {
   const currT = t[language];
 
   return (
-    <div ref={containerRef} className="fixed bottom-6 right-6 rtl:right-auto rtl:left-6 z-[9999] flex flex-col items-end rtl:items-start pointer-events-none">
+    <div ref={containerRef} className="fixed bottom-6 right-6 rtl:right-auto rtl:left-6 z-[9999] flex flex-col items-end rtl:items-start pointer-events-none print:hidden">
       {isOpen ? (
         <div 
           className="bg-forest rounded-[2rem] border border-white/20 w-[90vw] sm:w-[420px] h-[75vh] sm:h-[85vh] max-h-[600px] sm:max-h-[850px] flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom-5 fade-in duration-300 pointer-events-auto relative overflow-hidden origin-bottom-right rtl:origin-bottom-left"

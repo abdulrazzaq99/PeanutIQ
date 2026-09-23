@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useTranslation } from 'react-i18next';
+import { fetchApi } from '../config/api';
 
 // Mock Data
 const COLORS = ['#22c55e', '#eab308', '#f97316', '#64748b', '#ef4444'];
@@ -28,7 +29,7 @@ export default function SeedIntelligence() {
     if (file) {
       const url = URL.createObjectURL(file);
       setImage(url);
-      simulateAnalysis();
+      simulateAnalysis(file);
     }
   };
 
@@ -38,15 +39,38 @@ export default function SeedIntelligence() {
     if (file && file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
       setImage(url);
-      simulateAnalysis();
+      simulateAnalysis(file);
     }
   };
 
-  const simulateAnalysis = () => {
+  const simulateAnalysis = async (file) => {
     setStatus('analyzing');
+    const token = localStorage.getItem('peanutiq_token');
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'Seed Intelligence');
+    formData.append('title', t('seed.mockTitles.t1', 'Seed Quality Analysis'));
+    formData.append('status', 'Healthy');
+    formData.append('confidence_score', '94.2');
+
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      // Omit Content-Type so browser sets multipart boundary
+      const res = await fetch('http://127.0.0.1:8000/api/v1/scans/', {
+        method: 'POST',
+        headers,
+        body: formData
+      });
+      if (!res.ok) console.error("Scan save failed", await res.text());
+    } catch (e) {
+      console.error("Save scan failed", e);
+    }
+
+    // Simulate AI time for UX
     setTimeout(() => {
       setStatus('complete');
-    }, 3000);
+    }, 2000);
   };
 
   const handleReset = () => {

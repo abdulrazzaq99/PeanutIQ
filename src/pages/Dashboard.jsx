@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Legend, PieChart, Pie, Cell
@@ -12,73 +12,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import farmBannerBg from '../assets/farm-banner-bg.png';
 import Logo from '../components/Logo';
-
-const getDiseaseData = (t) => [
-  { name: t('admin.dashboard.months.jan'), EarlyLeafSpot: 40, LateLeafSpot: 24, CollarRot: 24 },
-  { name: t('admin.dashboard.months.feb'), EarlyLeafSpot: 30, LateLeafSpot: 13, CollarRot: 22 },
-  { name: t('admin.dashboard.months.mar'), EarlyLeafSpot: 20, LateLeafSpot: 58, CollarRot: 29 },
-  { name: t('admin.dashboard.months.apr'), EarlyLeafSpot: 27, LateLeafSpot: 39, CollarRot: 20 },
-  { name: t('admin.dashboard.months.may'), EarlyLeafSpot: 18, LateLeafSpot: 48, CollarRot: 21 },
-  { name: t('admin.dashboard.months.jun'), EarlyLeafSpot: 23, LateLeafSpot: 38, CollarRot: 25 },
-  { name: t('admin.dashboard.months.jul'), EarlyLeafSpot: 34, LateLeafSpot: 43, CollarRot: 21 },
-];
-
-const getYieldData = (t) => [
-  { name: t('admin.dashboard.attock'), yield: 4000 },
-  { name: t('admin.dashboard.chakwal'), yield: 3000 },
-  { name: t('admin.dashboard.talagang'), yield: 2000 },
-  { name: t('admin.dashboard.rawalpindi'), yield: 2780 },
-];
-
-const getAiData = (t) => [
-  { name: t('admin.dashboard.voiceLabel'), value: 75, color: '#07571C' },
-  { name: t('admin.dashboard.textInteractionsLabel'), value: 25, color: '#E07A5F' }
-];
-
-const getTrendingQueries = (t) => [
-  t('admin.dashboard.trendingQuery1'),
-  t('admin.dashboard.trendingQuery2'),
-  t('admin.dashboard.trendingQuery3')
-];
-
-const getTopArticles = (t) => [
-  { 
-    title: t('admin.dashboard.article1Title'), 
-    views: "1.2k",
-    category: t('admin.dashboard.catCultivation'),
-    author: t('admin.dashboard.authorFaisal'),
-    date: "Aug 1, 2026",
-    summary: t('admin.dashboard.article1Summary'),
-    content: t('admin.dashboard.article1Content')
-  },
-  { 
-    title: t('admin.dashboard.article2Title'), 
-    views: "956",
-    category: t('admin.dashboard.catDisease'),
-    author: t('admin.dashboard.authorAhmed'),
-    date: "Jul 15, 2026",
-    summary: t('admin.dashboard.article2Summary'),
-    content: t('admin.dashboard.article2Content')
-  },
-  { 
-    title: t('admin.dashboard.article3Title'), 
-    views: "840",
-    category: t('admin.dashboard.catHarvesting'),
-    author: t('admin.dashboard.authorAli'),
-    date: "Sep 5, 2026",
-    summary: t('admin.dashboard.article3Summary'),
-    content: t('admin.dashboard.article3Content')
-  },
-  { 
-    title: t('admin.dashboard.article4Title'), 
-    views: "612",
-    category: t('admin.dashboard.catSoil'),
-    author: t('admin.dashboard.authorFaisal'),
-    date: "Jun 20, 2026",
-    summary: t('admin.dashboard.article4Summary'),
-    content: t('admin.dashboard.article4Content')
-  }
-];
+import { fetchApi } from '../config/api';
 
 const getTheme = (color) => {
   switch (color) {
@@ -88,6 +22,15 @@ const getTheme = (color) => {
     case 'red': return { bg: 'bg-rose-50/40 hover:bg-rose-50/80', border: 'border-rose-100 hover:border-rose-200', iconBg: 'bg-rose-100/30 text-rose-500' };
     default: return { bg: 'bg-sand hover:bg-forest/10 hover:text-forest hover:border-transparent', border: 'border-gray-200 hover:border-gray-300', iconBg: 'bg-white text-gray-500' };
   }
+}
+
+const getStatusTheme = (status) => {
+  if (!status) return { text: 'text-slate-500', bg: 'bg-slate-500' };
+  const s = status.toLowerCase();
+  if (s.includes('optimal') || s.includes('healthy')) return { text: 'text-teal-700', bg: 'bg-teal-500' };
+  if (s.includes('warning') || s.includes('approaching')) return { text: 'text-amber-700', bg: 'bg-amber-400' };
+  if (s.includes('critical') || s.includes('error')) return { text: 'text-rose-700', bg: 'bg-rose-500' };
+  return { text: 'text-sky-700', bg: 'bg-sky-500' };
 }
 
 
@@ -149,9 +92,87 @@ export default function Dashboard() {
   const [isAdvisoryModalOpen, setIsAdvisoryModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [targetRegion, setTargetRegion] = useState('All');
+  
+  const [stats, setStats] = useState({
+    active_farmers: 0,
+    active_farmers_trend: "+0%",
+    active_farmers_trend_up: true,
+    seed_analyses: 0,
+    seed_analyses_trend: "+0%",
+    seed_analyses_trend_up: true,
+    disease_detections: 0,
+    disease_detections_trend: "+0%",
+    disease_detections_trend_up: true,
+    outbreak_alerts: 0,
+    outbreak_alerts_trend: "+0",
+    outbreak_alerts_trend_up: true
+  });
+  const [activities, setActivities] = useState([]);
+  
+  const [regionalIntelligence, setRegionalIntelligence] = useState({
+    mapLocations: [
+      { name: 'Attock', pos: [33.7660, 72.3609], type: 'disease' },
+      { name: 'Chakwal', pos: [32.9328, 72.8630], type: 'disease' },
+      { name: 'Talagang', pos: [32.9279, 72.4153], type: 'farmer' },
+      { name: 'Rawalpindi', pos: [33.5651, 73.0169], type: 'farmer' },
+    ],
+    criticalArea: {
+      name: "Attock District",
+      risk_percentage: "+15% Risk",
+      alert: "Collar Rot outbreak detected in 3 zones."
+    },
+    highEngagement: {
+      name: "Talagang",
+      new_count: "+240 New",
+      alert: "Farmers onboarded this week."
+    }
+  });
+  
+  const [diseaseData, setDiseaseData] = useState([]);
+  const [yieldData, setYieldData] = useState([]);
+  const [aiData, setAiData] = useState(null);
+  const [topArticles, setTopArticles] = useState([]);
+  const [systemHealth, setSystemHealth] = useState(null);
 
-  const diseaseData = getDiseaseData(t);
-  const yieldData = getYieldData(t);
+  useEffect(() => {
+    const fetchAdminData = async () => {
+      const token = localStorage.getItem('peanutiq_token');
+      if (!token) return;
+      try {
+        const statsRes = await fetchApi('/admin/dashboard-stats', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (statsRes.ok) {
+          setStats(await statsRes.json());
+        }
+        
+        const activityRes = await fetchApi('/admin/recent-activity', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (activityRes.ok) {
+          setActivities(await activityRes.json());
+        }
+
+        const [diseaseRes, yieldRes, aiRes, articlesRes, healthRes, regionalRes] = await Promise.all([
+          fetchApi('/admin/analytics/disease-trends', { headers: { Authorization: `Bearer ${token}` } }),
+          fetchApi('/admin/analytics/yield-forecast', { headers: { Authorization: `Bearer ${token}` } }),
+          fetchApi('/admin/analytics/ai-usage', { headers: { Authorization: `Bearer ${token}` } }),
+          fetchApi('/admin/analytics/top-articles', { headers: { Authorization: `Bearer ${token}` } }),
+          fetchApi('/admin/analytics/system-health', { headers: { Authorization: `Bearer ${token}` } }),
+          fetchApi('/admin/analytics/regional-intelligence', { headers: { Authorization: `Bearer ${token}` } })
+        ]);
+        if (diseaseRes.ok) setDiseaseData(await diseaseRes.json());
+        if (yieldRes.ok) setYieldData(await yieldRes.json());
+        if (aiRes.ok) setAiData(await aiRes.json());
+        if (articlesRes.ok) setTopArticles(await articlesRes.json());
+        if (healthRes.ok) setSystemHealth(await healthRes.json());
+        if (regionalRes.ok) setRegionalIntelligence(await regionalRes.json());
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchAdminData();
+  }, []);
 
   const handleExport = () => {
     setIsExporting(true);
@@ -161,10 +182,31 @@ export default function Dashboard() {
     }, 800);
   };
 
-  const handleSendAdvisory = (e) => {
+  const handleSendAdvisory = async (e) => {
     e.preventDefault();
-    setIsAdvisoryModalOpen(false);
-    showToast(t('admin.dashboard.broadcastSuccess', { region: targetRegion }).replace('{region}', targetRegion), '', 'success');
+    
+    const title = e.target[1].value;
+    const message = e.target[2].value;
+    const token = localStorage.getItem('peanutiq_token');
+
+    try {
+      const res = await fetchApi('/dashboard/advisories', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          title: title,
+          message: message,
+          type: 'alert',
+          severity: 'high'
+        })
+      });
+      if (res.ok) {
+        setIsAdvisoryModalOpen(false);
+        showToast(t('admin.dashboard.broadcastSuccess', { region: targetRegion }).replace('{region}', targetRegion), '', 'success');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -212,10 +254,10 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title={t('admin.dashboard.activeFarmers')} value="12,345" icon={Users} trend="+12%" trendUp={true} colorTheme="blue" />
-        <StatCard title={t('admin.dashboard.seedAnalyses')} value="8,432" icon={Bean} trend="+5.4%" trendUp={true} colorTheme="green" />
-        <StatCard title={t('admin.dashboard.diseaseDetections')} value="3,211" icon={ScanSearch} trend="-2.1%" trendUp={false} colorTheme="amber" />
-        <StatCard title={t('admin.dashboard.outbreakAlerts')} value="14" icon={AlertTriangle} trend="+3" trendUp={false} colorTheme="red" />
+        <StatCard title={t('admin.dashboard.activeFarmers')} value={stats.active_farmers.toLocaleString()} icon={Users} trend={stats.active_farmers_trend} trendUp={stats.active_farmers_trend_up} colorTheme="blue" />
+        <StatCard title={t('admin.dashboard.seedAnalyses')} value={stats.seed_analyses.toLocaleString()} icon={Bean} trend={stats.seed_analyses_trend} trendUp={stats.seed_analyses_trend_up} colorTheme="green" />
+        <StatCard title={t('admin.dashboard.diseaseDetections')} value={stats.disease_detections.toLocaleString()} icon={ScanSearch} trend={stats.disease_detections_trend} trendUp={stats.disease_detections_trend_up} colorTheme="amber" />
+        <StatCard title={t('admin.dashboard.outbreakAlerts')} value={stats.outbreak_alerts.toLocaleString()} icon={AlertTriangle} trend={stats.outbreak_alerts_trend} trendUp={stats.outbreak_alerts_trend_up} colorTheme="red" />
       </div>
 
       {/* 2. {t('admin.dashboard.regionalIntelligenceTitle')} Map */}
@@ -274,26 +316,17 @@ export default function Dashboard() {
               <TileLayer
                 url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
               />
-              <Marker position={[33.7660, 72.3609]} icon={diseaseIcon}>
-                <LeafletTooltip direction="bottom" offset={[0, 10]} opacity={1} permanent className="custom-tooltip">
-                  {t('admin.dashboard.attock')}
-                </LeafletTooltip>
-              </Marker>
-              <Marker position={[33.5973, 73.0479]} icon={farmerIcon}>
-                <LeafletTooltip direction="bottom" offset={[0, 10]} opacity={1} permanent className="custom-tooltip">
-                  {t('admin.dashboard.rawalpindi')}
-                </LeafletTooltip>
-              </Marker>
-              <Marker position={[32.9328, 72.8630]} icon={diseaseIcon}>
-                <LeafletTooltip direction="bottom" offset={[0, 10]} opacity={1} permanent className="custom-tooltip">
-                  {t('admin.dashboard.chakwal')}
-                </LeafletTooltip>
-              </Marker>
-              <Marker position={[32.9297, 72.4150]} icon={farmerIcon}>
-                <LeafletTooltip direction="bottom" offset={[0, 10]} opacity={1} permanent className="custom-tooltip">
-                  {t('admin.dashboard.talagang')}
-                </LeafletTooltip>
-              </Marker>
+              {regionalIntelligence.mapLocations.map((loc, idx) => (
+                <Marker 
+                  key={idx} 
+                  position={loc.pos} 
+                  icon={loc.type === 'disease' ? diseaseIcon : farmerIcon}
+                >
+                  <LeafletTooltip direction="bottom" offset={[0, 10]} opacity={1} permanent className="custom-tooltip">
+                    {loc.name}
+                  </LeafletTooltip>
+                </Marker>
+              ))}
             </MapContainer>
             
             {/* Soft Overlays */}
@@ -319,28 +352,30 @@ export default function Dashboard() {
           
           {/* Data details - Humanized */}
           <div className="lg:col-span-2 flex flex-col justify-center space-y-4">
-            <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('admin.dashboard.criticalAreaLabel')}</p>
-                <span className="flex items-center px-2.5 py-1 bg-rose-50 text-rose-700 rounded-lg font-bold text-xs">
-                  <TrendingUp className="w-3.5 h-3.5 rtl:ml-1 ltr:mr-1" />
-                  {t('admin.dashboard.riskIncrease')}
+            <div className="bg-white border border-rose-100 p-5 rounded-2xl shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+              <div className="flex justify-between items-start mb-4 relative z-10">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('admin.dashboard.criticalAreaLabel')}</span>
+                <span className="bg-rose-50 text-rose-600 text-xs font-bold px-2 py-1 rounded flex items-center gap-1 whitespace-nowrap">
+                  <TrendingUp className="w-3 h-3 shrink-0" />
+                  {regionalIntelligence.criticalArea.risk_percentage}
                 </span>
               </div>
-              <h4 className="text-xl font-bold text-slate-900 mb-1">{t('admin.dashboard.attockDistrict')}</h4>
-              <p className="text-sm font-medium text-slate-600">{t('admin.dashboard.collarRotOutbreakMsg')}</p>
+              <h4 className="text-xl font-black text-slate-800 mb-2 relative z-10">{regionalIntelligence.criticalArea.name}</h4>
+              <p className="text-sm font-bold text-slate-600 relative z-10">{regionalIntelligence.criticalArea.alert}</p>
             </div>
             
-            <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('admin.dashboard.highEngagementLabel')}</p>
-                <span className="flex items-center px-2.5 py-1 bg-sky-50 text-sky-700 rounded-lg font-bold text-xs">
-                  <Users className="w-3.5 h-3.5 rtl:ml-1 ltr:mr-1" />
-                  {t('admin.dashboard.newFarmers')}
+            <div className="bg-white border border-sky-100 p-5 rounded-2xl shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-sky-50 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+              <div className="flex justify-between items-start mb-4 relative z-10">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('admin.dashboard.highEngagementLabel')}</span>
+                <span className="bg-sky-50 text-sky-600 text-xs font-bold px-2 py-1 rounded flex items-center gap-1 whitespace-nowrap">
+                  <Users className="w-3 h-3 shrink-0" />
+                  {regionalIntelligence.highEngagement.new_count}
                 </span>
               </div>
-              <h4 className="text-xl font-bold text-slate-900 mb-1">{t('admin.dashboard.talagang')}</h4>
-              <p className="text-sm font-medium text-slate-600">{t('admin.dashboard.farmersOnboardedMsg')}</p>
+              <h4 className="text-xl font-black text-slate-800 mb-2 relative z-10">{regionalIntelligence.highEngagement.name}</h4>
+              <p className="text-sm font-bold text-slate-600 relative z-10">{regionalIntelligence.highEngagement.alert}</p>
             </div>
           </div>
         </div>
@@ -364,13 +399,13 @@ export default function Dashboard() {
             <div className="w-full md:w-1/2 h-48 relative">
               {/* Center text for donut */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
-                <span className="text-2xl font-black text-slate-900">{t('admin.dashboard.tenKPlus')}</span>
+                <span className="text-2xl font-black text-slate-900">{aiData?.totalQueries || '0'}</span>
                 <span className="text-[11px] font-bold text-slate-500 uppercase">{t('admin.dashboard.queriesLabel')}</span>
               </div>
               <ResponsiveContainer width="100%" height="100%" className="z-10 relative">
                 <PieChart>
                   <Pie
-                    data={getAiData(t)}
+                    data={aiData?.chartData || []}
                     cx="50%"
                     cy="50%"
                     innerRadius={55}
@@ -380,7 +415,7 @@ export default function Dashboard() {
                     dataKey="value"
                     stroke="none"
                   >
-                    {getAiData(t).map((entry, index) => (
+                    {(aiData?.chartData || []).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -393,9 +428,9 @@ export default function Dashboard() {
             </div>
             
             <div className="w-full md:w-1/2 space-y-4 mt-6 md:mt-0 md:pl-4">
-              {getAiData(t).map((item, idx) => (
+              {(aiData?.chartData || []).map((item, idx) => (
                 <div key={idx} className="bg-sand p-4 rounded-2xl">
-                  <div className="flex items-center gap- mb-1 overflow-hidden">
+                  <div className="flex items-center gap-2 mb-1 overflow-hidden">
                     <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{backgroundColor: item.color}}></span>
                     <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wide whitespace-nowrap truncate">{item.name}</span>
                   </div>
@@ -408,7 +443,7 @@ export default function Dashboard() {
           <div className="mt-8">
             <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-4">{t('admin.dashboard.topTrendingQueries')}</p>
             <div className="flex flex-wrap gap-2">
-              {getTrendingQueries(t).map((query, idx) => (
+              {(aiData?.trendingQueries || []).map((query, idx) => (
                 <div key={idx} className="bg-sand border border-earth text-charcoal px-4 py-2.5 rounded-xl text-sm font-bold flex items-center shadow-sm hover:bg-forest/10 hover:text-forest hover:border-forest/30 transition-colors cursor-default">
                   <TrendingUp className="w-4 h-4 rtl:ml-2 ltr:mr-2 opacity-70 text-forest" />
                   {query}
@@ -434,21 +469,21 @@ export default function Dashboard() {
           </div>
           
           <div className="space-y-3 flex-1">
-            {getTopArticles(t).map((article, idx) => (
+            {topArticles.map((article, idx) => (
               <div 
                 key={idx} 
                 onClick={() => setSelectedArticle(article)}
                 className="group p-4 rounded-2xl bg-sand/50 hover:bg-forest/10 hover:shadow-sm transition-all flex justify-between items-center cursor-pointer border border-transparent hover:border-forest/30"
               >
-                <div className="flex items-center gap- overflow-hidden">
+                <div className="flex items-center gap-4 overflow-hidden">
                   <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center font-black text-slate-400 group-hover:text-forest transition-colors flex-shrink-0 text-lg">
                     {idx + 1}
                   </div>
                   <span className="text-[15px] font-bold text-slate-800 group-hover:text-forest truncate">{article.title}</span>
                 </div>
-                <div className="flex flex-col items-end flex-shrink-0 ltr:ml-4 rtl:mr-4">
-                  <span className="text-sm font-black text-slate-800">{article.views}</span>
-                  <span className="text-[11px] font-bold text-slate-500 uppercase">{t('admin.dashboard.viewsLabel')}</span>
+                <div className="flex flex-col items-center justify-center flex-shrink-0 min-w-[50px] ltr:ml-4 rtl:mr-4">
+                  <span className="text-lg font-black text-slate-800 leading-none">{article.views}</span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase mt-1 tracking-wider">{t('admin.dashboard.viewsLabel')}</span>
                 </div>
               </div>
             ))}
@@ -519,24 +554,31 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-earth/40 bg-white">
-              {[
-                { name: t('admin.dashboard.names.ahmad'), region: t('admin.dashboard.attock'), type: t('admin.dashboard.activityTypes.seedScan'), status: t('admin.dashboard.statuses.completed'), statusColor: 'bg-green-100 text-[#07571C]', time: t('admin.dashboard.times.min5') },
-                { name: t('admin.dashboard.names.ali'), region: t('admin.dashboard.chakwal'), type: t('admin.dashboard.activityTypes.diseaseAnalysis'), status: t('admin.dashboard.statuses.highRisk'), statusColor: 'bg-red-100 text-red-700', time: t('admin.dashboard.times.min12') },
-                { name: t('admin.dashboard.names.usman'), region: t('admin.dashboard.rawalpindi'), type: t('admin.dashboard.activityTypes.voiceAdvisory'), status: t('admin.dashboard.statuses.completed'), statusColor: 'bg-green-100 text-[#07571C]', time: t('admin.dashboard.times.hour1') },
-                { name: t('admin.dashboard.names.zainab'), region: t('admin.dashboard.talagang'), type: t('admin.dashboard.activityTypes.profileUpdate'), status: t('admin.dashboard.statuses.pending'), statusColor: 'bg-amber-100 text-amber-700', time: t('admin.dashboard.times.hour2') },
-              ].map((person, personIdx) => (
-                <tr key={personIdx} className="hover:bg-forest/10 transition-colors">
-                  <td className="px-4 py-4 whitespace-nowrap text-[14px] font-bold text-charcoal">{person.name}</td>
-                  <td className="px-4 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">{person.region}</td>
-                  <td className="px-4 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">{person.type}</td>
+              {activities.length > 0 ? activities.map((activity, idx) => (
+                <tr key={idx} className="hover:bg-forest/10 transition-colors">
+                  <td className="px-4 py-4 whitespace-nowrap text-[14px] font-bold text-charcoal">{activity.name}</td>
+                  <td className="px-4 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">{activity.region}</td>
+                  <td className="px-4 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">{activity.type}</td>
                   <td className="px-4 py-4 whitespace-nowrap text-center text-[13px]">
-                    <span className={`w-24 justify-center text-center px-2.5 py-1 inline-flex text-[11px] font-bold rounded-full ${person.statusColor}`}>
-                      {person.status}
+                    <span className={`w-24 justify-center text-center px-2.5 py-1 inline-flex text-[11px] font-bold rounded-full ${
+                      activity.status.toLowerCase().includes('high') ? 'bg-red-100 text-red-700' :
+                      activity.status.toLowerCase().includes('pending') ? 'bg-amber-100 text-amber-700' :
+                      'bg-green-100 text-[#07571C]'
+                    }`}>
+                      {activity.status}
                     </span>
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-[13px] text-charcoal/70 font-medium">{person.time}</td>
+                  <td className="px-4 py-4 whitespace-nowrap text-[13px] text-charcoal/70 font-medium">
+                    {new Date(activity.timestamp).toLocaleString()}
+                  </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan="5" className="px-4 py-8 text-center text-[13px] font-medium text-charcoal/60">
+                    No recent activity.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -551,9 +593,9 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Metric 1 */}
           <div className="flex flex-col">
-            <div className="flex items-center gap- mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-teal-50 flex items-center justify-center">
-                <Server className="w-5 h-5 text-teal-600" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center">
+                <Server className="w-5 h-5 text-slate-600" />
               </div>
               <div>
                 <div className="text-sm font-bold text-slate-800">{t('admin.dashboard.serverUptime')}</div>
@@ -561,19 +603,21 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex justify-between items-end mb-2 mt-auto">
-              <span className="text-2xl font-black text-slate-900">99.9%</span>
-              <p className="text-[11px] font-bold text-teal-700 mb-1">{t('admin.dashboard.healthy')}</p>
+              <span className="text-2xl font-black text-slate-900">{systemHealth?.uptime?.value || 0}%</span>
+              <p className={`text-[11px] font-bold mb-1 ${getStatusTheme(systemHealth?.uptime?.status).text}`}>
+                {systemHealth?.uptime?.status || ''}
+              </p>
             </div>
             <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-teal-500 rounded-full" style={{ width: '99.9%' }}></div>
+              <div className={`h-full rounded-full ${getStatusTheme(systemHealth?.uptime?.status).bg}`} style={{ width: `${systemHealth?.uptime?.value || 0}%` }}></div>
             </div>
           </div>
           
           {/* Metric 2 */}
           <div className="flex flex-col">
-            <div className="flex items-center gap- mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center">
-                <Mic className="w-5 h-5 text-amber-500" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center">
+                <Mic className="w-5 h-5 text-slate-600" />
               </div>
               <div>
                 <div className="text-sm font-bold text-slate-800">{t('admin.dashboard.aiApiUsage')}</div>
@@ -581,19 +625,21 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex justify-between items-end mb-2 mt-auto">
-              <span className="text-2xl font-black text-slate-900">85%</span>
-              <p className="text-[11px] font-bold text-amber-700 mb-1">{t('admin.dashboard.approaching')}</p>
+              <span className="text-2xl font-black text-slate-900">{systemHealth?.aiQuota?.value || 0}%</span>
+              <p className={`text-[11px] font-bold mb-1 ${getStatusTheme(systemHealth?.aiQuota?.status).text}`}>
+                {systemHealth?.aiQuota?.status || ''}
+              </p>
             </div>
             <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-amber-400 rounded-full" style={{ width: '85%' }}></div>
+              <div className={`h-full rounded-full ${getStatusTheme(systemHealth?.aiQuota?.status).bg}`} style={{ width: `${systemHealth?.aiQuota?.value || 0}%` }}></div>
             </div>
           </div>
           
           {/* Metric 3 */}
           <div className="flex flex-col">
-            <div className="flex items-center gap- mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-sky-50 flex items-center justify-center">
-                <Database className="w-5 h-5 text-sky-600" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center">
+                <Database className="w-5 h-5 text-slate-600" />
               </div>
               <div>
                 <div className="text-sm font-bold text-slate-800">{t('admin.dashboard.databaseStorage')}</div>
@@ -601,11 +647,13 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex justify-between items-end mb-2 mt-auto">
-              <span className="text-2xl font-black text-slate-900">42%</span>
-              <p className="text-[11px] font-bold text-sky-700 mb-1">{t('admin.dashboard.optimal')}</p>
+              <span className="text-2xl font-black text-slate-900">{systemHealth?.dbStorage?.value || 0}%</span>
+              <p className={`text-[11px] font-bold mb-1 ${getStatusTheme(systemHealth?.dbStorage?.status).text}`}>
+                {systemHealth?.dbStorage?.status || ''}
+              </p>
             </div>
             <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-sky-500 rounded-full" style={{ width: '42%' }}></div>
+              <div className={`h-full rounded-full ${getStatusTheme(systemHealth?.dbStorage?.status).bg}`} style={{ width: `${systemHealth?.dbStorage?.value || 0}%` }}></div>
             </div>
           </div>
         </div>

@@ -2,16 +2,19 @@ import React from 'react';
 import { Sprout, Flower2, Bean, Package, Tractor, Leaf, Nut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-export default function CropLifecycle() {
+export default function CropLifecycle({ currentStage = 'pegging' }) {
   const { t, i18n } = useTranslation();
   const isUrdu = i18n.language === 'ur';
   
+  const stageOrder = ['sowing', 'flowering', 'pegging', 'podFill', 'harvesting'];
+  const currentIndex = stageOrder.indexOf(currentStage);
+  
   const stages = [
-    { id: 'sowing', label: isUrdu ? 'بوائی' : 'Sowing', icon: Nut, active: true, completed: true },
-    { id: 'flowering', label: isUrdu ? 'پھول آنا' : 'Flowering', icon: Flower2, active: true, completed: true },
-    { id: 'pegging', label: isUrdu ? 'پھلیاں بننا' : 'Pegging', icon: Bean, active: true, completed: false }, // Current active stage
-    { id: 'podFill', label: isUrdu ? 'پھلی بھرنا' : 'Pod Fill', icon: Package, active: false, completed: false },
-    { id: 'harvesting', label: isUrdu ? 'کٹائی' : 'Harvesting', icon: Tractor, active: false, completed: false },
+    { id: 'sowing', label: isUrdu ? 'بوائی' : 'Sowing', icon: Nut, active: currentIndex >= 0, completed: currentIndex > 0 },
+    { id: 'flowering', label: isUrdu ? 'پھول آنا' : 'Flowering', icon: Flower2, active: currentIndex >= 1, completed: currentIndex > 1 },
+    { id: 'pegging', label: isUrdu ? 'پھلیاں بننا' : 'Pegging', icon: Bean, active: currentIndex >= 2, completed: currentIndex > 2 },
+    { id: 'podFill', label: isUrdu ? 'پھلی بھرنا' : 'Pod Fill', icon: Package, active: currentIndex >= 3, completed: currentIndex > 3 },
+    { id: 'harvesting', label: isUrdu ? 'کٹائی' : 'Harvesting', icon: Tractor, active: currentIndex >= 4, completed: currentIndex > 4 },
   ];
 
   return (
@@ -27,7 +30,10 @@ export default function CropLifecycle() {
           <div className="absolute left-[10%] right-[10%] rtl:right-[10%] rtl:left-[10%] top-6 -translate-y-1/2 h-1.5 bg-earth rounded-full z-0"></div>
         
         {/* Active Progress Line */}
-        <div className="absolute left-[10%] rtl:right-[10%] rtl:left-auto top-6 -translate-y-1/2 h-1.5 bg-[#07571C] rounded-full z-0 transition-all duration-1000 w-[50%]"></div>
+        <div 
+          className="absolute left-[10%] rtl:right-[10%] rtl:left-auto top-6 -translate-y-1/2 h-1.5 bg-[#07571C] rounded-full z-0 transition-all duration-1000"
+          style={{ width: `${Math.max(0, (currentIndex / 4) * 80)}%` }}
+        ></div>
         
         {stages.map((stage, index) => {
           const Icon = stage.icon;

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { 
   CloudRain, Thermometer, Wind, Droplets, ArrowRight, Wheat, Bean, ScanSearch, BookOpen, Clock, History, Calendar, AlertTriangle, Leaf, Activity, ClipboardList, BarChart3, MessageSquare, Sun
 } from 'lucide-react';
@@ -9,6 +10,8 @@ import Logo from '../components/Logo';
 import CropLifecycle from '../components/CropLifecycle';
 import DailyAITip from '../components/DailyAITip';
 import UpcomingActions from '../components/UpcomingActions';
+import { fetchApi } from '../config/api';
+
 const weatherForecast = [
   { dayKey: 'dashboard.weatherData.today', temp: '32°C', icon: Thermometer, conditionKey: 'dashboard.weatherData.sunny', color: 'text-amber-500' },
   { dayKey: 'dashboard.weatherData.tomorrow', temp: '29°C', icon: CloudRain, conditionKey: 'dashboard.weatherData.rainExpected', color: 'text-blue-500' },
@@ -21,17 +24,58 @@ const quickActions = [
   { icon: BookOpen, labelKey: 'dashboard.knowledgeBase', bg: 'bg-teal-50', text: 'text-teal-600', link: '/user/knowledge-base' },
 ];
 
-const recentActivities = [
-  { titleKey: 'admin.dashboard.activityTypes.diseaseAnalysis', subtitleKey: 'history.statusHighRisk', timeKey: 'dashboard.activities.timeToday830', dot: 'bg-red-500' },
-  { titleKey: 'admin.dashboard.activityTypes.seedScan', subtitleKey: 'history.statusHealthy', timeKey: 'dashboard.activities.timeToday615', dot: 'bg-forest' },
-  { titleKey: 'admin.dashboard.activityTypes.voiceAdvisory', subtitleKey: 'dashboard.advisory.heavyRainTitle', timeKey: 'dashboard.activities.timeYesterday445', dot: 'bg-[#07571C]' },
-  { titleKey: 'dashboard.knowledgeBase', subtitleKey: 'admin.dashboard.catCultivation', timeKey: 'dashboard.activities.timeYesterday1120', dot: 'bg-gray-400' },
-  { titleKey: 'admin.dashboard.activityTypes.profileUpdate', subtitleKey: '', timeKey: 'dashboard.activities.timeMay19', dot: 'bg-gray-400' },
-];
+const getTimeAgo = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+  
+  if (diffInSeconds < 60) return 'Just now';
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+};
 
 export default function UserDashboard() {
   const { user } = useAuth();
   const { t, i18n } = useTranslation();
+  
+  const [activities, setActivities] = useState([]);
+  const [advisory, setAdvisory] = useState(null);
+  const [cropProfile, setCropProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem('peanutiq_token');
+      if (!token) return;
+
+      try {
+        const actRes = await fetchApi('/dashboard/activities?limit=5', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (actRes.ok) setActivities(await actRes.json());
+
+        const advRes = await fetchApi('/dashboard/advisories?type=alert&limit=1', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (advRes.ok) {
+          const data = await advRes.json();
+          if (data.length > 0) setAdvisory(data[0]);
+        }
+
+        const profileRes = await fetchApi('/dashboard/crop-profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (profileRes.ok) setCropProfile(await profileRes.json());
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchData();
+  }, []);
   
   return (
     <div className="max-w-7xl mx-auto flex flex-col gap-4 pb-10">
@@ -55,7 +99,7 @@ export default function UserDashboard() {
             <Logo className="w-6 h-6 ms-3" iconColor="#ffffff" sparkleColor="#A3D977" />
           </h1>
           <p className="text-green-50 max-w-xl text-[13px] opacity-90 leading-tight">
-            {t('dashboard.farmIntro', { location: user?.location || t('dashboard.defaultLocation', 'Attock, Punjab') })}
+            {t('dashboard.farmIntro', { location: user?.farm_location || t('dashboard.defaultLocation', 'Attock, Punjab') })}
           </p>
         </div>
       </div>
@@ -107,21 +151,35 @@ export default function UserDashboard() {
               <AlertTriangle className="w-5 h-5 me-2 text-red-500" strokeWidth={2} /> 
               {t('dashboard.latestAdvisory', 'Latest Advisory')}
             </h3>
-            <span className="text-[12px] font-bold text-red-500 flex items-center bg-red-50 px-2.5 py-1 rounded-full">
-              <Clock className="w-3.5 h-3.5 me-1" /> {t('dashboard.timeAgo', '2 hours ago')}
-            </span>
+            {advisory && (advisory.created_at || advisory.date) && (
+              <span className="text-[12px] font-bold text-red-500 flex items-center bg-red-50 px-2.5 py-1 rounded-full">
+                <Clock className="w-3.5 h-3.5 me-1" /> {getTimeAgo(advisory.created_at || advisory.date)}
+              </span>
+            )}
           </div>
           
-          <div className="mb-3">
-            <span className="inline-block px-3 py-1 bg-[#FDE8E8] text-red-700 text-[11px] font-bold rounded-full">
-              {t('dashboard.highPriority', 'High Priority')}
-            </span>
-          </div>
-          <h4 className="text-[16px] font-bold text-red-800 mb-2">{t('dashboard.advisory.heavyRainTitle', 'Heavy Rain Warning')}</h4>
-          <p className="text-[13px] text-charcoal/80 leading-relaxed font-medium mb-5">
-            {t('dashboard.advisory.heavyRainDesc', 'Meteorological data suggests heavy rainfall in your region over the next 48 hours. Ensure proper drainage in your peanut fields to prevent waterlogging and root rot.')}
-          </p>
-          <Link to="/user" className="mt-auto text-[13px] font-bold text-red-500 hover:text-red-700 transition-colors inline-flex items-center w-fit">
+          {advisory ? (
+            <>
+              <div className="mb-3">
+                <span className="inline-block px-3 py-1 bg-[#FDE8E8] text-red-700 text-[11px] font-bold rounded-full">
+                  {advisory.severity === 'high' ? t('dashboard.highPriority', 'High Priority') : advisory.severity}
+                </span>
+              </div>
+              <h4 className="text-[16px] font-bold text-red-800 mb-2">{advisory.title}</h4>
+              <p className="text-[13px] text-charcoal/80 leading-relaxed font-medium mb-5">
+                {advisory.message}
+              </p>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-center">
+              <span className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-3">
+                <Leaf className="w-6 h-6 text-forest" />
+              </span>
+              <p className="text-sm font-bold text-charcoal/70">No active alerts</p>
+              <p className="text-xs text-charcoal/50 mt-1">Your farm conditions are optimal.</p>
+            </div>
+          )}
+          <Link to="/user/advisories" className="mt-auto text-[13px] font-bold text-red-500 hover:text-red-700 transition-colors inline-flex items-center w-fit">
             {t('dashboard.readMore', 'Read more details')} <ArrowRight className="w-3.5 h-3.5 ms-1" />
           </Link>
         </div>
@@ -134,9 +192,9 @@ export default function UserDashboard() {
           </h3>
           <div className="flex items-center flex-1 py-2 justify-center gap-5 mt-2">
             <div className="relative w-36 h-36 flex-shrink-0">
-              <div className="w-full h-full rounded-full" style={{ background: 'conic-gradient(#22c55e 0% 78%, #eab308 78% 93%, #ef4444 93% 100%)' }}>
+              <div className="w-full h-full rounded-full" style={{ background: `conic-gradient(#22c55e 0% ${cropProfile?.health_good_pct || 0}%, #eab308 ${cropProfile?.health_good_pct || 0}% ${(cropProfile?.health_good_pct || 0) + (cropProfile?.health_average_pct || 0)}%, #ef4444 ${(cropProfile?.health_good_pct || 0) + (cropProfile?.health_average_pct || 0)}% 100%)` }}>
                 <div className="absolute inset-3 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
-                   <span className="text-[28px] font-black text-charcoal leading-none" dir="ltr">78%</span>
+                   <span className="text-[28px] font-black text-charcoal leading-none" dir="ltr">{cropProfile?.health_good_pct || 0}%</span>
                    <span className="text-[12px] font-bold text-[#07571C] mt-1 uppercase tracking-wider">{t('dashboard.good', 'Good')}</span>
                 </div>
               </div>
@@ -144,15 +202,15 @@ export default function UserDashboard() {
             <div className="space-y-3.5 min-w-[100px]">
                <div className="flex justify-between items-center text-[13px] font-bold text-charcoal">
                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-forest me-2.5 shadow-sm"></div>{t('dashboard.good', 'Good')}</div> 
-                 <span className="opacity-70" dir="ltr">78%</span>
+                 <span className="opacity-70" dir="ltr">{cropProfile?.health_good_pct || 0}%</span>
                </div>
                <div className="flex justify-between items-center text-[13px] font-bold text-charcoal">
                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-yellow-400 me-2.5 shadow-sm"></div>{t('dashboard.average', 'Average')}</div> 
-                 <span className="opacity-70" dir="ltr">15%</span>
+                 <span className="opacity-70" dir="ltr">{cropProfile?.health_average_pct || 0}%</span>
                </div>
                <div className="flex justify-between items-center text-[13px] font-bold text-charcoal">
                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-red-500 me-2.5 shadow-sm"></div>{t('dashboard.poor', 'Poor')}</div> 
-                 <span className="opacity-70" dir="ltr">7%</span>
+                 <span className="opacity-70" dir="ltr">{cropProfile?.health_poor_pct || 0}%</span>
                </div>
             </div>
           </div>
@@ -164,7 +222,7 @@ export default function UserDashboard() {
       </div>
 
       {/* 4. Crop Lifecycle Stage */}
-      <CropLifecycle />
+      <CropLifecycle currentStage={cropProfile?.stage} />
 
       {/* 5. Quick Actions */}
       <div className="bg-white border border-earth rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]">
@@ -209,19 +267,26 @@ export default function UserDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-earth/40 bg-white">
-                {recentActivities.slice(0, 5).map((activity, idx) => (
+                {activities.map((activity, idx) => (
                   <tr key={idx} className="hover:bg-forest/10 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-[14px] font-bold text-charcoal">
-                      {t(activity.titleKey)}
+                      {activity.action}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-[13px] font-medium text-charcoal/70">
-                      {activity.subtitleKey ? t(activity.subtitleKey) : <span className="opacity-50">-</span>}
+                      {activity.details ? activity.details : <span className="opacity-50">-</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-[13px] text-charcoal/70 font-medium">
-                      {t(activity.timeKey)}
+                      {new Date(activity.timestamp).toLocaleString()}
                     </td>
                   </tr>
                 ))}
+                {activities.length === 0 && (
+                  <tr>
+                    <td colSpan="3" className="px-6 py-8 text-center text-sm font-medium text-charcoal/60">
+                      {t('dashboard.activities.noActivity', 'No recent activity.')}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

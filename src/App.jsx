@@ -15,11 +15,13 @@ import Users from './pages/Users';
 import SeedIntelligence from './pages/SeedIntelligence';
 import DiseaseIntelligence from './pages/DiseaseIntelligence';
 import HistoryReports from './pages/HistoryReports';
+import Advisories from './pages/Advisories';
 import Login from './pages/auth/Login';
 import VerifyOTP from './pages/auth/VerifyOTP';
 import Signup from './pages/auth/Signup';
 import ProfileSetup from './pages/auth/ProfileSetup';
 import UserDashboard from './pages/UserDashboard';
+import Maintenance from './pages/Maintenance';
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
           <ScrollToTop />
         <Routes>
           <Route path="/" element={<Navigate to="/user" replace />} />
+          <Route path="/maintenance" element={<Maintenance />} />
           
           {/* Auth Routes */}
           <Route element={<AuthLayout />}>
@@ -46,6 +49,7 @@ function App() {
               <Route path="seed" element={<SeedIntelligence />} />
               <Route path="disease" element={<DiseaseIntelligence />} />
               <Route path="history" element={<HistoryReports />} />
+              <Route path="advisories" element={<Advisories />} />
               <Route path="knowledge-base" element={<KnowledgeBase />} />
               <Route path="profile" element={<Users />} />
             </Route>

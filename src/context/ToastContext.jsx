@@ -20,7 +20,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className={`fixed bottom-10 left-1/2 -translate-x-1/2 transition-all duration-500 z-[100] ${toast.show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+      <div className={`fixed bottom-10 right-4 md:right-10 rtl:right-auto rtl:left-4 rtl:md:left-10 transition-all duration-500 z-[100] ${toast.show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
         <div className={`bg-white border-l-4 rtl:border-l-0 rtl:border-r-4 rounded-lg shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] p-4 flex items-start max-w-sm ${toast.type === 'error' ? 'border-red-500' : toast.type === 'warning' ? 'border-amber-500' : toast.type === 'info' ? 'border-blue-500' : 'border-forest'}`}>
           <div className={`rounded-full p-1.5 mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0 ${toast.type === 'error' ? 'bg-red-100' : toast.type === 'warning' ? 'bg-amber-100' : toast.type === 'info' ? 'bg-blue-100' : 'bg-emerald-100'}`}>
             {toast.type === 'error' || toast.type === 'warning' ? (

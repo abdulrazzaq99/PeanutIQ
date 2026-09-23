@@ -24,6 +24,7 @@ export default function AdminLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const profileRef = useRef(null);
@@ -218,7 +219,9 @@ export default function AdminLayout() {
                 className={`relative bg-white p-2 rounded-full transition-colors focus:outline-none cursor-pointer ${showNotifications ? "bg-green-50 text-forest opacity-100" : "text-charcoal opacity-70 hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}
               >
                 <Bell className="h-6 w-6" />
-                <span className="absolute top-0 right-0 rtl:right-auto rtl:left-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
+                {notifications.length > 0 && (
+                  <span className="absolute top-0 right-0 rtl:right-auto rtl:left-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">{notifications.length}</span>
+                )}
               </button>
 
               {showNotifications && (
@@ -226,10 +229,21 @@ export default function AdminLayout() {
                   <div className="px-4 py-3 border-b border-gray-100 bg-sand flex justify-between items-center">
                     <h3 className="text-sm font-bold text-gray-900 no-common-ligatures">{t('admin.layout.notifications')}</h3>
                   </div>
-                  <div className="p-6 text-center">
-                    <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                    <p className="text-sm text-gray-500">{t('admin.layout.noNotifications')}</p>
-                  </div>
+                  {notifications.length === 0 ? (
+                    <div className="p-6 text-center">
+                      <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                      <p className="text-sm text-gray-500">{t('admin.layout.noNotifications')}</p>
+                    </div>
+                  ) : (
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.map(n => (
+                        <div key={n.id} className="px-4 py-3 border-b border-earth bg-sand hover:bg-forest/10 cursor-pointer transition-colors">
+                          <p className="text-sm font-bold text-terracotta">{n.title}</p>
+                          <p className="text-xs text-charcoal opacity-70 mt-1">{n.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

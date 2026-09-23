@@ -11,6 +11,11 @@
     "languageDescription": "Choose your preferred language for the dashboard.",
     "english": "English",
     "urdu": "Urdu",
+    "roles": {
+      "farmer": "Farmer",
+      "admin": "Admin",
+      "researcher": "Researcher"
+    },
     "placeholder": {
       "phoneOrEmail": "Phone or Email",
       "location": "Location",
@@ -42,6 +47,20 @@
     "seedDesc": "Scan your peanut seeds before sowing to ensure high germination rates.",
     "diseaseId": "Disease Identification",
     "diseaseDesc": "Upload photos of diseased crop leaves to get instant AI diagnosis.",
+    "knowledge": {
+      "title": "Knowledge Base",
+      "subtitle": "Expert advice, research, and best practices for peanut farming",
+      "search": "Search knowledge base...",
+      "readMore": "Read Full Article",
+      "back": "Back to Knowledge Base",
+      "views": "Views"
+    },
+    "advisories": {
+      "title": "Advisories & Alerts",
+      "subtitle": "Stay updated with important notifications regarding your crops and weather conditions.",
+      "emptyTitle": "No Active Advisories",
+      "emptyDesc": "There are no active alerts or advisories for your region at this time."
+    },
     "knowledgeBase": "Knowledge Base",
     "kbDesc": "Access verified agricultural research and talk to our Agentic AI.",
     "highPriority": "High Priority",
@@ -76,6 +95,7 @@
     "nav": {
       "aiCompanion": "AI Companion",
       "history": "History & Reports",
+      "advisories": "Advisories",
       "dashboard": "Dashboard",
       "seedIntelligence": "Seed Intelligence",
       "diseaseIntelligence": "Disease Intelligence",
@@ -438,6 +458,12 @@
       "cancel": "Cancel",
       "broadcastNow": "Broadcast Now",
       "broadcastSuccess": "New advisory broadcasted to farmers in: {region}",
+      "activities": {
+        "action": "Action",
+        "details": "Details",
+        "time": "Time",
+        "noActivity": "No recent activity."
+      },
       "months": {
         "jan": "Jan",
         "feb": "Feb",
@@ -703,6 +729,12 @@
       "passwordUpdated": "Password updated securely!",
       "languageNote": "Note: The admin panel defaults to English. Changing this updates your global preference."
     }
+  },
+  "advisories": {
+    "title": "Advisories & Alerts",
+    "subtitle": "Stay updated with important notifications regarding your crops and weather conditions.",
+    "emptyTitle": "No Active Advisories",
+    "emptyDesc": "There are no active alerts or advisories for your region at this time."
   },
   "robot": {
     "title": "PeanutIQ Assistant",

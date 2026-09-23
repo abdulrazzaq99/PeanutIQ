@@ -1,50 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../context/ToastContext';
 import { Download, Bean, ScanSearch, Calendar, Search, Filter, X } from 'lucide-react';
-
-const MOCK_HISTORY = [
-  {
-    id: 1,
-    date: '2026-08-05',
-    type: 'Seed Intelligence',
-    titleKey: 'history.mockTitles.t1',
-    status: 'Healthy',
-    image: 'https://images.unsplash.com/photo-1599818815197-009772322301?auto=format&fit=crop&q=80&w=200&h=200',
-  },
-  {
-    id: 2,
-    date: '2026-08-01',
-    type: 'Disease Intelligence',
-    titleKey: 'history.mockTitles.t2',
-    status: 'High Risk',
-    image: 'https://images.unsplash.com/photo-1611181284814-1ecb7d51b3ce?auto=format&fit=crop&q=80&w=200&h=200',
-  },
-  {
-    id: 3,
-    date: '2026-07-28',
-    type: 'Seed Intelligence',
-    titleKey: 'history.mockTitles.t3',
-    status: 'Moderate',
-    image: 'https://images.unsplash.com/photo-1599818815197-009772322301?auto=format&fit=crop&q=80&w=200&h=200',
-  },
-  {
-    id: 4,
-    date: '2026-07-15',
-    type: 'Disease Intelligence',
-    titleKey: 'history.mockTitles.t4',
-    status: 'Healthy',
-    image: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?auto=format&fit=crop&q=80&w=200&h=200',
-  }
-];
+import { fetchApi } from '../config/api';
 
 export default function HistoryReports() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('All');
   const [selectedReport, setSelectedReport] = useState(null);
+  const [history, setHistory] = useState([]);
   const { showToast } = useToast();
 
-  const filteredHistory = MOCK_HISTORY.filter(item => {
+  useEffect(() => {
+    const fetchHistory = async () => {
+      const token = localStorage.getItem('peanutiq_token');
+      if (!token) return;
+      try {
+        const res = await fetchApi('/scans/', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          setHistory(await res.json());
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchHistory();
+  }, []);
+
+  const filteredHistory = history.filter(item => {
     if (activeTab === 'All') return true;
     return item.type === activeTab;
   });
@@ -64,13 +49,20 @@ export default function HistoryReports() {
 
   const handleDownload = (e, report) => {
     e.stopPropagation();
-    showToast(`${t('history.downloadingPdf', 'Downloading PDF for:')} ${t(report.titleKey)}`, '', 'info');
+    if (!selectedReport) {
+      setSelectedReport(report);
+      setTimeout(() => {
+        window.print();
+      }, 100);
+    } else {
+      window.print();
+    }
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 print:m-0">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">{t('history.title')}</h1>
           <p className="text-sm text-slate-500 mt-1">{t('history.subtitle')}</p>
@@ -93,16 +85,25 @@ export default function HistoryReports() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 print:hidden">
         {filteredHistory.map((record) => (
           <div 
             key={record.id} 
             onClick={() => setSelectedReport(record)}
             className="flat-card overflow-hidden transition-shadow flex flex-col cursor-pointer hover:border-forest/30"
           >
-            <div className="h-40 relative overflow-hidden bg-slate-100">
-              <img src={record.image} alt={t(record.titleKey)} className="w-full h-full object-cover" />
-              <div className="absolute top-3 end-3">
+            <div className="h-40 relative overflow-hidden bg-slate-100 flex items-center justify-center">
+              <img 
+                src={record.image_url} 
+                alt={record.title} 
+                className="absolute inset-0 w-full h-full object-cover z-10 bg-white" 
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+              <div className="text-slate-400 flex flex-col items-center">
+                <ScanSearch className="w-8 h-8 mb-2 opacity-50" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">{t('history.imageExpired', 'Image Expired')}</span>
+              </div>
+              <div className="absolute top-3 end-3 z-20">
                 <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border shadow-sm bg-white/90 backdrop-blur-sm ${getStatusColor(record.status).text} ${getStatusColor(record.status).border}`}>
                   <span className={`w-1.5 h-1.5 rounded-full me-1.5 ${getStatusColor(record.status).dot}`}></span>
                   {record.status === 'Healthy' ? t('history.statusHealthy') : record.status === 'High Risk' ? t('history.statusHighRisk') : t('history.statusModerate')}
@@ -118,11 +119,11 @@ export default function HistoryReports() {
                 </span>
                 <span className="flex items-center whitespace-nowrap flex-shrink-0">
                   <Calendar className="w-3.5 h-3.5 me-1" />
-                  {record.date.split('-').reverse().join('-')}
+                  {new Date(record.created_at).toLocaleDateString()}
                 </span>
               </div>
               
-              <h3 className="text-lg font-bold text-slate-900 mb-4 line-clamp-2">{t(record.titleKey)}</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-4 line-clamp-2">{record.title}</h3>
               
               <div className="mt-auto pt-4 border-t border-slate-100">
                 <button 
@@ -148,21 +149,30 @@ export default function HistoryReports() {
 
       {/* Detail Modal */}
       {selectedReport && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setSelectedReport(null)}></div>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-full">
-            <div className="h-48 sm:h-64 relative bg-slate-100 flex-shrink-0">
-              <img src={selectedReport.image} alt={t(selectedReport.titleKey)} className="w-full h-full object-cover" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:static print:p-0">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm print:hidden" onClick={() => setSelectedReport(null)}></div>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-full print:shadow-none print:w-full print:max-w-none">
+            <div className="h-48 sm:h-64 relative bg-slate-100 flex-shrink-0 print:h-64 flex items-center justify-center">
+              <img 
+                src={selectedReport.image_url} 
+                alt={selectedReport.title} 
+                className="absolute inset-0 w-full h-full object-cover z-10 bg-white" 
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+              <div className="text-slate-400 flex flex-col items-center">
+                <ScanSearch className="w-10 h-10 mb-3 opacity-50" />
+                <span className="text-xs font-bold uppercase tracking-wider">{t('history.imageExpired', 'Image Expired')}</span>
+              </div>
               <button 
                 onClick={(e) => handleDownload(e, selectedReport)}
-                className="absolute top-4 start-4 flex items-center justify-center px-4 py-2 text-sm font-bold text-white bg-forest/90 hover:bg-forest backdrop-blur-sm rounded-xl transition-colors shadow-sm"
+                className="absolute top-4 start-4 flex items-center justify-center px-4 py-2 text-sm font-bold text-white bg-forest/90 hover:bg-forest backdrop-blur-sm rounded-xl transition-colors shadow-sm print:hidden z-20"
               >
                 <Download className="w-4 h-4 me-2" />
                 {t('history.downloadPdf')}
               </button>
               <button 
                 onClick={() => setSelectedReport(null)}
-                className="absolute top-4 end-4 p-2 bg-white/80 hover:bg-forest/10 hover:text-forest hover:border-transparent text-slate-700 rounded-full shadow-sm backdrop-blur-sm transition-colors"
+                className="absolute top-4 end-4 p-2 bg-white/80 hover:bg-forest/10 hover:text-forest hover:border-transparent text-slate-700 rounded-full shadow-sm backdrop-blur-sm transition-colors print:hidden z-20"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -177,7 +187,7 @@ export default function HistoryReports() {
                   </span>
                   <span className="flex items-center whitespace-nowrap flex-shrink-0">
                     <Calendar className="w-4 h-4 me-1.5" />
-                    {selectedReport.date.split('-').reverse().join('-')}
+                    {new Date(selectedReport.created_at).toLocaleDateString()}
                   </span>
                 </div>
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold border ${getStatusColor(selectedReport.status).text} ${getStatusColor(selectedReport.status).border}`}>
@@ -186,12 +196,12 @@ export default function HistoryReports() {
                 </span>
               </div>
               
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">{t(selectedReport.titleKey)}</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">{selectedReport.title}</h2>
               
               <div className="text-sm text-slate-600 mb-8 leading-relaxed">
                 <p className="mb-4">{t('history.reportParagraph1')} <strong>{selectedReport.status === 'Healthy' ? t('history.statusHealthy') : selectedReport.status === 'High Risk' ? t('history.statusHighRisk') : t('history.statusModerate')}</strong> {t('history.reportClassification')}</p>
                 <ul className="list-disc list-inside space-y-1.5">
-                  <li>{t('history.confidenceScore')} <strong dir="ltr">94.2%</strong></li>
+                  <li>{t('history.confidenceScore')} <strong dir="ltr">{selectedReport.confidence_score}%</strong></li>
                   <li>{t('history.reportListItem1')}</li>
                   <li>{t('history.reportListItem2')}</li>
                   <li>{t('history.reportListItem3')}</li>

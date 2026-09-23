@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { LayoutDashboard, Leaf, User, BookOpen, Bean, ScanSearch, Bell, LogOut, ChevronLeft, ChevronRight, ChevronDown, MessageSquare, History, Globe, Search, Menu } from 'lucide-react';
+import { LayoutDashboard, Leaf, User, BookOpen, Bean, ScanSearch, Bell, LogOut, ChevronLeft, ChevronRight, ChevronDown, MessageSquare, History, Globe, Search, Menu, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import FloatingAgent from '../components/FloatingAgent';
@@ -11,6 +11,7 @@ const navItems = [
   { to: '/user/seed', icon: Bean, labelKey: 'layout.nav.seedIntelligence' },
   { to: '/user/disease', icon: ScanSearch, labelKey: 'layout.nav.diseaseIntelligence' },
   { to: '/user/history', icon: History, labelKey: 'layout.nav.history' },
+  { to: '/user/advisories', icon: AlertTriangle, labelKey: 'layout.nav.advisories' },
   { to: '/user/knowledge-base', icon: BookOpen, labelKey: 'layout.nav.knowledgeBase' },
   { to: '/user/profile', icon: User, labelKey: 'layout.nav.profile' },
 ];
@@ -22,6 +23,7 @@ export default function UserLayout() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const notificationRef = useRef(null);
@@ -198,7 +200,9 @@ export default function UserLayout() {
             <div className="relative" ref={notificationRef}>
               <button onClick={() => setShowNotifications(!showNotifications)} className={`p-2 rounded-full transition-colors focus:outline-none relative cursor-pointer ${showNotifications ? "bg-green-50 text-forest opacity-100" : "text-charcoal opacity-70 hover:text-forest hover:opacity-100 hover:bg-forest/10"}`}>
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-0 right-0 rtl:right-auto rtl:left-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">3</span>
+                {notifications.length > 0 && (
+                  <span className="absolute top-0 right-0 rtl:right-auto rtl:left-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">{notifications.length}</span>
+                )}
               </button>
 
               {showNotifications && (
@@ -206,20 +210,24 @@ export default function UserLayout() {
                   <div className="py-1">
                     <div className="px-4 py-2 border-b border-earth flex justify-between items-center bg-sand">
                       <p className="text-sm font-bold text-charcoal no-common-ligatures">{t('layout.header.notifications')}</p>
-                      <span className="text-xs font-bold text-forest hover:text-terracotta cursor-pointer">{t('layout.header.markAllRead')}</span>
+                      {notifications.length > 0 && <span className="text-xs font-bold text-forest hover:text-terracotta cursor-pointer">{t('layout.header.markAllRead')}</span>}
                     </div>
-                    <div className="max-h-80 overflow-y-auto">
-                      <div className="px-4 py-3 border-b border-earth bg-sand hover:bg-forest/10 cursor-pointer transition-colors">
-                        <p className="text-sm font-bold text-terracotta">{t('layout.notifications.heavyRainTitle', 'Heavy Rain Warning')}</p>
-                        <p className="text-xs text-charcoal opacity-70 mt-1">{t('layout.notifications.heavyRainDesc', 'Meteorological data suggests heavy rainfall in your region over the next 48 hours.')}</p>
-                        <p className="text-xs text-terracotta opacity-70 mt-2 font-bold">{t('layout.notifications.hoursAgo2', '2 hours ago')}</p>
+                    {notifications.length === 0 ? (
+                      <div className="p-6 text-center">
+                        <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                        <p className="text-sm text-gray-500">{t('admin.layout.noNotifications', 'No new notifications')}</p>
                       </div>
-                      <div className="px-4 py-3 hover:bg-forest/10 cursor-pointer transition-colors border-b border-earth">
-                        <p className="text-sm font-bold text-charcoal">{t('layout.notifications.seedAnalysisTitle', 'Seed Analysis Complete')}</p>
-                        <p className="text-xs text-charcoal opacity-70 mt-1">{t('layout.notifications.seedAnalysisDesc', 'Your recent BARI-2016 seed scan shows 92% viability.')}</p>
-                        <p className="text-xs text-charcoal opacity-50 mt-2 font-bold">{t('layout.notifications.yesterday', 'Yesterday')}</p>
+                    ) : (
+                      <div className="max-h-80 overflow-y-auto">
+                        {notifications.map(n => (
+                          <div key={n.id} className="px-4 py-3 border-b border-earth bg-sand hover:bg-forest/10 cursor-pointer transition-colors">
+                            <p className="text-sm font-bold text-terracotta">{t(n.titleKey, n.titleDefault)}</p>
+                            <p className="text-xs text-charcoal opacity-70 mt-1">{t(n.descKey, n.descDefault)}</p>
+                            <p className="text-xs text-terracotta opacity-70 mt-2 font-bold">{t(n.timeKey, n.timeDefault)}</p>
+                          </div>
+                        ))}
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               )}

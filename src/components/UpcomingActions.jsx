@@ -1,36 +1,52 @@
-import React, { useState } from 'react';
-import { Droplets, Shield, CalendarClock, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Droplets, Shield, CalendarClock, Check, Sprout } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { fetchApi } from '../config/api';
 
 export default function UpcomingActions() {
   const { t, i18n } = useTranslation();
   const isUrdu = i18n.language === 'ur';
   
-  const [completedTasks, setCompletedTasks] = useState({});
+  const [tasks, setTasks] = useState([]);
 
-  const tasks = [
-    {
-      id: 1,
-      title: isUrdu ? 'کھیت 2 کو پانی دیں' : 'Irrigate Field 2',
-      time: isUrdu ? 'کل صبح 8:00 بجے تک' : 'Due Tomorrow, 8:00 AM',
-      category: isUrdu ? 'آبپاشی' : 'IRRIGATION',
-      icon: Droplets,
-      color: 'text-sky-500',
-      bgColor: 'bg-sky-50'
-    },
-    {
-      id: 2,
-      title: isUrdu ? 'پھپھوندی کش سپرے کریں' : 'Apply Fungicide (Chlorothalonil)',
-      time: isUrdu ? 'آج شام 5:00 بجے تک' : 'Due Today, 5:00 PM',
-      category: isUrdu ? 'بیماری کنٹرول' : 'DISEASE CONTROL',
-      icon: Shield,
-      color: 'text-rose-500',
-      bgColor: 'bg-rose-50'
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const token = localStorage.getItem('peanutiq_token');
+      if (!token) return;
+      try {
+        const res = await fetchApi('/dashboard/actions', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          setTasks(await res.json());
+        }
+      } catch (e) {
+        console.error("Failed to fetch actions", e);
+      }
+    };
+    fetchTasks();
+  }, []);
+
+  const toggleTask = async (id, isCompleted) => {
+    const token = localStorage.getItem('peanutiq_token');
+    try {
+      const res = await fetchApi(`/dashboard/actions/${id}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ is_completed: !isCompleted })
+      });
+      if (res.ok) {
+        setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: !isCompleted } : t));
+      }
+    } catch (e) {
+      console.error(e);
     }
-  ];
+  };
 
-  const toggleTask = (id) => {
-    setCompletedTasks(prev => ({ ...prev, [id]: !prev[id] }));
+  const getIcon = (category) => {
+    if (category?.toLowerCase().includes('irrigation')) return <Droplets className="w-3.5 h-3.5" strokeWidth={2.5} />;
+    if (category?.toLowerCase().includes('disease')) return <Shield className="w-3.5 h-3.5" strokeWidth={2.5} />;
+    return <Sprout className="w-3.5 h-3.5" strokeWidth={2.5} />;
   };
 
   return (
@@ -49,36 +65,41 @@ export default function UpcomingActions() {
         {tasks.map(task => (
           <div 
             key={task.id} 
-            className={`flex items-start gap-4 p-4 rounded-xl border border-earth/50 transition-all duration-300 cursor-pointer group ${completedTasks[task.id] ? 'opacity-50 hover:opacity-70 bg-earth/10' : 'hover:bg-forest/5 hover:border-forest/30 bg-white shadow-sm'}`}
-            onClick={() => toggleTask(task.id)}
+            className={`flex items-start gap-4 p-4 rounded-xl border border-earth/50 transition-all duration-300 cursor-pointer group ${task.is_completed ? 'opacity-50 hover:opacity-70 bg-earth/10' : 'hover:bg-forest/5 hover:border-forest/30 bg-white shadow-sm'}`}
+            onClick={() => toggleTask(task.id, task.is_completed)}
           >
             {/* Custom Checkbox */}
             <div 
               className={`flex-shrink-0 w-[22px] h-[22px] mt-0.5 rounded-lg border-2 flex items-center justify-center transition-all duration-300 ${
-                completedTasks[task.id] 
+                task.is_completed
                   ? 'bg-forest border-forest text-white' 
                   : 'border-charcoal/20 bg-white group-hover:border-forest/60 shadow-sm'
               }`}
             >
-              <Check className={`w-3.5 h-3.5 transition-transform duration-300 ${completedTasks[task.id] ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}`} strokeWidth={4} />
+              <Check className={`w-3.5 h-3.5 transition-transform duration-300 ${task.is_completed ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}`} strokeWidth={4} />
             </div>
             
             <div className="flex-1">
-              <h4 className={`text-[15px] font-bold tracking-tight transition-all duration-300 ${completedTasks[task.id] ? 'text-charcoal/60 line-through' : 'text-charcoal group-hover:text-forest'}`}>
+              <h4 className={`text-[15px] font-bold tracking-tight transition-all duration-300 ${task.is_completed ? 'text-charcoal/60 line-through' : 'text-charcoal group-hover:text-forest'}`}>
                 {task.title}
               </h4>
               <div className="flex items-center justify-between gap-2.5 mt-1.5 w-full">
-                 <div className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded-[6px] ${task.bgColor} ${task.color}`}>
-                   <task.icon className="w-3.5 h-3.5" strokeWidth={2.5} />
+                 <div className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded-[6px] bg-sky-50 text-sky-500`}>
+                   {getIcon(task.category)}
                    {task.category}
                  </div>
                  <span className="text-[12px] font-bold text-charcoal/70">
-                   {task.time}
+                   {task.due_date ? new Date(task.due_date).toLocaleDateString() : ''}
                  </span>
               </div>
             </div>
           </div>
         ))}
+        {tasks.length === 0 && (
+          <div className="col-span-2 text-center py-6 text-sm text-gray-500 font-medium">
+            {isUrdu ? 'کوئی آنے والے اقدامات نہیں ہیں۔' : 'No upcoming actions.'}
+          </div>
+        )}
       </div>
     </div>
   );

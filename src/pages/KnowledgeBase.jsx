@@ -23,6 +23,7 @@ export default function KnowledgeBase() {
   const [activeCategory, setActiveCategory] = useState(t('kb.allArticles'));
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [editingArticleId, setEditingArticleId] = useState(null);
+  const [articleToDelete, setArticleToDelete] = useState(null);
   
   // Reset category when language changes to prevent empty states
   useEffect(() => {
@@ -370,7 +371,7 @@ export default function KnowledgeBase() {
                       </button>
                       <button onClick={(e) => { 
                         e.stopPropagation(); 
-                        if(window.confirm(t('kb.deleteConfirm'))) deleteArticle(article.id);
+                        setArticleToDelete(article.id);
                       }} className="p-2 text-slate-600 hover:text-red-600 bg-slate-100 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-100 transition-colors cursor-pointer" title={t('kb.deleteArticle')}>
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -382,6 +383,40 @@ export default function KnowledgeBase() {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {articleToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setArticleToDelete(null)}>
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 max-w-sm w-full animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-4 mb-4 text-red-600">
+              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">{t('kb.deleteArticle', 'Delete Article')}</h3>
+            </div>
+            <p className="text-slate-600 text-[15px] font-medium mb-6">
+              {t('kb.deleteConfirm', 'Are you sure you want to delete this article?')}
+            </p>
+            <div className="flex justify-end gap-3">
+              <button 
+                onClick={() => setArticleToDelete(null)}
+                className="px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors"
+              >
+                {t('common.cancel', 'Cancel')}
+              </button>
+              <button 
+                onClick={() => {
+                  deleteArticle(articleToDelete);
+                  setArticleToDelete(null);
+                }}
+                className="px-4 py-2 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm shadow-red-600/20"
+              >
+                {t('common.delete', 'Delete')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

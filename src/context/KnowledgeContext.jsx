@@ -1,54 +1,114 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useAuth } from './AuthContext';
+import { fetchApi } from '../config/api';
 
 const KnowledgeContext = createContext();
 
 export function KnowledgeProvider({ children }) {
-  const { t } = useTranslation();
+  const { user } = useAuth();
   const [publishedArticles, setPublishedArticles] = useState([]);
-  
-  // Pending articles start with some mock ones for demonstration
-  const [pendingArticles, setPendingArticles] = useState([
-    { id: 'p1', title: 'Updated Seed Treatment Protocol 2026', titleKey: 'seedProtocol', author: 'Dr. Faisal', authorKey: 'faisal', type: 'Knowledge Base', typeKey: 'knowledgeBase', category: 'Cultivation Practices', date: '2 hours ago', dateKey: 'hrs2', excerpt: 'New protocols for seed treatment before sowing.', excerptKey: 'seedExcerpt', content: 'Detailed content about seed treatment...', contentKey: 'seedContent' },
-    { id: 'p2', title: 'Late Leaf Spot Fungicide Efficacy Data', titleKey: 'leafSpot', author: 'Dr. Zoya', authorKey: 'zoya', type: 'Research Data', typeKey: 'researchData', category: 'Disease Management', date: '5 hours ago', dateKey: 'hrs5', excerpt: 'Research data on fungicide efficacy.', excerptKey: 'leafExcerpt', content: 'The efficacy of the new fungicidal spray showed a 34% reduction in late leaf spot severity...', contentKey: 'leafContent' },
-  ]);
+  const [pendingArticles, setPendingArticles] = useState([]);
 
-  // Load initial published articles from translations
+  const fetchArticles = async () => {
+    const token = localStorage.getItem('peanutiq_token');
+    if (!token || !user) return;
+    
+    try {
+      if (user.role === 'farmer') {
+        const res = await fetchApi('/knowledge/articles', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPublishedArticles(data.map(a => ({ ...a, date: new Date(a.created_at).toLocaleDateString() })));
+        }
+      } else {
+        const pubRes = await fetchApi('/knowledge/articles?is_published=true', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (pubRes.ok) {
+          const data = await pubRes.json();
+          setPublishedArticles(data.map(a => ({ ...a, date: new Date(a.created_at).toLocaleDateString() })));
+        }
+        
+        const pendRes = await fetchApi('/knowledge/articles?is_published=false', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (pendRes.ok) {
+          const data = await pendRes.json();
+          setPendingArticles(data.map(a => ({ ...a, date: new Date(a.created_at).toLocaleDateString() })));
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch articles:", e);
+    }
+  };
+
   useEffect(() => {
-    const articles = t('kb.articles', { returnObjects: true });
-    if (Array.isArray(articles)) {
-      setPublishedArticles(articles);
+    fetchArticles();
+  }, [user]);
+
+  const submitArticle = async (articleData) => {
+    const token = localStorage.getItem('peanutiq_token');
+    try {
+      const res = await fetchApi('/knowledge/articles', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify(articleData)
+      });
+      if (res.ok) {
+        fetchArticles(); // refresh lists
+        return true;
+      }
+    } catch (e) {
+      console.error(e);
     }
-  }, [t]);
-
-  const submitArticle = (articleData) => {
-    const newPending = {
-      ...articleData,
-      id: `p-${Date.now()}`,
-      date: new Date().toISOString().split('T')[0],
-      type: 'Knowledge Base',
-    };
-    setPendingArticles([...pendingArticles, newPending]);
+    return false;
   };
 
-  const approveArticle = (id) => {
-    const articleToApprove = pendingArticles.find(a => a.id === id);
-    if (articleToApprove) {
-      setPublishedArticles([...publishedArticles, articleToApprove]);
-      setPendingArticles(pendingArticles.filter(a => a.id !== id));
+  const approveArticle = async (id) => {
+    const token = localStorage.getItem('peanutiq_token');
+    try {
+      const res = await fetchApi(`/knowledge/articles/${id}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ is_published: true })
+      });
+      if (res.ok) fetchArticles();
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  const rejectArticle = (id) => {
-    setPendingArticles(pendingArticles.filter(a => a.id !== id));
+  const rejectArticle = async (id) => {
+    deleteArticle(id);
   };
 
-  const updateArticle = (id, updatedData) => {
-    setPublishedArticles(publishedArticles.map(a => a.id === id ? { ...a, ...updatedData } : a));
+  const updateArticle = async (id, updatedData) => {
+    const token = localStorage.getItem('peanutiq_token');
+    try {
+      const res = await fetchApi(`/knowledge/articles/${id}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify(updatedData)
+      });
+      if (res.ok) fetchArticles();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const deleteArticle = (id) => {
-    setPublishedArticles(publishedArticles.filter(a => a.id !== id));
+  const deleteArticle = async (id) => {
+    const token = localStorage.getItem('peanutiq_token');
+    try {
+      const res = await fetchApi(`/knowledge/articles/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) fetchArticles();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -59,7 +119,8 @@ export function KnowledgeProvider({ children }) {
       approveArticle,
       rejectArticle,
       updateArticle,
-      deleteArticle
+      deleteArticle,
+      refreshArticles: fetchArticles
     }}>
       {children}
     </KnowledgeContext.Provider>

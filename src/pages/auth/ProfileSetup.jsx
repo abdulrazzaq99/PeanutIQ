@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 export default function ProfileSetup() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { updateProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   
@@ -52,15 +52,17 @@ export default function ProfileSetup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const res = await signup({ ...formData, identifier });
+    const res = await updateProfile({
+      name: formData.name,
+      farm_location: formData.location,
+      language_preference: formData.language.toLowerCase()
+    });
     setIsLoading(false);
     
     if (res.success) {
-      if (res.user.role === 'admin' || res.user.role === 'researcher') {
-        navigate('/admin');
-      } else {
-        navigate('/user');
-      }
+      navigate('/user');
+    } else {
+      alert("Failed to update profile");
     }
   };
 
@@ -90,25 +92,7 @@ export default function ProfileSetup() {
           </div>
         </div>
 
-        <div>
-          <label className="block text-xs font-bold text-gray-600 mb-1">{t('auth.profileSetup.role')}</label>
-          <div className="relative rounded-xl shadow-sm">
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="focus:ring-1 focus:ring-[#07571C] focus:border-[#07571C] block w-full px-4 sm:text-sm border border-gray-200 rounded-xl py-2.5 transition-colors bg-white text-charcoal outline-none appearance-none"
-            >
-              <option value="farmer">{t('auth.profileSetup.roleFarmer')}</option>
-              <option value="researcher">{t('auth.profileSetup.roleResearcher')}</option>
-              <option value="admin">{t('auth.profileSetup.roleAdmin')}</option>
-            </select>
-            {/* Custom arrow for select since appearance is none */}
-            <div className="pointer-events-none absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center px-4">
-              <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
-          </div>
-        </div>
+
 
         {formData.role === 'farmer' && (
           <div>

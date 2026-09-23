@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useTranslation } from 'react-i18next';
+import { fetchApi } from '../config/api';
 
 export default function DiseaseIntelligence() {
   const { t } = useTranslation();
@@ -26,7 +27,7 @@ export default function DiseaseIntelligence() {
     if (file) {
       const url = URL.createObjectURL(file);
       setImage(url);
-      simulateAnalysis();
+      simulateAnalysis(file);
     }
   };
 
@@ -36,15 +37,38 @@ export default function DiseaseIntelligence() {
     if (file && file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
       setImage(url);
-      simulateAnalysis();
+      simulateAnalysis(file);
     }
   };
 
-  const simulateAnalysis = () => {
+  const simulateAnalysis = async (file) => {
     setStatus('analyzing');
+    const token = localStorage.getItem('peanutiq_token');
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'Disease Intelligence');
+    formData.append('title', t('disease.mockTitles.t1', 'Late Leaf Spot Detection'));
+    formData.append('status', 'High Risk');
+    formData.append('confidence_score', '98.1');
+
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      // Omit Content-Type so browser sets multipart boundary
+      const res = await fetch('http://127.0.0.1:8000/api/v1/scans/', {
+        method: 'POST',
+        headers,
+        body: formData
+      });
+      if (!res.ok) console.error("Scan save failed", await res.text());
+    } catch (e) {
+      console.error("Save scan failed", e);
+    }
+
+    // Simulate AI time for UX
     setTimeout(() => {
       setStatus('complete');
-    }, 3000);
+    }, 2000);
   };
 
   const handleReset = () => {

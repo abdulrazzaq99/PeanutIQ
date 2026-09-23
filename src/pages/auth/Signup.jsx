@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 export default function Signup() {
   const [identifier, setIdentifier] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -22,6 +23,8 @@ export default function Signup() {
     
     if (res.success) {
       navigate('/verify-otp', { state: { identifier, isLoginIntent: false } });
+    } else {
+      setError(res.error || "Something went wrong.");
     }
   };
 
@@ -46,9 +49,13 @@ export default function Signup() {
               className="focus:ring-1 focus:ring-[#07571C] focus:border-[#07571C] block w-full pl-11 sm:text-sm border border-gray-200 rounded-xl py-3.5 transition-colors bg-white text-left text-charcoal outline-none"
               placeholder={t('auth.mockup.identifierPlaceholder', 'Email or Phone Number')}
               value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
+              onChange={(e) => {
+                setIdentifier(e.target.value);
+                setError('');
+              }}
             />
           </div>
+          {error && <p className="mt-2 text-sm text-red-500 font-bold">{error}</p>}
         </div>
 
         {/* Submit Button */}

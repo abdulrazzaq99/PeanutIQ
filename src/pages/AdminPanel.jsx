@@ -11,18 +11,7 @@ import { useToast } from '../context/ToastContext';
 import farmBannerBg from '../assets/farm-banner-bg.png';
 import Logo from '../components/Logo';
 
-const users = [
-  { id: 1, name: 'Dr. Faisal', nameKey: 'faisal', email: 'faisal@narc.gov.pk', role: 'Researcher', status: 'Active', login: '2 mins ago', loginKey: 'min2' },
-  { id: 2, name: 'Ahmad Khan', nameKey: 'ahmad', email: 'ahmad@farmer.pk', role: 'Farmer', status: 'Active', login: '1 hr ago', loginKey: 'hr1' },
-  { id: 3, name: 'System Admin', nameKey: 'admin', email: 'admin@peanutiq.pk', role: 'Admin', status: 'Active', login: 'Just now', loginKey: 'justNow' },
-  { id: 4, name: 'Ali Raza', nameKey: 'ali', email: 'ali@farmer.pk', role: 'Farmer', status: 'Suspended', login: '2 weeks ago', loginKey: 'weeks2' },
-];
-
-
-const issues = [
-  { id: 1, title: 'Image Upload Timeout on 3G Networks', titleKey: 'uploadTimeout', status: 'Open', priority: 'High', reporter: 'Ahmad Khan', reporterKey: 'ahmad' },
-  { id: 2, title: 'Incorrect Translation in Sindhi UI', titleKey: 'sindhiTranslation', status: 'In Progress', priority: 'Medium', reporter: 'System Monitor', reporterKey: 'systemMonitor' },
-];
+import { fetchApi } from '../config/api';
 
 const ALL_TABS = [
   { id: 'users', translationKey: 'admin.management.usersAndRoles', icon: UsersIcon, allowedRoles: ['admin'] },
@@ -42,9 +31,37 @@ export default function AdminPanel() {
   const defaultTab = authorizedTabs.length > 0 ? authorizedTabs[0].id : '';
 
   const [activeTab, setActiveTab] = useState(defaultTab);
-  const [userList, setUserList] = useState(users);
+  const [userList, setUserList] = useState([]);
+  const [issuesList, setIssuesList] = useState([]);
+  const [aiMetrics, setAiMetrics] = useState(null);
+  const [maintenance, setMaintenance] = useState(null);
   
   const { pendingArticles, approveArticle, rejectArticle } = useKnowledge();
+
+  const fetchSystemData = async () => {
+    const token = localStorage.getItem('peanutiq_token');
+    if (!token || role !== 'admin') return;
+    
+    try {
+      const [usersRes, issuesRes, aiRes, maintRes] = await Promise.all([
+        fetchApi('/admin/system/users', { headers: { Authorization: `Bearer ${token}` } }),
+        fetchApi('/admin/system/issues', { headers: { Authorization: `Bearer ${token}` } }),
+        fetchApi('/admin/system/ai-metrics', { headers: { Authorization: `Bearer ${token}` } }),
+        fetchApi('/admin/system/maintenance', { headers: { Authorization: `Bearer ${token}` } })
+      ]);
+      
+      if (usersRes.ok) setUserList(await usersRes.json());
+      if (issuesRes.ok) setIssuesList(await issuesRes.json());
+      if (aiRes.ok) setAiMetrics(await aiRes.json());
+      if (maintRes.ok) setMaintenance(await maintRes.json());
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchSystemData();
+  }, [role]);
 
   // If role changes, ensure we aren't stuck on an unauthorized tab
   useEffect(() => {
@@ -54,39 +71,88 @@ export default function AdminPanel() {
   }, [role, activeTab, defaultTab, authorizedTabs]);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isMaintenanceModalOpen, setIsMaintenanceModalOpen] = useState(false);
+  const [maintenanceForm, setMaintenanceForm] = useState({ start_time: '', end_time: '' });
   const [editingUserId, setEditingUserId] = useState(null);
   const [reviewingContentId, setReviewingContentId] = useState(null);
   const [activeDropdownId, setActiveDropdownId] = useState(null);
 
+  const toLocalISOString = (date) => {
+    const tzOffset = date.getTimezoneOffset() * 60000;
+    return (new Date(date.getTime() - tzOffset)).toISOString().slice(0, 16);
+  };
+
   const handleAddSubmit = (e) => {
     e.preventDefault();
-    const fd = new FormData(e.target);
-    const newUser = {
-      id: Date.now(),
-      name: fd.get('name'),
-      email: fd.get('email'),
-      role: fd.get('role'),
-      status: 'Active',
-      login: 'Never'
-    };
-    setUserList([...userList, newUser]);
+    showToast("Please use the public registration page to add new users.", "", "info");
     setIsAddModalOpen(false);
   };
 
-  const handleEditSubmit = (e) => {
+  const handleMaintenanceSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('peanutiq_token');
+    try {
+      const res = await fetchApi('/admin/system/maintenance', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          start_time: new Date(maintenanceForm.start_time).toISOString(),
+          end_time: new Date(maintenanceForm.end_time).toISOString()
+        })
+      });
+      if (res.ok) {
+        setMaintenance({
+          start_time: new Date(maintenanceForm.start_time).toISOString(),
+          end_time: new Date(maintenanceForm.end_time).toISOString()
+        });
+        showToast(t('admin.management.maintenance.scheduledSuccess', 'Maintenance scheduled successfully!'), '', 'success');
+        setIsMaintenanceModalOpen(false);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleEditSubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    setUserList(userList.map(u => u.id === editingUserId ? { ...u, role: fd.get('role') } : u));
+    const newRole = fd.get('role');
+    const token = localStorage.getItem('peanutiq_token');
+    try {
+      const res = await fetchApi(`/admin/system/users/${editingUserId}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ role: newRole })
+      });
+      if (res.ok) {
+        setUserList(userList.map(u => u.id === editingUserId ? { ...u, role: newRole } : u));
+        showToast("Role updated successfully", "", "success");
+      }
+    } catch (err) {
+      console.error(err);
+    }
     setEditingUserId(null);
   };
 
-  const toggleUserStatus = (id) => {
-    setUserList(userList.map(u => {
-      if (u.id === id) {
-        return { ...u, status: u.status === 'Active' ? 'Suspended' : 'Active' };
+  const toggleUserStatus = async (id) => {
+    const user = userList.find(u => u.id === id);
+    if (!user) return;
+    const newStatus = user.status === 'Active' ? false : true;
+    const token = localStorage.getItem('peanutiq_token');
+    
+    try {
+      const res = await fetchApi(`/admin/system/users/${id}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ is_active: newStatus })
+      });
+      if (res.ok) {
+        setUserList(userList.map(u => u.id === id ? { ...u, status: newStatus ? 'Active' : 'Suspended' } : u));
+        showToast("User status updated", "", "success");
       }
-      return u;
-    }));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleContentAction = (id, action) => {
@@ -276,12 +342,12 @@ export default function AdminPanel() {
                 <h3 className="text-charcoal font-bold text-[14px]">{t('admin.management.seedIntelligenceCNN')}</h3>
               </div>
               <div className="flex items-end gap- mt-2">
-                <span className="text-4xl font-black text-charcoal tracking-tight" dir="ltr">98.4%</span>
+                <span className="text-4xl font-black text-charcoal tracking-tight" dir="ltr">{aiMetrics?.seedIntelligence.accuracy || '0'}%</span>
                 <span className="text-[13px] text-[#07571C] font-bold mb-1.5">{t('admin.management.accuracy')}</span>
               </div>
               <div className="w-full mt-auto pt-5">
                 <div className="w-full bg-green-50 rounded-full h-2 overflow-hidden">
-                  <div className="bg-[#07571C] h-2 rounded-full" style={{ width: '98.4%' }}></div>
+                  <div className="bg-[#07571C] h-2 rounded-full" style={{ width: `${aiMetrics?.seedIntelligence.accuracy || 0}%` }}></div>
                 </div>
               </div>
             </div>
@@ -294,12 +360,12 @@ export default function AdminPanel() {
                 <h3 className="text-charcoal font-bold text-[14px]">{t('admin.management.diseaseDetectionCNN')}</h3>
               </div>
               <div className="flex items-end gap- mt-2">
-                <span className="text-4xl font-black text-charcoal tracking-tight" dir="ltr">94.2%</span>
+                <span className="text-4xl font-black text-charcoal tracking-tight" dir="ltr">{aiMetrics?.diseaseDetection.accuracy || '0'}%</span>
                 <span className="text-[13px] text-terracotta font-bold mb-1.5">{t('admin.management.accuracy')}</span>
               </div>
               <div className="w-full mt-auto pt-5">
                 <div className="w-full bg-orange-50 rounded-full h-2 overflow-hidden">
-                  <div className="bg-terracotta h-2 rounded-full" style={{ width: '94.2%' }}></div>
+                  <div className="bg-terracotta h-2 rounded-full" style={{ width: `${aiMetrics?.diseaseDetection.accuracy || 0}%` }}></div>
                 </div>
               </div>
             </div>
@@ -312,10 +378,10 @@ export default function AdminPanel() {
                 <h3 className="text-charcoal font-bold text-[14px]">Avg Inference Time</h3>
               </div>
               <div className="flex items-end space-x-2 mt-2 rtl:space-x-reverse">
-                <span className="text-4xl font-black text-charcoal tracking-tight">1.2s</span>
+                <span className="text-4xl font-black text-charcoal tracking-tight">{aiMetrics?.inference.time || '0s'}</span>
                 <span className="text-[13px] text-charcoal/50 font-bold mb-1.5">per image</span>
               </div>
-              <div className="mt-auto pt-5"><span className="text-[12px] font-bold text-amber-700 uppercase tracking-wider bg-amber-100/50 inline-block px-3 py-1.5 rounded-full border border-amber-200">API Load: 342 req/min</span></div>
+              <div className="mt-auto pt-5"><span className="text-[12px] font-bold text-amber-700 uppercase tracking-wider bg-amber-100/50 inline-block px-3 py-1.5 rounded-full border border-amber-200">API Load: {aiMetrics?.inference.apiLoad || '0 req/min'}</span></div>
             </div>
           </div>
         </div>
@@ -330,28 +396,35 @@ export default function AdminPanel() {
               <div className="pb-5 border-b border-earth/60 mb-2">
                 <h3 className="text-[17px] font-bold text-charcoal">{t('admin.management.openIssues')}</h3>
               </div>
-              <ul className="divide-y divide-earth/40 flex-1">
-                {issues.map(issue => (
-                  <li key={issue.id} className="py-5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${issue.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
-                            {t(`admin.management.priorities.${issue.priority.toLowerCase()}`)} Priority
-                          </span>
-                          <span className="text-[12px] font-medium text-charcoal/50">Reported by <span className="font-bold text-charcoal/70">{issue.reporterKey ? t(`admin.management.names.${issue.reporterKey}`) : issue.reporter}</span></span>
+              {issuesList.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center py-10">
+                  <CheckCircle className="w-12 h-12 text-forest/30 mb-3" />
+                  <p className="text-[14px] font-bold text-charcoal/50">No open issues found</p>
+                </div>
+              ) : (
+                <ul className="divide-y divide-earth/40 flex-1">
+                  {issuesList.map(issue => (
+                    <li key={issue.id} className="py-5">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                            <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${issue.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+                              {issue.priority} Priority
+                            </span>
+                            <span className="text-[12px] font-medium text-charcoal/50">Reported by <span className="font-bold text-charcoal/70">{issue.reporter}</span></span>
+                          </div>
+                          <h4 className="text-[15px] font-bold text-charcoal">{issue.title}</h4>
                         </div>
-                        <h4 className="text-[15px] font-bold text-charcoal">{issue.titleKey ? t(`admin.management.issues.${issue.titleKey}`) : issue.title}</h4>
+                        <div className="shrink-0">
+                          <span className={`px-3 py-1 rounded-full text-[12px] font-bold border shadow-sm ${issue.status === 'Open' ? 'border-red-200 text-red-700 bg-red-50' : 'border-blue-200 text-blue-700 bg-blue-50'}`}>
+                            {issue.status}
+                          </span>
+                        </div>
                       </div>
-                      <div className="shrink-0">
-                        <span className={`px-3 py-1 rounded-full text-[12px] font-bold border shadow-sm ${issue.status === 'Open' ? 'border-red-200 text-red-700 bg-red-50' : 'border-blue-200 text-blue-700 bg-blue-50'}`}>
-                          {t(`admin.management.issueStatuses.${issue.status === 'In Progress' ? 'inProgress' : issue.status.toLowerCase()}`)}
-                        </span>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div className="lg:col-span-1 bg-white border border-earth rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:border-forest/30 transition-colors flex flex-col">
@@ -365,14 +438,34 @@ export default function AdminPanel() {
               <div className="space-y-4 mt-auto">
                 <div className="p-5 bg-[#F8FAFC] border border-earth/60 rounded-xl">
                   <h4 className="text-[14px] font-bold text-charcoal">{t('admin.management.maintenance.nextWindow', 'Next Scheduled Window')}</h4>
-                  <p className="text-[13px] font-medium text-charcoal/70 mt-2">{t('admin.management.maintenance.date', 'Saturday, 15 Aug 2026')}</p>
-                  <p className="text-[13px] font-bold text-[#07571C] mt-1" dir="ltr">{t('admin.management.maintenance.time', '02:00 AM - 04:00 AM PKT')}</p>
+                  {!maintenance ? (
+                    <p className="text-[13px] font-medium text-charcoal/70 mt-2">Loading...</p>
+                  ) : !maintenance.start_time ? (
+                    <p className="text-[13px] font-medium text-charcoal/70 mt-2">No maintenance scheduled.</p>
+                  ) : (
+                    <>
+                      <p className="text-[13px] font-medium text-charcoal/70 mt-2">
+                        {new Date(maintenance.start_time).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                      <p className="text-[13px] font-bold text-[#07571C] mt-1" dir="ltr">
+                        {`${new Date(maintenance.start_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - ${new Date(maintenance.end_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} PKT`}
+                      </p>
+                    </>
+                  )}
                 </div>
                 <button 
-                  onClick={() => showToast(t('admin.management.maintenance.scheduledSuccess', 'Maintenance scheduled successfully!'), '', 'success')}
+                  onClick={() => {
+                     const currentStart = maintenance?.start_time ? new Date(maintenance.start_time) : new Date();
+                     const currentEnd = maintenance?.end_time ? new Date(maintenance.end_time) : new Date(currentStart.getTime() + 2 * 60 * 60 * 1000);
+                     setMaintenanceForm({
+                       start_time: toLocalISOString(currentStart),
+                       end_time: toLocalISOString(currentEnd)
+                     });
+                     setIsMaintenanceModalOpen(true);
+                  }}
                   className="w-full py-3 border border-earth/70 rounded-xl text-[13px] font-bold text-charcoal hover:bg-forest/5 hover:border-[#07571C]/30 transition-colors cursor-pointer shadow-sm"
                 >
-                  {t('admin.management.maintenance.schedule', 'Schedule Maintenance')}
+                  {maintenance?.start_time ? 'Update Maintenance' : t('admin.management.maintenance.schedule', 'Schedule Maintenance')}
                 </button>
               </div>
             </div>
@@ -380,6 +473,44 @@ export default function AdminPanel() {
           </div>
         </div>
       )}
+
+    {/* Maintenance Modal */}
+    {isMaintenanceModalOpen && (
+      <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 className="text-lg font-bold text-gray-900">{t('admin.management.maintenance.schedule', 'Schedule Maintenance')}</h3>
+            <button onClick={() => setIsMaintenanceModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5"/></button>
+          </div>
+          <form onSubmit={handleMaintenanceSubmit} className="p-6 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+              <input 
+                type="datetime-local" 
+                required 
+                value={maintenanceForm.start_time}
+                onChange={e => setMaintenanceForm({...maintenanceForm, start_time: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+              <input 
+                type="datetime-local" 
+                required 
+                value={maintenanceForm.end_time}
+                onChange={e => setMaintenanceForm({...maintenanceForm, end_time: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest" 
+              />
+            </div>
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+              <button type="button" onClick={() => setIsMaintenanceModalOpen(false)} className="px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancel</button>
+              <button type="submit" className="px-4 py-2 text-sm font-bold bg-forest text-white hover:bg-forest/90 rounded-lg transition-colors">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
 
     {/* Add User Modal */}
     {isAddModalOpen && (
