@@ -180,8 +180,12 @@ export default function AdminProfile() {
                 <h2 className="text-2xl font-bold text-gray-900">{user?.name || 'Admin User'}</h2>
                 <div className="mt-2 flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-600">
                   <div className="flex items-center">
-                    <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                    {user?.email || 'admin@peanutiq.pk'}
+                    {user?.identifier?.includes('@') ? (
+                      <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                    ) : (
+                      <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                    )}
+                    {user?.identifier || 'admin@peanutiq.pk'}
                   </div>
                   {user?.role === 'researcher' && (
                     <div className="flex items-center">
@@ -210,44 +214,53 @@ export default function AdminProfile() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Settings Form */}
         <div className="flat-card p-8 flex flex-col">
           <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
             <User className="w-5 h-5 rtl:ml-2 ltr:mr-2 text-forest" /> {t('admin.profile.personalInfo')}
           </h3>
           <form onSubmit={handleSaveProfile} className="space-y-5 flex flex-col flex-1">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.profile.phoneNumber')}</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="h-4 w-4 text-gray-400" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {user?.identifier?.includes('@') ? t('admin.profile.email', 'Email Address') : t('admin.profile.phoneNumber', 'Phone Number')}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    {user?.identifier?.includes('@') ? (
+                      <Mail className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Phone className="h-4 w-4 text-gray-400" />
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    value={user?.identifier || ''}
+                    disabled
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg focus:ring-0 focus:border-gray-200 text-sm cursor-not-allowed"
+                  />
                 </div>
-                <input
-                  type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm"
-                />
+                <p className="mt-1 text-xs text-gray-400">Your login identifier cannot be changed.</p>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.profile.languagePref')}</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Globe className="h-4 w-4 text-gray-400" />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.profile.languagePref')}</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Globe className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="block w-full px-10 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm bg-white"
+                  >
+                    <option value="en">{t('admin.profile.english')}</option>
+                    <option value="ur">{t('admin.profile.urdu')}</option>
+                  </select>
                 </div>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="block w-full px-10 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm bg-white"
-                >
-                  <option value="en">{t('admin.profile.english')}</option>
-                  <option value="ur">{t('admin.profile.urdu')}</option>
-                </select>
+                <p className="mt-1 text-xs text-gray-500">{t('admin.profile.languageNote', 'Note: The admin panel defaults to English. Changing this updates your global preference.')}</p>
               </div>
-              <p className="mt-1 text-xs text-gray-500">{t('admin.profile.languageNote', 'Note: The admin panel defaults to English. Changing this updates your global preference.')}</p>
             </div>
 
             <div className="pt-4 mt-auto">
@@ -261,51 +274,6 @@ export default function AdminProfile() {
           </form>
         </div>
 
-        {/* Security Section */}
-        <div className="flat-card p-8 flex flex-col">
-          <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-            <Key className="w-5 h-5 rtl:ml-2 ltr:mr-2 text-forest" /> {t('admin.profile.securitySettings')}
-          </h3>
-          <form onSubmit={handleUpdatePassword} className="space-y-5 flex flex-col flex-1">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.profile.currentPassword')}</label>
-              <input
-                type="password"
-                required
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.profile.newPassword')}</label>
-              <input
-                type="password"
-                required
-                minLength="8"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.profile.confirmPassword')}</label>
-              <input
-                type="password"
-                required
-                minLength="8"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-forest focus:border-forest text-sm"
-              />
-            </div>
-
-            <div className="pt-4 mt-auto">
-              <button
-                type="submit"
-                className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-forest/10 hover:text-forest hover:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forest transition-colors cursor-pointer"
-              >
-                 {passwordSaved ? <><CheckCircle className="w-4 h-4 rtl:ml-2 ltr:mr-2 text-forest" /> {t('admin.profile.passwordUpdated')}</> : t('admin.profile.updatePassword')}
-              </button>
-            </div>
-          </form>
-        </div>
       </div>
     </div>
   );
