@@ -53,3 +53,13 @@ def test_only_two_settings_are_required():
 
     s = Settings(_env_file=None, JWT_SECRET="x", DATABASE_URL="sqlite://")
     assert s.RESEND_API_KEY == "" and s.MINIO_URL is None and s.BLOB_READ_WRITE_TOKEN is None
+
+
+def test_login_codes_are_random_when_deployed_and_fixed_locally(monkeypatch):
+    from app.services import otp_service
+
+    monkeypatch.setattr(settings, "VERCEL", None)
+    assert otp_service.generate_otp() == "123456"
+    monkeypatch.setattr(settings, "VERCEL", "1")
+    codes = {otp_service.generate_otp() for _ in range(20)}
+    assert len(codes) > 1 and all(len(c) == 6 and c.isdigit() for c in codes)

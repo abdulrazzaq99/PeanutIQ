@@ -7,7 +7,10 @@ resend.api_key = settings.RESEND_API_KEY
 
 def generate_otp() -> str:
     """Generates a secure 6-digit OTP."""
-    # Hardcoded for development testing to avoid email blocking issues
+    if settings.VERCEL:
+        # Deployed: a real random code, sent by email (needs RESEND_API_KEY).
+        return f"{secrets.randbelow(1_000_000):06d}"
+    # Local development: a fixed code to avoid email blocking issues.
     return "123456"
 
 def send_otp_email(to_email: str, otp: str) -> bool:
