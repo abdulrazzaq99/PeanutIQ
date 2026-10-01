@@ -17,10 +17,15 @@ def send_otp_email(to_email: str, otp: str) -> bool:
     """Sends OTP email via Resend API."""
     try:
         if not resend.api_key or resend.api_key == "re_your_api_key_here":
+            if settings.VERCEL:
+                print("RESEND_API_KEY is not set; cannot send login codes")
+                return False
             print(f"DEV MODE: Pretending to send OTP '{otp}' to {to_email}")
             return True
 
-        print(f"\n🔐 DEV MODE: Generated OTP '{otp}' for {to_email} 🔐\n")
+        if not settings.VERCEL:
+            # Never log codes when deployed: anyone who can read the logs could sign in.
+            print(f"\n🔐 DEV MODE: Generated OTP '{otp}' for {to_email} 🔐\n")
         
         params: resend.Emails.SendParams = {
             "from": settings.RESEND_FROM_EMAIL,
@@ -34,5 +39,7 @@ def send_otp_email(to_email: str, otp: str) -> bool:
         return True
     except Exception as e:
         print(f"Failed to send email via Resend: {e}")
+        if settings.VERCEL:
+            return False  # The website shows an error instead of waiting for an email that never comes.
         print("Continuing anyway since this is a development environment...")
         return True

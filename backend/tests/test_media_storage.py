@@ -63,3 +63,28 @@ def test_login_codes_are_random_when_deployed_and_fixed_locally(monkeypatch):
     monkeypatch.setattr(settings, "VERCEL", "1")
     codes = {otp_service.generate_otp() for _ in range(20)}
     assert len(codes) > 1 and all(len(c) == 6 and c.isdigit() for c in codes)
+
+
+def test_deployed_email_failures_are_reported_and_codes_never_logged(monkeypatch, capsys):
+    from app.services import otp_service
+
+    def boom(params):
+        raise RuntimeError("You can only send testing emails to your own email address")
+
+    monkeypatch.setattr(otp_service.resend, "api_key", "re_test")
+    monkeypatch.setattr(otp_service.resend.Emails, "send", boom)
+
+    monkeypatch.setattr(settings, "VERCEL", "1")
+    assert otp_service.send_otp_email("a@example.com", "482913") is False
+    assert "482913" not in capsys.readouterr().out
+
+    monkeypatch.setattr(settings, "VERCEL", None)
+    assert otp_service.send_otp_email("a@example.com", "123456") is True
+
+
+def test_deployed_without_a_key_is_reported(monkeypatch):
+    from app.services import otp_service
+
+    monkeypatch.setattr(otp_service.resend, "api_key", "")
+    monkeypatch.setattr(settings, "VERCEL", "1")
+    assert otp_service.send_otp_email("a@example.com", "482913") is False
