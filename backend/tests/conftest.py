@@ -15,6 +15,8 @@ from app.db.session import Base, get_db
 import app.models.user  # noqa: F401  registers the tables
 import app.models.otp  # noqa: F401
 import app.models.dashboard  # noqa: F401
+import app.models.knowledge  # noqa: F401
+import app.models.ai_usage  # noqa: F401
 from app.main import app
 
 

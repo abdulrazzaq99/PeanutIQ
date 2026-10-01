@@ -35,6 +35,13 @@ class Settings(BaseSettings):
     # to the Vercel project; when empty, photos go to the local uploads/ folder.
     BLOB_READ_WRITE_TOKEN: Optional[str] = None
 
+    # Gemini (assistant, voice, photos, Knowledge Base "Ask AI"). Models are tried in order;
+    # Google often answers 503 "high demand", so later ones are fallbacks.
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODELS: str = "gemini-flash-latest,gemini-3.1-flash-lite,gemini-3.8-flash"
+    # AI requests per farmer per day (cost protection).
+    AI_DAILY_LIMIT: int = 100
+
     # Set by Vercel on every deployment.
     VERCEL: Optional[str] = None
 

@@ -14,6 +14,8 @@ from app.schemas.dashboard import (
 )
 from app.api.dependencies import get_current_user
 from app.models.user import User
+from app.services import weather as weather_service
+import httpx
 
 router = APIRouter()
 
@@ -132,3 +134,12 @@ def create_activity_log(
     db.commit()
     db.refresh(db_activity)
     return db_activity
+
+
+@router.get("/weather")
+def get_weather(current_user: User = Depends(get_current_user)):
+    """Current conditions and a 3-day forecast for the farmer's district."""
+    try:
+        return weather_service.forecast(current_user.farm_location)
+    except (httpx.HTTPError, KeyError, ValueError, TypeError):
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="Weather is unavailable")

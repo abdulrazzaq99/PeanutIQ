@@ -10,6 +10,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from app.core.config import settings
 from app.models.user import Base # Import base models here
+import app.models.ai_usage  # noqa: F401  (so autogenerate sees it)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1 import auth, uploads, users, knowledge, dashboard, scan, admin
+from app.api.v1 import auth, uploads, users, knowledge, dashboard, scan, admin, assistant
 from app.services import media_storage
 
 app = FastAPI(title="PeanutIQ API", version="1.0.0")
@@ -31,6 +31,7 @@ app.include_router(knowledge.router, prefix="/api/v1/knowledge", tags=["knowledg
 app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["dashboard"])
 app.include_router(scan.router, prefix="/api/v1/scans", tags=["scans"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(assistant.router, prefix="/api/v1/assistant", tags=["assistant"])
 
 @app.get("/health")
 def health_check():

@@ -8,6 +8,11 @@ from app.models.knowledge import Article
 from app.schemas.knowledge import ArticleCreate, ArticleUpdate, ArticleResponse
 from app.api.dependencies import get_current_user
 from app.models.user import User
+from typing import Literal
+from pydantic import BaseModel, Field
+from app.services import gemini
+from app.services.advisor import clean, system_prompt
+from app.services.ai_quota import use_quota
 
 router = APIRouter()
 
@@ -103,3 +108,33 @@ def delete_article(
     db.delete(db_article)
     db.commit()
     return None
+
+
+class AskRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=1000)
+    language: Literal["en", "ur"] = "en"
+
+
+class AskReply(BaseModel):
+    answer: str
+
+
+@router.post("/ask", response_model=AskReply)
+def ask_ai(request: AskRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Knowledge Base "Ask AI": answers from the published articles where they apply."""
+    use_quota(db, current_user)
+    articles = (
+        db.query(Article).filter(Article.is_published == True)  # noqa: E712
+        .order_by(Article.created_at.desc()).limit(20).all()
+    )
+    context = "\n\n".join(
+        f"### {a.title} ({a.category})\n{a.excerpt}\n{(a.content or '')[:1500]}" for a in articles
+    )
+    try:
+        answer = gemini.generate(
+            system_prompt(current_user, request.language, words=150, articles=context),
+            [gemini.Part(text=request.query)],
+        )
+    except gemini.AIUnavailable:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="AI assistant is busy. Please try again.")
+    return AskReply(answer=clean(answer))
