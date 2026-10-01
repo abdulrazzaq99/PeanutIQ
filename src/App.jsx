@@ -17,9 +17,7 @@ import DiseaseIntelligence from './pages/DiseaseIntelligence';
 import HistoryReports from './pages/HistoryReports';
 import Advisories from './pages/Advisories';
 import Login from './pages/auth/Login';
-import VerifyOTP from './pages/auth/VerifyOTP';
 import Signup from './pages/auth/Signup';
-import ProfileSetup from './pages/auth/ProfileSetup';
 import UserDashboard from './pages/UserDashboard';
 import Maintenance from './pages/Maintenance';
 
@@ -37,9 +35,10 @@ function App() {
           {/* Auth Routes */}
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
-            <Route path="/verify-otp" element={<VerifyOTP />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/profile-setup" element={<ProfileSetup />} />
+            {/* Old email-code pages: sign-in is email + password now. */}
+            <Route path="/verify-otp" element={<Navigate to="/login" replace />} />
+            <Route path="/profile-setup" element={<Navigate to="/login" replace />} />
           </Route>
 
           {/* User (Farmer) Routes - Protected */}

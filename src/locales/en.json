@@ -369,6 +369,23 @@
       "submitBtn": "Send OTP",
       "hasAccount": "Already have an account?",
       "loginLink": "Sign in"
+    },
+    "app": {
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "passwordHint": "At least 8 characters",
+      "signInBtn": "Sign In",
+      "passwordShort": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords do not match",
+      "accountCreated": "Account created. Please sign in.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "emailPlaceholder": "Email address",
+      "emailInvalid": "Please enter a valid email address",
+      "badCredentials": "Incorrect email or password",
+      "emailTaken": "An account with this email already exists",
+      "checkFields": "Please check the details and try again.",
+      "networkError": "Network error. Please try again."
     }
   },
   "aiCompanion": {

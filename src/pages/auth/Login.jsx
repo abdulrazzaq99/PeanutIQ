@@ -1,31 +1,41 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, Lock, Eye } from 'lucide-react';
+import { User, CheckCircle2 } from 'lucide-react';
 import Logo from '../../components/Logo';
 import { useTranslation } from 'react-i18next';
+import PasswordInput from './PasswordInput';
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Login() {
-  const [identifier, setIdentifier] = useState('');
+  const location = useLocation();
+  // Create Account sends the user here with the email filled in.
+  const [identifier, setIdentifier] = useState(location.state?.email || '');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const accountCreated = Boolean(location.state?.created);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!identifier.trim()) return;
-    
-    setIsLoading(true);
-    const res = await login(identifier);
-    setIsLoading(false);
-    
-    if (res.success) {
-      navigate('/verify-otp', { state: { identifier, isLoginIntent: true } });
-    } else {
-      setError(res.error || "Something went wrong.");
+    if (isLoading || !identifier.trim() || !password) return;
+    if (!EMAIL.test(identifier.trim())) {
+      setEmailError(t('auth.app.emailInvalid', 'Please enter a valid email address'));
+      return;
     }
+    setIsLoading(true);
+    const res = await login(identifier, password);
+    setIsLoading(false);
+    if (!res.success) {
+      setError(res.error);
+      return;
+    }
+    navigate(res.user.role === 'admin' || res.user.role === 'researcher' ? '/admin' : '/user', { replace: true });
   };
 
   return (
@@ -35,8 +45,14 @@ export default function Login() {
         <p className="text-sm text-gray-500 mt-2 font-medium">{t('auth.mockup.loginDesc', 'Login to continue your journey')}</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Email or Phone Number Input */}
+      {accountCreated && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-[#07571C]" role="status">
+          <CheckCircle2 className="h-5 w-5 shrink-0" />
+          <span>{t('auth.app.accountCreated', 'Account created. Please sign in.')}</span>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div>
           <div className="relative rounded-xl shadow-sm" dir="ltr">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -44,27 +60,43 @@ export default function Login() {
             </div>
             <input
               id="identifier"
-              type="text"
+              type="email"
               required
-              className="focus:ring-1 focus:ring-[#07571C] focus:border-[#07571C] block w-full pl-11 sm:text-sm border border-gray-200 rounded-xl py-3.5 transition-colors bg-white text-left text-charcoal outline-none"
-              placeholder={t('auth.mockup.identifierPlaceholder', 'Email or Phone Number')}
+              autoComplete="email"
+              className={`focus:ring-1 block w-full pl-11 sm:text-sm border rounded-xl py-3.5 transition-colors bg-white text-left text-charcoal outline-none ${
+                emailError ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-gray-200 focus:ring-[#07571C] focus:border-[#07571C]'
+              }`}
+              placeholder={t('auth.app.emailPlaceholder', 'Email address')}
               value={identifier}
               onChange={(e) => {
                 setIdentifier(e.target.value);
+                setEmailError('');
                 setError('');
               }}
             />
           </div>
+          {emailError && <p className="mt-2 text-sm text-red-500 font-bold">{emailError}</p>}
+        </div>
+
+        <div>
+          <PasswordInput
+            id="password"
+            autoComplete="current-password"
+            placeholder={t('auth.app.password', 'Password')}
+            value={password}
+            hasError={Boolean(error)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError('');
+            }}
+          />
           {error && <p className="mt-2 text-sm text-red-500 font-bold">{error}</p>}
         </div>
 
-
-
-        {/* Submit Button */}
         <div className="pt-2">
           <button
             type="submit"
-            disabled={isLoading || !identifier.trim()}
+            disabled={isLoading || !identifier.trim() || !password}
             className="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#324329] hover:bg-[#1a2315] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#324329] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
@@ -74,7 +106,7 @@ export default function Login() {
               </svg>
             ) : (
               <>
-                {t('auth.login.sendOtp', 'Send OTP')}
+                {t('auth.app.signInBtn', 'Sign In')}
                 <Logo className="ml-2 w-4 h-4 opacity-80" sparkleColor="currentColor" />
               </>
             )}
@@ -90,8 +122,6 @@ export default function Login() {
           </Link>
         </p>
       </div>
-      
-
     </div>
   );
 }

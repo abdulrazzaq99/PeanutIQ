@@ -60,58 +60,62 @@ export function AuthProvider({ children }) {
     initAuth();
   }, []);
 
-  const login = async (identifier) => {
+  // The backend's English messages that a farmer can meet here, translated.
+  const describeAuthError = (detail) => {
+    const known = {
+      'Incorrect email or password': i18n.t('auth.app.badCredentials', 'Incorrect email or password'),
+      'Email already registered': i18n.t('auth.app.emailTaken', 'An account with this email already exists'),
+    };
+    if (typeof detail === 'string') return known[detail] || detail;
+    return i18n.t('auth.app.checkFields', 'Please check the details and try again.');
+  };
+
+  /** Creates the account. It does not sign in: the user signs in next with the password. */
+  const register = async ({ name, identifier, password, farm_location, language_preference }) => {
     try {
-      const response = await fetchApi('/auth/request-otp', {
+      const response = await fetchApi('/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ identifier }),
+        body: JSON.stringify({
+          name: name.trim(),
+          identifier: identifier.trim(),
+          password,
+          farm_location,
+          language_preference,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+        }),
       });
       if (!response.ok) {
-        throw new Error('Failed to request OTP');
+        const data = await response.json().catch(() => ({}));
+        return { success: false, error: describeAuthError(data.detail) };
       }
-      return { success: true, identifier };
+      return { success: true };
     } catch (error) {
       console.error(error);
-      return { success: false, error: error.message };
+      return { success: false, error: i18n.t('auth.app.networkError', 'Network error. Please try again.') };
     }
   };
 
-  const verifyOtp = async (identifier, otp, isLoginIntent = true) => {
+  /** Email and password sign-in. Returns the user so the caller can route by role. */
+  const login = async (identifier, password) => {
     try {
-      const response = await fetchApi('/auth/verify-otp', {
+      const response = await fetchApi('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ identifier, otp }),
+        body: JSON.stringify({ identifier: identifier.trim(), password }),
       });
-      
-      const data = await response.json();
-      
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        return { success: false, error: data.detail || 'Invalid OTP' };
+        return { success: false, error: describeAuthError(data.detail) };
       }
-
       // data contains { access_token, token_type, user }
-      const loggedInUser = data.user;
-      
-      setUser(loggedInUser);
-      localStorage.setItem('peanutiq_user', JSON.stringify(loggedInUser));
+      setUser(data.user);
+      localStorage.setItem('peanutiq_user', JSON.stringify(data.user));
       localStorage.setItem('peanutiq_token', data.access_token);
-      
-      setGlobalLanguage(loggedInUser.language_preference);
-      
-      // Determine if new user based on active status or missing profile fields
-      // For now we assume if they don't have a farm_location, they might need setup
-      const isNewUser = !loggedInUser.farm_location && loggedInUser.role === 'farmer';
-      
-      return { success: true, isNewUser, user: loggedInUser };
+      setGlobalLanguage(data.user.language_preference);
+      return { success: true, user: data.user };
     } catch (error) {
       console.error(error);
-      return { success: false, error: 'Network error occurred' };
+      return { success: false, error: i18n.t('auth.app.networkError', 'Network error. Please try again.') };
     }
-  };
-
-  const signup = async (profileData) => {
-    // Signup flow routes to request-otp as our backend creates the user if they don't exist
-    return login(profileData.identifier || profileData.email || profileData.phone);
   };
 
   const logout = () => {
@@ -144,7 +148,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, verifyOtp, signup, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
