@@ -1,0 +1,7 @@
+backend/
+backend.zip
+.playwright-mcp/
+node_modules/
+dist/
+.env
+.env.local
