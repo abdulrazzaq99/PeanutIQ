@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useTranslation } from 'react-i18next';
-import { fetchApi } from '../config/api';
+import { fetchApi, API_BASE_URL } from '../config/api';
 
 export default function DiseaseIntelligence() {
   const { t } = useTranslation();
@@ -55,7 +55,7 @@ export default function DiseaseIntelligence() {
     try {
       const headers = { Authorization: `Bearer ${token}` };
       // Omit Content-Type so browser sets multipart boundary
-      const res = await fetch('http://127.0.0.1:8000/api/v1/scans/', {
+      const res = await fetch(`${API_BASE_URL}/scans/`, {
         method: 'POST',
         headers,
         body: formData

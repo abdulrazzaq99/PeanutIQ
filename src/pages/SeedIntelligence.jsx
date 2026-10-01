@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useTranslation } from 'react-i18next';
-import { fetchApi } from '../config/api';
+import { fetchApi, API_BASE_URL } from '../config/api';
 
 // Mock Data
 const COLORS = ['#22c55e', '#eab308', '#f97316', '#64748b', '#ef4444'];
@@ -57,7 +57,7 @@ export default function SeedIntelligence() {
     try {
       const headers = { Authorization: `Bearer ${token}` };
       // Omit Content-Type so browser sets multipart boundary
-      const res = await fetch('http://127.0.0.1:8000/api/v1/scans/', {
+      const res = await fetch(`${API_BASE_URL}/scans/`, {
         method: 'POST',
         headers,
         body: formData
