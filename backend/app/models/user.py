@@ -19,6 +19,8 @@ class User(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     identifier = Column(String, unique=True, index=True, nullable=False)
+    # Set by password sign-up (mobile app). Null for accounts that only use email codes (website).
+    password_hash = Column(String, nullable=True)
     name = Column(String, nullable=True)
     role = Column(Enum(UserRole), default=UserRole.farmer, nullable=False)
     farm_location = Column(String, nullable=True)

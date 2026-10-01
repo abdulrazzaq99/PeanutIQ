@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, UploadFile, File, Form
+from fastapi import APIRouter, Depends, Request, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from typing import List
 import os
@@ -23,6 +23,7 @@ def get_scan_reports(
 
 @router.post("/", response_model=ScanReportResponse, status_code=status.HTTP_201_CREATED)
 async def create_scan_report(
+    request: Request,
     type: str = Form(...),
     title: str = Form(...),
     scan_status: str = Form(..., alias="status"),
@@ -40,7 +41,9 @@ async def create_scan_report(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
         
-    image_url = f"http://127.0.0.1:8000/uploads/{unique_filename}"
+    # The address the client used, so phones, the emulator and a deployed server all get a
+    # link they can open (not 127.0.0.1, which is the phone itself).
+    image_url = f"{str(request.base_url).rstrip('/')}/uploads/{unique_filename}"
     
     db_scan = ScanReport(
         user_id=current_user.id,

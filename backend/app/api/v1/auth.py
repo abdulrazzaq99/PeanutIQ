@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from app.db.session import get_db
-from app.schemas.auth import OTPRequest, OTPVerify, Token
+from app.schemas.auth import OTPRequest, OTPVerify, Token, RegisterRequest, LoginRequest
 from app.schemas.user import UserResponse
 from app.models.user import User
 from app.models.otp import OTPToken
@@ -78,4 +79,50 @@ def verify_otp(request: OTPVerify, db: Session = Depends(get_db)):
         "access_token": access_token, 
         "token_type": "bearer",
         "user": user
+    }
+
+
+def _find_user(db: Session, email: str) -> User | None:
+    return db.query(User).filter(func.lower(User.identifier) == email.lower()).first()
+
+
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+def register(request: RegisterRequest, db: Session = Depends(get_db)):
+    """Password sign-up (mobile app). Creates a farmer account; it does not sign in."""
+    email = str(request.identifier).strip().lower()
+    # An existing email (including code-only website accounts) can't be claimed with a password,
+    # because nothing here proves the person owns that inbox.
+    if _find_user(db, email):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+
+    user = User(
+        identifier=email,
+        name=request.name,
+        farm_location=request.farm_location,
+        language_preference=request.language_preference,
+        password_hash=get_password_hash(request.password),
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.post("/login", response_model=Token)
+def login(request: LoginRequest, db: Session = Depends(get_db)):
+    """Password sign-in (mobile app). Same response as /verify-otp."""
+    user = _find_user(db, str(request.identifier).strip())
+    # One message for every failure, so the endpoint doesn't reveal which emails have accounts.
+    if (
+        not user
+        or not user.is_active
+        or not user.password_hash
+        or not verify_password(request.password, user.password_hash)
+    ):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+
+    return {
+        "access_token": create_access_token(subject=str(user.id)),
+        "token_type": "bearer",
+        "user": user,
     }
