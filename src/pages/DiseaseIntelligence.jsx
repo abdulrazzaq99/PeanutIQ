@@ -48,7 +48,7 @@ export default function DiseaseIntelligence() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', 'Disease Intelligence');
-    formData.append('title', t('disease.mockTitles.t1', 'Late Leaf Spot Detection'));
+    formData.append('title', t('disease.mockTitles.t1', 'Early Leaf Spot Detection'));
     formData.append('status', 'High Risk');
     formData.append('confidence_score', '98.1');
 

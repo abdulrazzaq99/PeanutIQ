@@ -1,3 +1,4 @@
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from app.models.user import LanguagePreference
 from app.schemas.user import UserResponse
@@ -15,6 +16,7 @@ class RegisterRequest(BaseModel):
     password: str = Field(min_length=8)
     farm_location: str | None = None
     language_preference: LanguagePreference = LanguagePreference.english
+    timezone: str = "UTC"
 
     @field_validator("name")
     @classmethod
@@ -30,6 +32,15 @@ class RegisterRequest(BaseModel):
         # bcrypt only uses the first 72 bytes; refuse longer ones rather than silently cut them.
         if len(value.encode("utf-8")) > 72:
             raise ValueError("Password is too long")
+        return value
+
+    @field_validator("timezone")
+    @classmethod
+    def known_timezone(cls, value: str) -> str:
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError):
+            raise ValueError("Unknown time zone")
         return value
 
 class LoginRequest(BaseModel):

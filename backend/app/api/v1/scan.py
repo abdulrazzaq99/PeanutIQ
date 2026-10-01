@@ -45,7 +45,8 @@ async def create_scan_report(
     db.add(db_scan)
     
     # Log the activity
-    action_type = "Disease Analysis" if type == "disease" else "Seed Quality Scan"
+    # The website and app send "Disease Intelligence" / "Seed Intelligence".
+    action_type = "Disease Analysis" if "disease" in type.lower() else "Seed Quality Scan"
     db_activity = ActivityLog(
         user_id=current_user.id,
         action=action_type,

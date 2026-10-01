@@ -100,3 +100,9 @@ def test_postgres_urls_use_the_installed_driver():
     for url in ["postgresql://u:p@db:5432/x", "postgres://u:p@db:5432/x"]:
         assert Settings(DATABASE_URL=url).DATABASE_URL == "postgresql+psycopg2://u:p@db:5432/x"
     assert Settings(DATABASE_URL="sqlite://").DATABASE_URL == "sqlite://"
+
+
+def test_register_keeps_the_phone_time_zone(client):
+    assert register(client, timezone="Asia/Karachi").json()["timezone"] == "Asia/Karachi"
+    assert register(client, identifier="b@example.com").json()["timezone"] == "UTC"
+    assert register(client, identifier="c@example.com", timezone="Mars/Olympus").status_code == 422

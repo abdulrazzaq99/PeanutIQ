@@ -100,6 +100,7 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         name=request.name,
         farm_location=request.farm_location,
         language_preference=request.language_preference,
+        timezone=request.timezone,
         password_hash=get_password_hash(request.password),
     )
     db.add(user)
