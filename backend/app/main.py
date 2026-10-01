@@ -1,7 +1,10 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import auth, uploads, users, knowledge, dashboard, scan, admin
+from app.services import media_storage
 
 app = FastAPI(title="PeanutIQ API", version="1.0.0")
 
@@ -14,8 +17,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve uploaded files
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Serve locally stored scan photos. Not on Vercel: photos go to Vercel Blob there,
+# and the disk is read-only.
+if not media_storage.uses_blob():
+    os.makedirs(media_storage.UPLOAD_DIR, exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=media_storage.UPLOAD_DIR), name="uploads")
 
 # API Routers
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])

@@ -1,52 +1,15 @@
-# Full backend: API + Postgres + MinIO.
-#   docker compose up -d --build
-# The API is then on http://<this machine's IP>:8000 for every device on the network
-# (Android emulator: http://10.0.2.2:8000). Secrets come from backend/.env (see .env.example).
-name: peanutiq
-
 services:
-  api:
-    build: .
-    container_name: peanutiq_api
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql://peanutiq:${POSTGRES_PASSWORD:-password}@db:5432/peanutiq_dev
-      MINIO_URL: http://minio:9000
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-admin}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-password123}
-      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME:-peanutiq-uploads}
-      JWT_SECRET: ${JWT_SECRET:-dev-only-change-this-secret}
-      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
-      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
-      # Only the website's email-code sign-in needs a real key; the app's password sign-in doesn't.
-      RESEND_API_KEY: ${RESEND_API_KEY:-not-configured}
-      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-PeanutIQ <onboarding@resend.dev>}
-    volumes:
-      - uploads_data:/app/uploads
-    depends_on:
-      db:
-        condition: service_healthy
-      minio:
-        condition: service_started
-    restart: unless-stopped
-
   db:
     image: postgres:15-alpine
     container_name: peanutiq_db
     environment:
       POSTGRES_USER: peanutiq
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: peanutiq_dev
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U peanutiq -d peanutiq_dev"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
     restart: unless-stopped
 
   minio:
@@ -54,8 +17,8 @@ services:
     container_name: peanutiq_minio
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-admin}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-password123}
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password123
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -66,4 +29,3 @@ services:
 volumes:
   postgres_data:
   minio_data:
-  uploads_data:

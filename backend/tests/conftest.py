@@ -1,13 +1,9 @@
 import os
 
-# Settings are required at import time; tests never reach these services.
+# The two required settings; tests never reach a real database or Blob store.
 os.environ.setdefault("JWT_SECRET", "test-secret")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
-os.environ.setdefault("RESEND_API_KEY", "test")
-os.environ.setdefault("MINIO_URL", "http://localhost:9000")
-os.environ.setdefault("MINIO_ACCESS_KEY", "test")
-os.environ.setdefault("MINIO_SECRET_KEY", "test")
-os.makedirs("uploads", exist_ok=True)  # main.py mounts it
+os.environ.pop("BLOB_READ_WRITE_TOKEN", None)
 
 import pytest
 from fastapi.testclient import TestClient

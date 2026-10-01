@@ -1,9 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from typing import List
-import os
-import uuid
-import shutil
 
 from app.db.session import get_db
 from app.models.dashboard import ActivityLog
@@ -11,6 +8,7 @@ from app.models.scan import ScanReport
 from app.schemas.scan import ScanReportResponse, ScanReportCreate
 from app.api.dependencies import get_current_user
 from app.models.user import User
+from app.services.media_storage import save_scan_image
 
 router = APIRouter()
 
@@ -32,18 +30,9 @@ async def create_scan_report(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    os.makedirs("uploads", exist_ok=True)
-    
-    file_extension = os.path.splitext(file.filename)[1] if file.filename else ".jpg"
-    unique_filename = f"{uuid.uuid4()}{file_extension}"
-    file_path = f"uploads/{unique_filename}"
-    
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-        
-    # The address the client used, so phones, the emulator and a deployed server all get a
-    # link they can open (not 127.0.0.1, which is the phone itself).
-    image_url = f"{str(request.base_url).rstrip('/')}/uploads/{unique_filename}"
+    image_url = save_scan_image(
+        await file.read(), file.filename, file.content_type, str(request.base_url)
+    )
     
     db_scan = ScanReport(
         user_id=current_user.id,

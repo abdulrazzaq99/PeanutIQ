@@ -11,14 +11,14 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
 
-    # Resend
-    RESEND_API_KEY: str
+    # Resend (email codes for the website's sign-in)
+    RESEND_API_KEY: str = ""
     RESEND_FROM_EMAIL: str = "PeanutIQ <onboarding@resend.dev>"
 
     # MinIO / S3
-    MINIO_URL: str
-    MINIO_ACCESS_KEY: str
-    MINIO_SECRET_KEY: str
+    MINIO_URL: Optional[str] = None
+    MINIO_ACCESS_KEY: Optional[str] = None
+    MINIO_SECRET_KEY: Optional[str] = None
     AWS_BUCKET_NAME: str = "peanutiq-uploads"
 
     @field_validator("DATABASE_URL")
@@ -30,6 +30,13 @@ class Settings(BaseSettings):
             if url.startswith(prefix):
                 return "postgresql+psycopg2://" + url[len(prefix):]
         return url
+
+    # Vercel Blob for scan photos. Set automatically when a Blob store is connected
+    # to the Vercel project; when empty, photos go to the local uploads/ folder.
+    BLOB_READ_WRITE_TOKEN: Optional[str] = None
+
+    # Set by Vercel on every deployment.
+    VERCEL: Optional[str] = None
 
     model_config = SettingsConfigDict(env_file=".env", env_ignore_empty=True, extra="ignore")
 
