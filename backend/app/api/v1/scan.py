@@ -10,7 +10,7 @@ from app.models.scan import ScanReport
 from app.schemas.scan import ScanReportResponse, ScanReportCreate
 from app.api.dependencies import get_current_user
 from app.models.user import User
-from app.services import gemini, scan_analysis
+from app.services import disease_model, gemini, scan_analysis
 from app.services.ai_quota import use_quota
 from app.services.media_storage import save_scan_image
 
@@ -25,6 +25,15 @@ def get_scan_reports(
     current_user: User = Depends(get_current_user)
 ):
     return db.query(ScanReport).filter(ScanReport.user_id == current_user.id).order_by(ScanReport.created_at.desc()).all()
+
+@router.get("/disease-model")
+def get_disease_model_info(current_user: User = Depends(get_current_user)):
+    """The trained disease model's classes and measured accuracy."""
+    info = disease_model.metrics()
+    if info is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="No trained model")
+    return info
+
 
 @router.post("/", response_model=ScanReportResponse, status_code=status.HTTP_201_CREATED)
 def create_scan_report(

@@ -99,6 +99,7 @@ def test_app_scan_is_analysed_and_saved(client, farmer, db, monkeypatch):
 
 
 def test_disease_scan(client, farmer, monkeypatch):
+    monkeypatch.setattr(scan_analysis.disease_model, "available", lambda: False)
     monkeypatch.setattr(gemini, "generate_json", lambda *a, **k: DISEASE_RAW)
     body = post(client, kind="Disease Intelligence").json()
     assert body["title"] == "Early Leaf Spot Detection" and body["status"] == "Moderate"

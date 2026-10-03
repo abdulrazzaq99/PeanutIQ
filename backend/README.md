@@ -51,6 +51,14 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 (Android emulator: `http://10.0.2.2:8000/api/v1`). Without `BLOB_READ_WRITE_TOKEN`, scan photos are
 saved in `uploads/` and served at `/uploads`.
 
+## AI scans
+
+- **Disease scan:** PeanutIQ's own trained model (`app/ml/disease.onnx`, see `ml/README.md`) detects the
+  problem; Gemini writes the explanation and advice and screens out photos that aren't crops. If the model
+  is under 50% sure, Gemini diagnoses instead; if Gemini is busy, built-in advice is used.
+  `GET /api/v1/scans/disease-model` returns the model's classes and accuracy.
+- **Seed scan:** Gemini counts the seeds by condition; grade and percentages are computed by fixed rules.
+
 ## Make a user an admin or researcher
 
 ```bash

@@ -1,0 +1,83 @@
+{
+ "validation_accuracy": 0.989,
+ "test": {
+  "accuracy": 0.986,
+  "per_class_accuracy": {
+   "healthy": 0.995,
+   "early_leaf_spot": 0.954,
+   "late_leaf_spot": 0.968,
+   "rust": 1.0,
+   "nutrient_deficiency": 1.0,
+   "caterpillar": 1.0
+  },
+  "confusion": [
+   [
+    407,
+    0,
+    0,
+    0,
+    2,
+    0
+   ],
+   [
+    19,
+    390,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    13,
+    392,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    818,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    451,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    6
+   ]
+  ],
+  "count": 2498,
+  "own_photos_accuracy": 1.0,
+  "own_photos_count": 47
+ },
+ "classes": [
+  "healthy",
+  "early_leaf_spot",
+  "late_leaf_spot",
+  "rust",
+  "nutrient_deficiency",
+  "caterpillar"
+ ],
+ "model": "mobilenet_v3_large (ImageNet) fine-tuned",
+ "input_size": 224,
+ "trained_at": "2026-10-03 21:18",
+ "data": {
+  "train": 7395,
+  "val": 821,
+  "test": 2498
+ }
+}

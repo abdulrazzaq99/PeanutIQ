@@ -5,7 +5,7 @@ problem). Percentages, grades and the germination estimate are then computed her
 rules, so the numbers are consistent and explainable. Results are AI estimates, not lab tests.
 """
 from app.models.user import User
-from app.services import gemini
+from app.services import disease_advice, disease_model, gemini
 from app.services.advisor import LANGUAGES
 
 LANGUAGE_NOTE = "Write every text field (summary, titles, details) in {language}."
@@ -186,6 +186,65 @@ def disease_status(result: dict) -> str:
     return "High Risk" if result["outbreak_risk"] == "high" or result["severity_stage"] >= 3 else "Moderate"
 
 
+# ---- Trained model + Gemini -------------------------------------------------------------
+
+# Below this, the trained model is "not sure" and Gemini diagnoses on its own.
+MODEL_MIN_CONFIDENCE = 0.5
+
+MODEL_HINT = """
+PeanutIQ's own trained image model classified this photo as "{condition}" ({pct}% confidence).
+Use that as the diagnosis (condition_en "{condition}") unless the photo clearly is not a crop or pest,
+and write the explanation and advice for it."""
+
+
+def analyze_disease(data: bytes, mime_type: str, language: str, user: User) -> dict:
+    """Detection by the trained model; explanation and advice from Gemini (or built-in advice)."""
+    prediction = None
+    if disease_model.available():
+        try:
+            prediction = disease_model.predict(data)
+        except ValueError:
+            prediction = None  # e.g. a format the model can't read; Gemini still can
+    use_model = prediction is not None and prediction.confidence >= MODEL_MIN_CONFIDENCE
+    language_note = LANGUAGE_NOTE.format(language=LANGUAGES.get(language, LANGUAGES["en"]))
+    location = f" The farm is in {user.farm_location}." if user.farm_location else ""
+    prompt = DISEASE_PROMPT.format(language_note=language_note) + location
+    if use_model:
+        prompt += MODEL_HINT.format(condition=prediction.condition_en, pct=round(prediction.confidence * 100))
+
+    try:
+        result = finish_disease(gemini.generate_json(prompt, [gemini.Part(data=data, mime_type=mime_type)], DISEASE_SCHEMA))
+    except gemini.AIUnavailable:
+        if not use_model:
+            raise
+        result = {"explanation": "", "urgent_action": "", "treatments": [], "prevention": ""}
+        result.update(disease_advice.built_in(prediction.label, language))
+        result["advice_source"] = "built-in"
+    else:
+        result["advice_source"] = "gemini"
+
+    if use_model:
+        lang = language if language in ("en", "ur") else "en"
+        result.update(
+            category=prediction.category,
+            condition_en=prediction.condition_en,
+            condition=disease_advice.NAMES[prediction.label][lang],
+            confidence_pct=round(prediction.confidence * 100),
+        )
+        if prediction.label == "healthy":
+            result.update(severity_stage=0, outbreak_risk="low", affected_pct=0)
+        else:
+            result["severity_stage"] = max(1, int(result.get("severity_stage") or 1))
+    result["detected_by"] = "model" if use_model else "gemini"
+    if prediction is not None:
+        result["model"] = {
+            "label": prediction.label,
+            "confidence": round(prediction.confidence, 4),
+            "probabilities": prediction.probabilities,
+        }
+    return result
+
+
 # ---- Entry point --------------------------------------------------------------------------
 
 def analyze(kind: str, data: bytes, mime_type: str, language: str, user: User) -> tuple[dict, str, str, float]:
@@ -197,7 +256,6 @@ def analyze(kind: str, data: bytes, mime_type: str, language: str, user: User) -
         raw = gemini.generate_json(SEED_PROMPT.format(language_note=language_note) + location, [image], SEED_SCHEMA)
         result = finish_seed(raw)
         return result, f"Seed Lot Grade {result['grade']}", seed_status(result), float(result["confidence_pct"])
-    raw = gemini.generate_json(DISEASE_PROMPT.format(language_note=language_note) + location, [image], DISEASE_SCHEMA)
-    result = finish_disease(raw)
+    result = analyze_disease(data, mime_type, language, user)
     title = "Healthy Crop" if result["category"] == "healthy" else f"{result['condition_en']} Detection"
     return result, title, disease_status(result), float(result["confidence_pct"])

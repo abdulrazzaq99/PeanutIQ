@@ -1,9 +1,13 @@
-import boto3
-from botocore.exceptions import ClientError
 from app.core.config import settings
 import uuid
 
 def get_s3_client():
+    # Imported here: boto3 is large and only this rarely used endpoint needs it. It is in
+    # requirements-dev.txt (local MinIO), not in the Vercel bundle.
+    try:
+        import boto3
+    except ImportError as e:
+        raise RuntimeError("File storage (S3/MinIO) is not set up on this server") from e
     if settings.MINIO_URL:
         # Dev mode using MinIO
         return boto3.client(
@@ -39,7 +43,7 @@ def upload_file_to_s3(file_obj, filename: str, content_type: str) -> str:
             ExtraArgs={'ContentType': content_type}
         )
         return object_name
-    except ClientError as e:
+    except Exception as e:
         print(f"Error uploading to S3: {e}")
         raise e
 
@@ -53,7 +57,7 @@ def get_presigned_url(object_name: str, expiration=3600) -> str:
                                                     Params={'Bucket': settings.AWS_BUCKET_NAME,
                                                             'Key': object_name},
                                                     ExpiresIn=expiration)
-    except ClientError as e:
+    except Exception as e:
         print(f"Error generating presigned url: {e}")
         return None
     return response
