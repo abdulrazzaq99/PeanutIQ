@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Float, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, String, Float, DateTime, ForeignKey, Enum, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from app.db.session import Base
 import enum
@@ -24,4 +24,6 @@ class ScanReport(Base):
     status = Column(Enum(ScanStatus), nullable=False)
     image_url = Column(String, nullable=False)
     confidence_score = Column(Float, nullable=False)
+    # Gemini's analysis of the photo (app scans); null for scans saved without analysis.
+    analysis = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

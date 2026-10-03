@@ -15,6 +15,7 @@ class ScanReportCreate(ScanReportBase):
     pass
 
 class ScanReportResponse(ScanReportBase):
+    analysis: Optional[dict] = None
     id: UUID
     user_id: UUID
     created_at: datetime
